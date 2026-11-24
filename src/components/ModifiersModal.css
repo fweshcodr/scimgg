@@ -1,0 +1,202 @@
+/* The Modifiers picker (ModifiersModal.tsx): the encounter panel's modifier grid on its own, in
+   the encounter panel's card language. Above the top chrome (68), level with the encounter picker. */
+.modifiers-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.modifiers-modal-overlay,
+.modifiers-modal-overlay * {
+  box-sizing: border-box;
+}
+
+.modifiers-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: var(--modal-backdrop);
+}
+
+.modifiers-modal-card {
+  position: relative;
+  /* Wide enough that the grid takes two columns (its container query starts at 600px). */
+  width: min(860px, 100%);
+  max-height: min(88vh, 720px);
+  /* biome-ignore lint/suspicious/noDuplicateProperties: deliberate progressive-enhancement pair. Browsers without dvh keep the vh value; the cascade is the fallback mechanism. */
+  max-height: min(88dvh, 720px);
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg-solid);
+  border: 1px solid var(--modal-card-border);
+  border-radius: var(--modal-radius);
+  /* The shadow is on ::before and overflow stays visible: an outer box-shadow on the element that
+     paints behind the text, or a clipped card, would cost the text its LCD antialiasing. */
+  overflow: visible;
+}
+
+/* As CreditsModal.css: -1px puts the outer shadow on the card's border box, and the transparent
+   border puts --modal-card-shadow's inset ring back on its padding box. */
+.modifiers-modal-card::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border: 1px solid transparent;
+  border-radius: var(--modal-radius);
+  box-shadow: var(--modal-card-shadow);
+  pointer-events: none;
+}
+
+.modifiers-modal-header {
+  flex-shrink: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 12px 12px 16px;
+  background: var(--color-bg-elevated);
+  border-bottom: 1px solid var(--color-border);
+}
+
+/* Level with the 20px title rather than the heading block's top. The phone sheet re-centers it. */
+.modifiers-modal-close {
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.modifiers-modal-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.modifiers-modal-heading h2 {
+  margin: 0;
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 16px;
+  font-weight: normal;
+  line-height: 20px;
+  color: var(--color-heading);
+  text-shadow: 1px 1px 0 #000;
+}
+
+.modifiers-modal-heading p {
+  margin: 0;
+  font-family: "RuneScape Plain 11", sans-serif;
+  font-size: 16px;
+  line-height: 18px;
+  color: var(--color-text-muted);
+}
+
+/* The one scroller. Its own opaque fill keeps the scrolling layer's text on LCD antialiasing; the
+   card's fill underneath does not count. Sized as a container, so the grid picks its columns. */
+.modifiers-modal-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+  container-type: inline-size;
+  padding: 16px;
+  background: var(--color-bg-solid);
+}
+
+.modifiers-modal-body::-webkit-scrollbar {
+  width: 8px;
+}
+
+.modifiers-modal-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.modifiers-modal-body::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 2px;
+  border: 2px solid var(--color-bg-solid);
+}
+
+.modifiers-modal-body::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary-structure);
+}
+
+.modifiers-modal-footer {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 12px 16px;
+  background: var(--color-bg-elevated);
+  border-top: 1px solid var(--color-border);
+}
+
+.modifiers-modal-body .modifier-name {
+  font-size: 16px;
+  line-height: 20px;
+  white-space: normal;
+  color: var(--color-secondary);
+  text-shadow: none;
+}
+.modifiers-modal-body .modifier-effect > p {
+  font-size: 16px;
+  line-height: 20px;
+}
+.modifiers-modal-body .modifier-tiers {
+  grid-template-columns: repeat(var(--modifier-tier-count, 4), 32px);
+}
+.modifiers-modal-body .modifier-tier {
+  height: 28px;
+  font-size: 16px;
+  line-height: 20px;
+}
+.modifiers-modal-body .modifier-tier--selected {
+  background: color-mix(in srgb, var(--color-surface-hover) 55%, var(--color-surface-inset));
+}
+.modifiers-modal-body .modifier-row--active .modifier-tier--selected {
+  background: var(--primary-dim);
+}
+@media (max-width: 600px), (max-height: 540px), (pointer: coarse) {
+  .modifiers-modal-overlay {
+    padding: 8px;
+  }
+  .modifiers-modal-card {
+    max-height: 100%;
+  }
+  .modifiers-modal-body .modifier-slot {
+    display: none;
+  }
+  .modifiers-modal-body .modifier-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 8px;
+  }
+  .modifiers-modal-body .modifier-effect {
+    grid-column: 1 / -1;
+  }
+  .modifiers-modal-body .modifier-tiers {
+    grid-template-columns: repeat(var(--modifier-tier-count, 4), 44px);
+  }
+  .modifiers-modal-body .modifier-tier,
+  .modifiers-modal-footer .osrs-btn {
+    min-height: 44px;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .modifiers-modal-card {
+    animation: modifiers-modal-in 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+}
+
+@keyframes modifiers-modal-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

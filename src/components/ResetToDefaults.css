@@ -1,0 +1,114 @@
+/* Reset to defaults (ResetToDefaults.tsx): the configurer's rail heading row and the end of
+   Practice's settings. Ghost at rest (no frame, no fill), so it never outweighs the heading or the
+   controls it serves; hover reveals the shared quiet surface. Opaque or transparent fills only and
+   no outer shadow, so the label keeps LCD antialiasing. Borders use --unscaled-px for zoomed chrome. */
+.reset-defaults {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  /* One face per surface for the action, its status and its Undo, so the pair that replaces the
+     action reads at the action's size: the rail's body face, or Practice's smaller one. */
+  font:
+    16px / 16px var(--reset-defaults-face, "RuneScape Plain 12"),
+    sans-serif;
+}
+
+.reset-defaults__action,
+.undo-action {
+  -webkit-appearance: none;
+  appearance: none;
+  position: relative;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  margin: 0;
+  border: var(--unscaled-px, 1px) solid transparent;
+  border-radius: calc(2 * var(--unscaled-px, 1px));
+  background: transparent;
+  color: var(--color-secondary);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.reset-defaults__action {
+  gap: 6px;
+  height: 28px;
+  padding: 0 8px;
+  font: inherit;
+}
+
+.reset-defaults__action > canvas {
+  flex: none;
+}
+
+.reset-defaults__action:hover {
+  border-color: var(--color-primary-structure);
+  background: var(--color-surface-hover);
+  color: var(--color-accent-text);
+}
+
+.reset-defaults__action:active {
+  background: var(--color-surface-inset);
+}
+
+/* A text action, underlined because it has no frame to say it can be pressed. It takes the face
+   of the text it sits in (the notice's sentence, the status beside it) and the WikiLink's 1px
+   rule, so it reads as a link in that line rather than a larger word dropped into it. */
+.undo-action {
+  height: 24px;
+  padding: 0 4px;
+  font: inherit;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-decoration-color: var(--color-primary-structure);
+  text-underline-offset: 3px;
+}
+
+.undo-action:hover {
+  color: var(--color-accent-text);
+  text-decoration-color: var(--color-primary);
+}
+
+.reset-defaults__status {
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+/* Touch: a 44px-tall target without growing the row it sits in. */
+@media (pointer: coarse) {
+  .reset-defaults__action::before,
+  .undo-action::before {
+    content: "";
+    position: absolute;
+    inset: -10px -2px;
+  }
+}
+
+/* ---- Configurer: the setup column's heading row ------------------------------------------
+   The 28px button gives 4px back above and below, so the row stays the heading's 20px line and
+   nothing under it moves. Its padding hangs past the column's trailing edge by the same 8px, so the
+   label, not the invisible frame, aligns with the controls below. */
+.reset-defaults--rail {
+  margin: -4px -8px -4px auto;
+}
+
+.reset-defaults--rail .undo-action {
+  margin-right: 4px;
+}
+
+/* ---- Practice: the last row of the settings, ruled off ----------------------------------- */
+.reset-defaults--practice {
+  --reset-defaults-face: "RuneScape Plain 11";
+  flex-wrap: wrap;
+  /* The action's height, so the shorter Undo does not lift Restart fight below it. */
+  min-height: 28px;
+  margin-top: 8px;
+  padding-top: 6px;
+  border-top: var(--unscaled-px, 1px) solid var(--color-border);
+}
+
+.reset-defaults--practice .reset-defaults__action {
+  /* The glyph, not the frame, starts on the column's edge, as the Options chevron does. */
+  margin-left: -8px;
+}

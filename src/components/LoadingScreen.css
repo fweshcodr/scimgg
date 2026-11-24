@@ -1,0 +1,314 @@
+.loading-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  /* biome-ignore lint/suspicious/noDuplicateProperties: deliberate progressive-enhancement pair. Browsers without dvh keep the vh value; the cascade is the fallback mechanism. */
+  height: 100dvh;
+  /* Split into color + image on purpose. A gradient is a background-IMAGE, and with
+     no background-COLOR under it this fixed, composited layer has nothing Blink can
+     prove opaque — which vetoes subpixel text AA for the entire screen. The color is
+     the gradient's own outermost stop, so the paint is unchanged. Same shape as
+     .app-container in App.css. */
+  background-color: var(--color-surface-inset);
+  background-image: radial-gradient(
+    circle at center,
+    var(--color-bg-elevated) 0%,
+    var(--color-surface) 60%,
+    var(--color-surface-inset) 100%
+  );
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-body);
+  transition:
+    opacity 1.5s ease-in-out,
+    visibility 1.5s ease-in-out,
+    transform 1.5s cubic-bezier(0.2, 0.8, 0.2, 1),
+    filter 1.5s ease-in-out;
+  /* No compositing hint at rest. `will-change: opacity/transform/filter` is a hard
+     Blink LCD-text veto, and this screen sits at rest for the whole cache download
+     — which is exactly when its text is being read. The hint moves to .hidden, so
+     it applies only for the 1.5s exit transition. Transitions on opacity/transform/
+     filter promote on their own, so the exit stays smooth. Same contract as the
+     sidebars' `.open { will-change: auto }`. */
+  will-change: auto;
+}
+
+.loading-screen.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  will-change: opacity, transform, filter;
+  transform: scale(1.08);
+  filter: blur(8px) brightness(1.2);
+}
+
+.loading-content {
+  width: 90%;
+  max-width: 480px;
+  min-width: 300px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+.loading-title {
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: clamp(24px, 5vw, 36px);
+  color: var(--color-secondary);
+  text-shadow: 1px 1px 0 #000;
+  margin: 0 0 2px 0;
+  letter-spacing: 1px;
+}
+
+.loading-subtitle {
+  font-family: "RuneScape Plain 12", sans-serif;
+  font-size: 11px;
+  color: var(--color-text-muted);
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  margin: 0 0 36px 0;
+}
+
+.loading-bar-container {
+  width: 100%;
+  height: 8px;
+  background-color: var(--color-surface-inset);
+  border: 1px solid var(--color-border);
+  border-radius: 2px;
+  position: relative;
+  padding: 0;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.loading-bar-container.ready {
+  border-color: var(--color-primary-hover);
+  box-shadow: 0 0 20px color-mix(in srgb, var(--color-primary) 20%, transparent);
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+  animation: ready-pulse 3s ease-in-out infinite;
+}
+
+@keyframes ready-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 20px color-mix(in srgb, var(--color-primary) 20%, transparent);
+    border-color: var(--color-primary);
+  }
+  50% {
+    box-shadow: 0 0 30px color-mix(in srgb, var(--color-primary) 40%, transparent);
+    border-color: var(--color-primary);
+  }
+}
+
+.loading-bar-progress {
+  height: 100%;
+  background: var(--color-secondary);
+  width: 100%;
+  transform-origin: left;
+  transform: scaleX(0);
+  position: relative;
+  overflow: hidden;
+  border-radius: 1px;
+}
+
+.loading-bar-progress::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.3) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  animation: shimmer 2.5s infinite;
+  width: 200%;
+  transform: translateX(-50%);
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.loading-percent-display {
+  position: absolute;
+  top: -24px;
+  right: 0;
+  font-family: "RuneScape Plain 12", sans-serif;
+  font-size: 14px;
+  color: var(--color-secondary);
+  text-shadow: 1px 1px 0 #000;
+  z-index: 10;
+  pointer-events: none;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  font-variant-numeric: tabular-nums;
+}
+
+.loading-text-container {
+  min-height: 48px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 4px;
+  margin-top: 24px;
+  overflow: hidden;
+}
+
+.loading-status-text {
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 16px;
+  color: var(--color-text-body);
+  text-shadow: 1px 1px 0 #000;
+  /* `backwards`, not `both`: a fill-forwards animation retains its final transform,
+     leaving the element on a composited layer forever and forcing grayscale AA.
+     `backwards` hides it pre-roll then settles onto the resting CSS values. Same
+     contract as the death/victory crests. */
+  animation: stage-appear 0.3s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+
+@keyframes stage-appear {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.loading-detail-text {
+  font-family: "RuneScape Plain 12", sans-serif;
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+.loading-error {
+  color: var(--color-error);
+  margin-top: 16px;
+  font-family: "RuneScape Bold 12", sans-serif;
+  text-shadow: 1px 1px 0 #000;
+}
+
+.loading-retry-button {
+  margin: 16px auto 0;
+  display: block;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  color: var(--color-secondary);
+  padding: 8px 24px;
+  cursor: pointer;
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 14px;
+  text-shadow: 1px 1px 0 #000;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  transition:
+    background 0.15s ease,
+    color 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+  border-radius: 2px;
+}
+
+.loading-retry-button:hover {
+  background: var(--color-surface-hover);
+  color: var(--color-text-body);
+  border-color: var(--color-primary-structure);
+}
+
+.loading-retry-button:active {
+  background: var(--color-surface-inset);
+  box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.4);
+}
+
+.loading-tip-container {
+  min-height: 96px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  margin-top: 48px;
+  padding: 0 16px;
+  max-width: 100%;
+  opacity: 1;
+  transition:
+    opacity 0.6s ease-in-out,
+    filter 0.6s ease-in-out;
+}
+
+.loading-tip-container.hidden {
+  opacity: 0;
+  filter: blur(2px);
+}
+
+.loading-tip-content {
+  text-align: left;
+  line-height: 1.6;
+}
+
+.loading-tip-prefix {
+  font-family: "RuneScape Bold 12", sans-serif;
+  color: var(--color-secondary);
+}
+.loading-tip-text {
+  font-family: "RuneScape Plain 12", sans-serif;
+  color: var(--color-text-muted);
+  text-shadow: 1px 1px 0 #000;
+}
+
+.loading-tip-text .kbd {
+  padding: 1px 5px;
+  font-family: "RuneScape Plain 12", sans-serif;
+  /* 16px = native pixel grid of the TTF (unitsPerEm=16) — crisp key names. */
+  font-size: 16px;
+}
+
+@media (max-width: 720px) {
+  .loading-content {
+    width: min(92vw, 420px);
+    min-width: 0;
+    padding: 0 12px;
+  }
+
+  .loading-subtitle {
+    margin-bottom: 24px;
+    letter-spacing: 1.5px;
+  }
+
+  .loading-text-container {
+    margin-top: 20px;
+    min-height: 42px;
+  }
+
+  .loading-tip-container {
+    margin-top: 28px;
+    min-height: 80px;
+    padding: 0 10px;
+  }
+
+  .loading-status-text {
+    font-size: 15px;
+  }
+
+  .loading-percent-display {
+    font-size: 13px;
+  }
+}

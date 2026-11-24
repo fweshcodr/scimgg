@@ -1,0 +1,160 @@
+.replay-cursor-layer {
+  /* Absolute, not fixed: the layer lives inside the rebuilt frame and inherits
+     whatever uniform scale that frame is displayed at. */
+  position: absolute;
+  inset: 0;
+  z-index: 31;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.replay-cursor {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0.92;
+  pointer-events: none;
+  transform-origin: 0 0;
+  will-change: transform, opacity;
+}
+
+.replay-cursor .demo-cursor-arrow {
+  /* 0.6375 = 0.85 x 0.75: still 75% of the demo cursor, both trimmed 15% now the
+     shadow adds the clarity. */
+  --demo-cursor-scale: 0.6375;
+}
+
+.replay-click-marker {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  width: 0;
+  height: 0;
+  will-change: transform;
+}
+
+.replay-click-sprite,
+.replay-click-ui-ring,
+.replay-click-ui-core {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  transform-origin: center;
+  will-change: transform, opacity;
+}
+
+.replay-click-sprite {
+  width: 16px;
+  height: 16px;
+  background-repeat: no-repeat;
+  background-size: 80px 16px;
+  image-rendering: pixelated;
+}
+
+/* A touch click's tap, beneath its X or UI marker (see ReplayTapCue). */
+.replay-tap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+}
+
+.replay-tap-disc {
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: visible;
+  transform: translate(-50%, -50%);
+  /* Antialiased by default; snapped like the X sprite where the layer measured enough device
+     pixels per art pixel to hold the steps and rim (tapEdgesFor in replayTapDisc.ts). */
+  shape-rendering: geometricPrecision;
+}
+
+.replay-cursor-layer[data-tap-edges="pixel"] .replay-tap-disc {
+  shape-rendering: crispEdges;
+}
+
+/* A touch long-press: the top half of a held pad, resting on the press point (ReplayHoldMarker). */
+.replay-hold-marker {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.replay-tap-disc.replay-hold-cap {
+  /* Its viewBox is the pad's top half; clip the rest, which would cover the menu's header
+     wherever this layer paints above the menu (a scaled frame). */
+  overflow: hidden;
+  transform: translate(-50%, -100%);
+}
+
+/* Frame 0 is first contact; frames 1 and 2 the spread fingertip. */
+.replay-tap[data-tap-frame="0"] .replay-tap-disc--spread,
+.replay-tap:not([data-tap-frame="0"]) .replay-tap-disc--contact {
+  display: none;
+}
+
+/* A light pad with a lighter rim, the way a screen recording shows a touch. The rim carries the
+   edge: a dark rim vanished into the dark arenas, leaving a muddy smudge at phone sizes. */
+.replay-tap-fill {
+  fill: color-mix(in srgb, var(--color-text-body) 20%, transparent);
+}
+
+.replay-tap-rim {
+  fill-rule: evenodd;
+  fill: color-mix(in srgb, var(--color-text-body) 50%, transparent);
+}
+
+.replay-click-ui-ring {
+  box-sizing: border-box;
+  width: 16px;
+  height: 16px;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+}
+
+.replay-click-ui-ring {
+  width: 20px;
+  height: 20px;
+  border-width: 2px;
+  color: var(--color-info);
+  background: var(--color-surface-highlight);
+}
+
+.replay-click-ui-core {
+  width: 6px;
+  height: 6px;
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+  background: var(--color-info);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .replay-cursor,
+  .replay-click-marker,
+  .replay-click-ui-ring,
+  .replay-click-ui-core {
+    will-change: auto;
+  }
+
+  .replay-click-ui-ring,
+  .replay-click-ui-core {
+    /* biome-ignore lint/complexity/noImportantStyles: reduced motion must override playhead-driven inline transforms */
+    transform: translate3d(-50%, -50%, 0) !important;
+  }
+
+  /* The tap holds one size: no contact-to-spread step. As specific as the frame rules
+     above, and later, so these win. */
+  .replay-tap[data-tap-frame] .replay-tap-disc--contact {
+    display: none;
+  }
+
+  .replay-tap[data-tap-frame] .replay-tap-disc--spread {
+    display: block;
+  }
+}

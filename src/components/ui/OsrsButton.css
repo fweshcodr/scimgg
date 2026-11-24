@@ -1,0 +1,131 @@
+.osrs-btn {
+  background-color: var(--color-surface);
+  border: var(--unscaled-px, 1px) solid var(--color-border);
+  border-radius: calc(2 * var(--unscaled-px, 1px));
+  font-family: "RuneScape Bold 12", sans-serif;
+  color: var(--color-secondary);
+  text-shadow: 1px 1px 0 #000;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  transition:
+    background-color 90ms,
+    border-color 90ms,
+    color 90ms;
+  line-height: 20px;
+}
+
+.osrs-btn:disabled {
+  background-color: var(--color-bg-elevated);
+  border-color: var(--color-border);
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* The same face, deliberately WITHOUT `pointer-events: none`: this is the off state for a button
+   that still has to answer the press, and the press is the whole point of choosing it.
+   Muted ink rather than `opacity`, which is one of Blink's LCD text-AA vetoes (AGENTS.md, "Text
+   Antialiasing") and would drop this label to grayscale — an alpha wash behind the label costs it
+   the same way, so the fill goes fully transparent. */
+.osrs-btn[aria-disabled="true"] {
+  background-color: transparent;
+  border-color: var(--color-border);
+  color: var(--color-text-muted);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.osrs-btn:hover:not(:disabled):not([aria-disabled="true"]) {
+  background-color: var(--color-surface-hover);
+  border-color: var(--color-primary-structure);
+  color: var(--color-accent-text);
+}
+
+.osrs-btn:active:not(:disabled):not([aria-disabled="true"]) {
+  background-color: var(--color-surface-inset);
+}
+
+.osrs-btn--full-width {
+  width: 100%;
+}
+
+.osrs-btn--default,
+.osrs-btn--secondary {
+  padding: 8px 16px;
+  font-size: 16px;
+}
+
+/* Reserved for the single most-important action in any view. */
+.osrs-btn--primary {
+  padding: 8px 16px;
+  font-size: 16px;
+  background-color: color-mix(in srgb, var(--color-secondary) 8%, var(--color-bg-elevated));
+  border-color: color-mix(in srgb, var(--color-secondary) 52%, var(--color-primary-structure));
+  border-top-color: color-mix(in srgb, var(--color-secondary) 85%, var(--color-primary-structure));
+  border-bottom-color: var(--color-primary-structure);
+  color: var(--color-heading);
+  text-shadow: none;
+}
+
+.osrs-btn--primary:hover:not(:disabled):not([aria-disabled="true"]) {
+  background-color: color-mix(in srgb, var(--color-secondary) 18%, var(--color-bg-elevated));
+  border-color: var(--color-secondary);
+  color: var(--color-heading);
+}
+
+.osrs-btn--primary:active:not(:disabled):not([aria-disabled="true"]) {
+  background-color: var(--color-surface-inset);
+  border-color: var(--color-primary-structure);
+}
+
+.osrs-btn--small {
+  padding: 2px 6px;
+  font-size: 11px;
+}
+
+/* The border carries the warning at rest, not just the text color: with the shared
+   --color-border a destructive button has the same silhouette as a benign one, so it
+   only reads as dangerous once you have read it. Muted against the border token rather
+   than full --color-error so hover still escalates. */
+.osrs-btn--danger {
+  padding: 8px 16px;
+  font-size: 14px;
+  color: var(--color-error);
+  border-color: color-mix(in srgb, var(--color-error) 35%, var(--color-border));
+}
+
+.osrs-btn--danger:hover:not(:disabled):not([aria-disabled="true"]) {
+  color: var(--color-error);
+  background-color: var(--color-surface-hover);
+  border-color: var(--color-error);
+}
+
+.osrs-btn--ghost {
+  padding: 8px 16px;
+  font-size: 16px;
+  background: transparent;
+  color: var(--color-secondary);
+  border-color: transparent;
+}
+
+.osrs-btn--ghost:hover:not(:disabled):not([aria-disabled="true"]) {
+  background-color: var(--color-surface-hover);
+  color: var(--color-text-body);
+  border-color: var(--color-border);
+}
+
+@media (pointer: coarse) {
+  .osrs-btn {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .osrs-btn {
+    transition: none;
+  }
+}

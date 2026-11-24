@@ -1,0 +1,5 @@
+# Normalize text files to LF
+* text=auto eol=lf
+
+# Keep the dev script as LF (executable)
+dev text eol=lf

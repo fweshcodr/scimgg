@@ -1,0 +1,21 @@
+.disclosure-chevron {
+  display: block;
+  flex: none;
+}
+
+.disclosure-chevron.is-open,
+details[open] > summary > .disclosure-chevron {
+  transform: rotate(90deg);
+}
+
+/* A summary carrying the chevron lays it beside its label and gives up the native marker. */
+summary:has(> .disclosure-chevron) {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  list-style: none;
+}
+
+summary:has(> .disclosure-chevron)::-webkit-details-marker {
+  display: none;
+}

@@ -1,0 +1,1097 @@
+[
+  {
+    "ids": [
+      7691
+    ],
+    "name": "Jal-Nib",
+    "size": 1,
+    "levels": {
+      "hitpoints": 10,
+      "attack": 1,
+      "strength": 1,
+      "defence": 15,
+      "magic": 15,
+      "ranged": 1
+    },
+    "offensive": {
+      "attack": 0,
+      "strength": 0,
+      "magic": 0,
+      "magicDamage": 0,
+      "ranged": 0,
+      "rangedStrength": 0
+    },
+    "defensive": {
+      "stab": -20,
+      "slash": -20,
+      "crush": -20,
+      "magic": -20,
+      "ranged": 0,
+      "rangedLight": -20,
+      "rangedStandard": -20,
+      "rangedHeavy": -20,
+      "flatArmour": 0
+    },
+    "attributes": [],
+    "elementalWeakness": {
+      "element": "water",
+      "percent": 40
+    },
+    "attackSpeed": 4,
+    "immunities": {
+      "burn": "Normal",
+      "cannon": false,
+      "thrall": false,
+      "poison": 100,
+      "venom": 100,
+      "freeze": 0
+    }
+  },
+  {
+    "ids": [
+      7692
+    ],
+    "name": "Jal-MejRah",
+    "size": 2,
+    "levels": {
+      "hitpoints": 25,
+      "attack": 0,
+      "strength": 0,
+      "defence": 55,
+      "magic": 120,
+      "ranged": 120
+    },
+    "offensive": {
+      "attack": 0,
+      "strength": 0,
+      "magic": 0,
+      "magicDamage": 0,
+      "ranged": 30,
+      "rangedStrength": 30
+    },
+    "defensive": {
+      "stab": 30,
+      "slash": 30,
+      "crush": 30,
+      "magic": -20,
+      "ranged": 0,
+      "rangedLight": 45,
+      "rangedStandard": 45,
+      "rangedHeavy": 45,
+      "flatArmour": 0
+    },
+    "attributes": [],
+    "elementalWeakness": {
+      "element": "water",
+      "percent": 40
+    },
+    "attackSpeed": 3,
+    "immunities": {
+      "burn": "Normal",
+      "cannon": false,
+      "thrall": false,
+      "poison": 100,
+      "venom": 100,
+      "freeze": 0
+    }
+  },
+  {
+    "ids": [
+      7693
+    ],
+    "name": "Jal-Ak",
+    "size": 3,
+    "levels": {
+      "hitpoints": 40,
+      "attack": 160,
+      "strength": 160,
+      "defence": 95,
+      "magic": 160,
+      "ranged": 160
+    },
+    "offensive": {
+      "attack": 0,
+      "strength": 45,
+      "magic": 45,
+      "magicDamage": 45,
+      "ranged": 45,
+      "rangedStrength": 45
+    },
+    "defensive": {
+      "stab": 25,
+      "slash": 25,
+      "crush": 25,
+      "magic": 25,
+      "ranged": 0,
+      "rangedLight": 25,
+      "rangedStandard": 25,
+      "rangedHeavy": 25,
+      "flatArmour": 0
+    },
+    "attributes": [],
+    "elementalWeakness": {
+      "element": "water",
+      "percent": 40
+    },
+    "attackSpeed": 6,
+    "immunities": {
+      "burn": "Normal",
+      "cannon": false,
+      "thrall": false,
+      "poison": 100,
+      "venom": 100,
+      "freeze": 0
+    }
+  },
+  {
+    "ids": [
+      7694
+    ],
+    "name": "Jal-AkRek-Mej",
+    "size": 1,
+    "levels": {
+      "hitpoints": 15,
+      "attack": 1,
+      "strength": 1,
+      "defence": 95,
+      "magic": 120,
+      "ranged": 1
+    },
+    "offensive": {
+      "attack": 0,
+      "strength": 0,
+      "magic": 25,
+      "magicDamage": 25,
+      "ranged": 0,
+      "rangedStrength": 0
+    },
+    "defensive": {
+      "stab": 0,
+      "slash": 0,
+      "crush": 0,
+      "magic": 25,
+      "ranged": 0,
+      "rangedLight": 0,
+      "rangedStandard": 0,
+      "rangedHeavy": 0,
+      "flatArmour": 0
+    },
+    "attributes": [],
+    "elementalWeakness": {
+      "element": "water",
+      "percent": 40
+    },
+    "attackSpeed": 4,
+    "immunities": {
+      "burn": null,
+      "cannon": false,
+      "thrall": false,
+      "poison": 100,
+      "venom": 100,
+      "freeze": 0
+    }
+  },
+  {
+    "ids": [
+      7695
+    ],
+    "name": "Jal-AkRek-Xil",
+    "size": 1,
+    "levels": {
+      "hitpoints": 15,
+      "attack": 1,
+      "strength": 1,
+      "defence": 95,
+      "magic": 1,
+      "ranged": 120
+    },
+    "offensive": {
+      "attack": 0,
+      "strength": 0,
+      "magic": 0,
+      "magicDamage": 0,
+      "ranged": 25,
+      "rangedStrength": 25
+    },
+    "defensive": {
+      "stab": 0,
+      "slash": 0,
+      "crush": 0,
+      "magic": 0,
+      "ranged": 0,
+      "rangedLight": 25,
+      "rangedStandard": 25,
+      "rangedHeavy": 25,
+      "flatArmour": 0
+    },
+    "attributes": [],
+    "elementalWeakness": {
+      "element": "water",
+      "percent": 40
+    },
+    "attackSpeed": 4,
+    "immunities": {
+      "burn": null,
+      "cannon": false,
+      "thrall": false,
+      "poison": 0,
+      "venom": 100,
+      "freeze": 0
+    }
+  },
+  {
+    "ids": [
+      7696
+    ],
+    "name": "Jal-AkRek-Ket",
+    "size": 1,
+    "levels": {
+      "hitpoints": 15,
+      "attack": 120,
+      "strength": 120,
+      "defence": 95,
+      "magic": 1,
+      "ranged": 1
+    },
+    "offensive": {
+      "attack": 0,
+      "strength": 25,
+      "magic": 0,
+      "magicDamage": 0,
+      "ranged": 0,
+      "rangedStrength": 0
+    },
+    "defensive": {
+      "stab": 25,
+      "slash": 25,
+      "crush": 25,
+      "magic": 0,
+      "ranged": 0,
+      "rangedLight": 0,
+      "rangedStandard": 0,
+      "rangedHeavy": 0,
+      "flatArmour": 0
+    },
+    "attributes": [],
+    "elementalWeakness": {
+      "element": "water",
+      "percent": 40
+    },
+    "attackSpeed": 4,
+    "immunities": {
+      "burn": null,
+      "cannon": false,
+      "thrall": false,
+      "poison": 100,
+      "venom": 100,
+      "freeze": 0
+    }
+  },
+  {
+    "ids": [
+      7697
+    ],
+    "name": "Jal-ImKot",
+    "size": 4,
+    "levels": {
+      "hitpoints": 75,
+      "attack": 210,
+      "strength": 290,
+      "defence": 120,
+      "magic": 120,
+      "ranged": 220
+    },
+    "offensive": {
+      "attack": 0,
+      "strength": 40,
+      "magic": 0,
+      "magicDamage": 0,
+      "ranged": 0,
+      "rangedStrength": 0
+    },
+    "defensive": {
+      "stab": 65,
+      "slash": 65,
+      "crush": 65,
+      "magic": 30,
+      "ranged": 0,
+      "rangedLight": 50,
+      "rangedStandard": 50,
+      "rangedHeavy": 50,
+      "flatArmour": 0
+    },
+    "attributes": [],
+    "elementalWeakness": {
+      "element": "water",
+      "percent": 40
+    },
+    "attackSpeed": 4,
+    "immunities": {
+      "burn": "Normal",
+      "cannon": false,
+      "thrall": false,
+      "poison": 100,
+      "venom": 100,
+      "freeze": 0
+    }
+  },
+  {
+    "ids": [
+      7698,
+      7702
+    ],
+    "name": "Jal-Xil",
+    "size": 3,
+    "levels": {
+      "hitpoints": 125,
+      "attack": 140,
+      "strength": 180,
+      "defence": 60,
+      "magic": 90,
+      "ranged": 250
+    },
+    "offensive": {
+      "attack": 0,
+      "strength": 0,
+      "magic": 0,
+      "magicDamage": 0,
+      "ranged": 40,
+      "rangedStrength": 50
+    },
+    "defensive": {
+      "stab": 0,
+      "slash": 0,
+      "crush": 0,
+      "magic": 0,
+      "ranged": 0,
+      "rangedLight": 0,
+      "rangedStandard": 0,
+      "rangedHeavy": 0,
+      "flatArmour": 0
+    },
+    "attributes": [],
+    "elementalWeakness": {
+      "element": "water",
+      "percent": 40
+    },
+    "attackSpeed": 4,
+    "immunities": {
+      "burn": "Normal",
+      "cannon": false,
+      "thrall": false,
+      "poison": 0,
+      "venom": 100,
+      "freeze": 0
+    }
+  },
+  {
+    "ids": [
+      7699,
+      7703
+    ],
+    "name": "Jal-Zek",
+    "size": 4,
+    "levels": {
+      "hitpoints": 220,
+      "attack": 370,
+      "strength": 510,
+      "defence": 260,
+      "magic": 300,
+      "ranged": 510
+    },
+    "offensive": {
+      "attack": 0,
+      "strength": 0,
+      "magic": 80,
+      "magicDamage": 0,
+      "ranged": 0,
+      "rangedStrength": 0
+    },
+    "defensive": {
+      "stab": 0,
+      "slash": 0,
+      "crush": 0,
+      "magic": 0,
+      "ranged": 0,
+      "rangedLight": 0,
+      "rangedStandard": 0,
+      "rangedHeavy": 0,
+      "flatArmour": 0
+    },
+    "attributes": [],
+    "elementalWeakness": {
+      "element": "water",
+      "percent": 40
+    },
+    "attackSpeed": 4,
+    "immunities": {
+      "burn": "Normal",
+      "cannon": false,
+      "thrall": false,
+      "poison": 0,
+      "venom": 100,
+      "freeze": 0
+    }
+  },
+  {
+    "ids": [
+      7700,
+      7704,
+      10623
+    ],
+    "name": "JalTok-Jad",
+    "size": 5,
+    "levels": {
+      "hitpoints": 350,
+      "attack": 750,
+      "strength": 1020,
+      "defence": 480,
+      "magic": 510,
+      "ranged": 1020
+    },
+    "offensive": {
+      "attack": 0,
+      "strength": 0,
+      "magic": 100,
+      "magicDamage": 75,
+      "ranged": 80,
+      "rangedStrength": 0
+    },
+    "defensive": {
+      "stab": 0,
+      "slash": 0,
+      "crush": 0,
+      "magic": 0,
+      "ranged": 0,
+      "rangedLight": 0,
+      "rangedStandard": 0,
+      "rangedHeavy": 0,
+      "flatArmour": 0
+    },
+    "attributes": [],
+    "elementalWeakness": {
+      "element": "water",
+      "percent": 40
+    },
+    "attackSpeed": 8,
+    "immunities": {
+      "burn": "Normal",
+      "cannon": false,
+      "thrall": false,
+      "poison": 100,
+      "venom": 100,
+      "freeze": 0
+    }
+  },
+  {
+    "ids": [
+      7701,
+      7705,
+      10624
+    ],
+    "name": "Yt-HurKot",
+    "version": "Level 141",
+    "size": 1,
+    "levels": {
+      "hitpoints": 90,
+      "attack": 165,
+      "strength": 125,
+      "defence": 100,
+      "magic": 150,
+      "ranged": 150
+    },
+    "offensive": {
+      "attack": 0,
+      "strength": 0,
+      "magic": 100,
+      "magicDamage": 0,
+      "ranged": 80,
+      "rangedStrength": 0
+    },
+    "defensive": {
+      "stab": 0,
+      "slash": 0,
+      "crush": 0,
+      "magic": 130,
+      "ranged": 0,
+      "rangedLight": 130,
+      "rangedStandard": 130,
+      "rangedHeavy": 130,
+      "flatArmour": 0
+    },
+    "attributes": [],
+    "elementalWeakness": {
+      "element": "water",
+      "percent": 40
+    },
+    "attackSpeed": 4,
+    "immunities": {
+      "burn": "Weak",
+      "cannon": false,
+      "thrall": false,
+      "poison": 0,
+      "venom": 0,
+      "freeze": 0
+    }
+  },
+  {
+    "ids": [
+      7706
+    ],
+    "name": "TzKal-Zuk",
+    "version": "Normal",
+    "size": 7,
+    "levels": {
+      "hitpoints": 1200,
+      "attack": 350,
+      "strength": 600,
+      "defence": 260,
+      "magic": 150,
+      "ranged": 400
+    },
+    "offensive": {
+      "attack": 0,
+      "strength": 200,
+      "magic": 550,
+      "magicDamage": 450,
+      "ranged": 550,
+      "rangedStrength": 200
+    },
+    "defensive": {
+      "stab": 0,
+      "slash": 0,
+      "crush": 0,
+      "magic": 350,
+      "ranged": 0,
+      "rangedLight": 100,
+      "rangedStandard": 100,
+      "rangedHeavy": 100,
+      "flatArmour": 0
+    },
+    "attributes": [],
+    "elementalWeakness": {
+      "element": "water",
+      "percent": 40
+    },
+    "attackSpeed": 10,
+    "immunities": {
+      "burn": "Strong",
+      "cannon": false,
+      "thrall": false,
+      "poison": 100,
+      "venom": 100,
+      "freeze": 0
+    }
+  },
+  {
+    "ids": [
+      7706
+    ],
+    "name": "TzKal-Zuk",
+    "version": "Enraged",
+    "size": 7,
+    "levels": {
+      "hitpoints": 1200,
+      "attack": 350,
+      "strength": 600,
+      "defence": 260,
+      "magic": 150,
+      "ranged": 400
+    },
+    "offensive": {
+      "attack": 0,
+      "strength": 200,
+      "magic": 550,
+      "magicDamage": 450,
+      "ranged": 550,
+      "rangedStrength": 200
+    },
+    "defensive": {
+      "stab": 0,
+      "slash": 0,
+      "crush": 0,
+      "magic": 350,
+      "ranged": 0,
+      "rangedLight": 100,
+      "rangedStandard": 100,
+      "rangedHeavy": 100,
+      "flatArmour": 0
+    },
+    "attributes": [],
+    "elementalWeakness": {
+      "element": "water",
+      "percent": 40
+    },
+    "attackSpeed": 7,
+    "immunities": {
+      "burn": "Strong",
+      "cannon": false,
+      "thrall": false,
+      "poison": 100,
+      "venom": 100,
+      "freeze": 0
+    }
+  },
+  {
+    "ids": [
+      7708
+    ],
+    "name": "Jal-MejJak",
+    "size": 1,
+    "levels": {
+      "hitpoints": 75,
+      "attack": 1,
+      "strength": 1,
+      "defence": 100,
+      "magic": 1,
+      "ranged": 1
+    },
+    "offensive": {
+      "attack": 0,
+      "strength": 0,
+      "magic": 0,
+      "magicDamage": 0,
+      "ranged": 0,
+      "rangedStrength": 0
+    },
+    "defensive": {
+      "stab": 0,
+      "slash": 0,
+      "crush": 0,
+      "magic": 0,
+      "ranged": 0,
+      "rangedLight": 0,
+      "rangedStandard": 0,
+      "rangedHeavy": 0,
+      "flatArmour": 0
+    },
+    "attributes": [],
+    "elementalWeakness": {
+      "element": "water",
+      "percent": 40
+    },
+    "attackSpeed": 3,
+    "immunities": {
+      "burn": null,
+      "cannon": false,
+      "thrall": false,
+      "poison": 100,
+      "venom": 100,
+      "freeze": 0
+    }
+  },
+  {
+    "ids": [
+      12814
+    ],
+    "name": "Fremennik warband archer",
+    "size": 1,
+    "levels": {
+      "hitpoints": 50,
+      "attack": 110,
+      "strength": 110,
+      "defence": 80,
+      "magic": 110,
+      "ranged": 110
+    },
+    "offensive": {
+      "attack": 150,
+      "strength": 150,
+      "magic": 150,
+      "magicDamage": 0,
+      "ranged": 150,
+      "rangedStrength": 10
+    },
+    "defensive": {
+      "stab": 0,
+      "slash": 0,
+      "crush": 0,
+      "magic": 75,
+      "ranged": 0,
+      "rangedLight": 50,
+      "rangedStandard": 50,
+      "rangedHeavy": 50,
+      "flatArmour": 0
+    },
+    "attributes": [],
+    "attackSpeed": 6,
+    "immunities": {
+      "burn": null,
+      "cannon": false,
+      "thrall": false,
+      "poison": 100,
+      "venom": 100,
+      "freeze": 0
+    }
+  },
+  {
+    "ids": [
+      12815
+    ],
+    "name": "Fremennik warband seer",
+    "size": 1,
+    "levels": {
+      "hitpoints": 50,
+      "attack": 110,
+      "strength": 110,
+      "defence": 80,
+      "magic": 110,
+      "ranged": 110
+    },
+    "offensive": {
+      "attack": 0,
+      "strength": 0,
+      "magic": 150,
+      "magicDamage": 0,
+      "ranged": 0,
+      "rangedStrength": 0
+    },
+    "defensive": {
+      "stab": 50,
+      "slash": 50,
+      "crush": 50,
+      "magic": 30,
+      "ranged": 0,
+      "rangedLight": 0,
+      "rangedStandard": 0,
+      "rangedHeavy": 0,
+      "flatArmour": 0
+    },
+    "attributes": [],
+    "attackSpeed": 6,
+    "immunities": {
+      "burn": null,
+      "cannon": false,
+      "thrall": false,
+      "poison": 100,
+      "venom": 100,
+      "freeze": 0
+    }
+  },
+  {
+    "ids": [
+      12816
+    ],
+    "name": "Fremennik warband berserker",
+    "size": 1,
+    "levels": {
+      "hitpoints": 48,
+      "attack": 110,
+      "strength": 110,
+      "defence": 80,
+      "magic": 110,
+      "ranged": 110
+    },
+    "offensive": {
+      "attack": 150,
+      "strength": 90,
+      "magic": 150,
+      "magicDamage": 0,
+      "ranged": 0,
+      "rangedStrength": 0
+    },
+    "defensive": {
+      "stab": 50,
+      "slash": 50,
+      "crush": 50,
+      "magic": 0,
+      "ranged": 0,
+      "rangedLight": 75,
+      "rangedStandard": 75,
+      "rangedHeavy": 75,
+      "flatArmour": 0
+    },
+    "attributes": [],
+    "attackSpeed": 6,
+    "immunities": {
+      "burn": null,
+      "cannon": false,
+      "thrall": false,
+      "poison": 100,
+      "venom": 100,
+      "freeze": 0
+    }
+  },
+  {
+    "ids": [
+      12821
+    ],
+    "name": "Sol Heredit",
+    "size": 5,
+    "levels": {
+      "hitpoints": 1500,
+      "attack": 350,
+      "strength": 400,
+      "defence": 200,
+      "magic": 300,
+      "ranged": 350
+    },
+    "offensive": {
+      "attack": 250,
+      "strength": 5,
+      "magic": 0,
+      "magicDamage": 0,
+      "ranged": 150,
+      "rangedStrength": 5
+    },
+    "defensive": {
+      "stab": 65,
+      "slash": 5,
+      "crush": 30,
+      "magic": 750,
+      "ranged": 0,
+      "rangedLight": 825,
+      "rangedStandard": 825,
+      "rangedHeavy": 825,
+      "flatArmour": 0
+    },
+    "attributes": [],
+    "immunities": {
+      "burn": null,
+      "cannon": false,
+      "thrall": false,
+      "poison": 100,
+      "venom": 100,
+      "freeze": 100
+    }
+  },
+  {
+    "ids": [
+      12825
+    ],
+    "name": "Healing totem",
+    "size": 1,
+    "levels": {
+      "hitpoints": 1,
+      "attack": 0,
+      "strength": 0,
+      "defence": 0,
+      "magic": 0,
+      "ranged": 0
+    },
+    "offensive": {
+      "attack": 0,
+      "strength": 0,
+      "magic": 0,
+      "magicDamage": 0,
+      "ranged": 0,
+      "rangedStrength": 0
+    },
+    "defensive": {
+      "stab": 0,
+      "slash": 0,
+      "crush": 0,
+      "magic": 0,
+      "ranged": 0,
+      "rangedLight": 0,
+      "rangedStandard": 0,
+      "rangedHeavy": 0,
+      "flatArmour": 0
+    },
+    "attributes": [],
+    "immunities": {
+      "burn": null,
+      "cannon": false,
+      "thrall": false,
+      "poison": 0,
+      "venom": 0,
+      "freeze": 0
+    }
+  },
+  {
+    "ids": [
+      14176
+    ],
+    "name": "Yama",
+    "version": "Normal",
+    "size": 5,
+    "levels": {
+      "hitpoints": 2500,
+      "attack": 320,
+      "strength": 350,
+      "defence": 225,
+      "magic": 250,
+      "ranged": 210
+    },
+    "offensive": {
+      "attack": 50,
+      "strength": 15,
+      "magic": 100,
+      "magicDamage": 65,
+      "ranged": 100,
+      "rangedStrength": 80
+    },
+    "defensive": {
+      "stab": 100,
+      "slash": 80,
+      "crush": 333,
+      "magic": 0,
+      "ranged": 0,
+      "rangedLight": 333,
+      "rangedStandard": 220,
+      "rangedHeavy": 333,
+      "flatArmour": 0
+    },
+    "attributes": [
+      "demon"
+    ],
+    "elementalWeakness": {
+      "element": "water",
+      "percent": 50
+    },
+    "attackSpeed": 8,
+    "immunities": {
+      "burn": null,
+      "cannon": false,
+      "thrall": false,
+      "poison": 100,
+      "venom": 100,
+      "freeze": 0
+    }
+  },
+  {
+    "ids": [
+      14176
+    ],
+    "name": "Yama",
+    "version": "Phase 3",
+    "size": 5,
+    "levels": {
+      "hitpoints": 2500,
+      "attack": 320,
+      "strength": 350,
+      "defence": 225,
+      "magic": 250,
+      "ranged": 210
+    },
+    "offensive": {
+      "attack": 50,
+      "strength": 15,
+      "magic": 100,
+      "magicDamage": 65,
+      "ranged": 100,
+      "rangedStrength": 80
+    },
+    "defensive": {
+      "stab": 135,
+      "slash": 108,
+      "crush": 449,
+      "magic": 81,
+      "ranged": 0,
+      "rangedLight": 449,
+      "rangedStandard": 297,
+      "rangedHeavy": 449,
+      "flatArmour": 0
+    },
+    "attributes": [
+      "demon"
+    ],
+    "elementalWeakness": {
+      "element": "water",
+      "percent": 50
+    },
+    "attackSpeed": 7,
+    "immunities": {
+      "burn": null,
+      "cannon": false,
+      "thrall": false,
+      "poison": 100,
+      "venom": 100,
+      "freeze": 0
+    }
+  },
+  {
+    "ids": [
+      14179
+    ],
+    "name": "Void Flare",
+    "version": "Shadow",
+    "size": 2,
+    "levels": {
+      "hitpoints": 140,
+      "attack": 1,
+      "strength": 1,
+      "defence": 100,
+      "magic": 200,
+      "ranged": 1
+    },
+    "offensive": {
+      "attack": 0,
+      "strength": 0,
+      "magic": 0,
+      "magicDamage": 0,
+      "ranged": 0,
+      "rangedStrength": 0
+    },
+    "defensive": {
+      "stab": 0,
+      "slash": 0,
+      "crush": 0,
+      "magic": 0,
+      "ranged": 0,
+      "rangedLight": 0,
+      "rangedStandard": 0,
+      "rangedHeavy": 0,
+      "flatArmour": 0
+    },
+    "attributes": [
+      "demon"
+    ],
+    "attackSpeed": 4,
+    "immunities": {
+      "burn": null,
+      "cannon": false,
+      "thrall": false,
+      "poison": 0,
+      "venom": 0,
+      "freeze": 0
+    }
+  },
+  {
+    "ids": [
+      14179
+    ],
+    "name": "Void Flare",
+    "version": "Fire",
+    "size": 2,
+    "levels": {
+      "hitpoints": 140,
+      "attack": 1,
+      "strength": 1,
+      "defence": 100,
+      "magic": 200,
+      "ranged": 1
+    },
+    "offensive": {
+      "attack": 0,
+      "strength": 0,
+      "magic": 0,
+      "magicDamage": 0,
+      "ranged": 0,
+      "rangedStrength": 0
+    },
+    "defensive": {
+      "stab": 0,
+      "slash": 0,
+      "crush": 0,
+      "magic": 0,
+      "ranged": 0,
+      "rangedLight": 0,
+      "rangedStandard": 0,
+      "rangedHeavy": 0,
+      "flatArmour": 0
+    },
+    "attributes": [
+      "demon"
+    ],
+    "attackSpeed": 4,
+    "immunities": {
+      "burn": null,
+      "cannon": false,
+      "thrall": false,
+      "poison": 0,
+      "venom": 0,
+      "freeze": 0
+    }
+  }
+]

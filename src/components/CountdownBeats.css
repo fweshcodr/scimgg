@@ -1,0 +1,56 @@
+/* Crest text (see the crest rule in src/index.css): native 16px, whole-pixel
+   tracking, hard-offset ink. Both callers float this row over the live arena,
+   so it carries the rim as well as the offset. */
+.countdown-beats {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 16px;
+  line-height: 1;
+  letter-spacing: 1px;
+}
+
+.countdown-beats-dot {
+  color: var(--color-text-dim);
+}
+
+/* The traveling highlight is carried by color across three states, never by
+   scale: a transform on this text renders the 16px face at a fractional size,
+   which is the exact defect the crest family was rebuilt to remove. */
+.countdown-beats-tick {
+  font-variant-numeric: tabular-nums;
+  text-shadow: var(--crest-rim), var(--crest-shadow-sm);
+  transition:
+    color 200ms ease,
+    opacity 200ms ease;
+}
+
+/* Quieter than a spent beat, but still readable over bright arena art: the row's
+   job is to show how many beats are left. */
+.countdown-beats-tick.is-pending {
+  color: var(--color-text-muted);
+  opacity: 0.6;
+}
+
+.countdown-beats-tick.is-lit {
+  color: var(--color-text-muted);
+  opacity: 1;
+}
+
+.countdown-beats-tick.is-active {
+  color: var(--color-text-body);
+  opacity: 1;
+}
+
+.countdown-beats-tick.is-go.is-active,
+.countdown-beats-tick.is-go.is-lit {
+  color: var(--color-secondary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Color-only highlight, so only the transition needs suppressing. */
+  .countdown-beats-tick {
+    transition: none;
+  }
+}

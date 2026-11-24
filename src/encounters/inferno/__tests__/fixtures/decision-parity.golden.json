@@ -1,0 +1,458 @@
+[
+  {
+    "seed": 3,
+    "startWave": 4,
+    "checkpoints": [
+      "dc924f8490a09566",
+      "3860a13c37ca1ad1",
+      "bcec9affaad08a63",
+      "dfdcecee5cde4014",
+      "32e30ed70fd9fc7c",
+      "3112936fe5e2c188",
+      "97076c15945678b6",
+      "7e27a4f7689f9273",
+      "f495743c76e7c003",
+      "ade3d728e13b9a6f",
+      "cf0826e9c5be2683",
+      "5410ca91cb6a2d07",
+      "735065a6e7af8589"
+    ]
+  },
+  {
+    "seed": 3,
+    "startWave": 12,
+    "checkpoints": [
+      "8a2395bc5c23fe00",
+      "6e79fc8a3719bfdd",
+      "6bb51f792a397d4f",
+      "93c15da3cf2ac1d2",
+      "223aeea15011c1c2",
+      "92b50fb1fcf04526",
+      "aeab0a0e81ebbb8d",
+      "bdfde330a619862e",
+      "91684f5a8053a41c",
+      "a8cdcc318937f10a",
+      "288b344eb249d5fa",
+      "1f33b5d74c20cafb",
+      "7e4f1b30c99ab13c"
+    ]
+  },
+  {
+    "seed": 3,
+    "startWave": 23,
+    "checkpoints": [
+      "f3fac45f94345258",
+      "1ae906513c33b092",
+      "421e50973d32ccc7",
+      "2e4f8ed5994c2673",
+      "76be1c1d05f9e134",
+      "48252a8aadb2dc7d",
+      "9d0f77135e48c6ca",
+      "cbda35c8dfdbc1c8",
+      "d5bed9ca232ffad0",
+      "6fd9bcec52d3b3f9",
+      "3d77ab35dfd0d2cc",
+      "e36388365ca6d33e",
+      "baf41a7355221e1e"
+    ]
+  },
+  {
+    "seed": 3,
+    "startWave": 38,
+    "checkpoints": [
+      "b0a182458ffe738d",
+      "0c7287e1d71c9687",
+      "d7c48050f12dd93d",
+      "301f35e8006b8eae",
+      "eb5a6e0ca0efdbd3",
+      "a1d05b1b44a4ce42",
+      "03a0588a7317c546",
+      "c30b88f6dbcc2e90",
+      "8cba7f1424a5a889",
+      "f585e9c11b080c34",
+      "28e158238d6b756b",
+      "75f80072169bfad7",
+      "32cf161274fa5d7c"
+    ]
+  },
+  {
+    "seed": 3,
+    "startWave": 52,
+    "checkpoints": [
+      "e3812c8fb13eac5a",
+      "4368dd8069d2e596",
+      "a533b5b9a811b24b",
+      "cfa8c47442986d8a",
+      "b1a423282cabd759",
+      "0f7224969cb35034",
+      "286201dfb7f16ae8",
+      "1b6878ffef2d4335",
+      "65de207322b74fb7",
+      "e4cc5629aad10798",
+      "ee4ad0059a25b15d",
+      "b63a5cdac4822788",
+      "0c6ef3c4f0c2a5f7"
+    ]
+  },
+  {
+    "seed": 3,
+    "startWave": 64,
+    "checkpoints": [
+      "0928fc8237bcc12e",
+      "c7e81c985bd433dd",
+      "ecc300a5fd81d42e",
+      "998feb93b74d442d",
+      "fc68079d9af264b6",
+      "8d6ccddebdcd8265",
+      "5f6a92d0571547aa",
+      "b26d1ad99c06fd9c",
+      "ad1907aa60a2a2d9",
+      "83e71395807afe0c",
+      "893c147cf6610bc3",
+      "e97225323c9aa5f3",
+      "79c247e6a341f8df"
+    ]
+  },
+  {
+    "seed": 3,
+    "startWave": 67,
+    "checkpoints": [
+      "17f2acadf83f681a",
+      "52cf050e4a4a7099",
+      "4daf3962844c9540",
+      "0d3f9eb1c8063200",
+      "e849fd16b4244ef5",
+      "731a5e47db79f833",
+      "af19a3a03915ae1a",
+      "d0451bb9a8c61b37",
+      "b79598742c5abc92",
+      "4d85a314ecefbe1a",
+      "4acc64ebc2b61dfd",
+      "b2db2aee99663a29",
+      "d87b1fd4bb4d2cfd"
+    ]
+  },
+  {
+    "seed": 3,
+    "startWave": 68,
+    "checkpoints": [
+      "2517c5fd305b1a80",
+      "0cb3c3d0327797ca",
+      "ce2f2463b1698513",
+      "5e3152270531c815",
+      "f0660bb29bcb57dc",
+      "e47561009f041118",
+      "0f9eec7dfa60217d",
+      "ad2b9640df9605e5",
+      "485bffd216e9adb1",
+      "ee67ffecc39f7773",
+      "61c1c1a0b96ee15c",
+      "7c5561f7aee7faa9",
+      "25f4d40abfaeb498"
+    ]
+  },
+  {
+    "seed": 11,
+    "startWave": 4,
+    "checkpoints": [
+      "90de988f31ed8458",
+      "c993aaec5714a294",
+      "5893743f3a204654",
+      "eabc0bdd8889abdc",
+      "db584c37d4b20ab1",
+      "ab1bd326b124349f",
+      "2f0122306d18b36b",
+      "79d43d53af8a9a02",
+      "4848ea1de6138ad5",
+      "5a5e9503c4fe0fdc",
+      "35875d772ef63230",
+      "364e22fe35f3de75",
+      "b2dd975a0273b7ac"
+    ]
+  },
+  {
+    "seed": 11,
+    "startWave": 12,
+    "checkpoints": [
+      "ac5edc9b8292280c",
+      "cba7f9ccec87f586",
+      "66d76103657f6289",
+      "638b726dd5e47f8a",
+      "20155bcf4302ca38",
+      "2b2d12b8fb8cf8c4",
+      "1da54472a427115e",
+      "e136fe97b9863f9b",
+      "d236bc114437affd",
+      "d4e880caafb8e8ce",
+      "9b7a7d237ff64959",
+      "0568de19c8bceb0f",
+      "a5e4e0b89b1e21ba"
+    ]
+  },
+  {
+    "seed": 11,
+    "startWave": 23,
+    "checkpoints": [
+      "9d2587419de3a2f6",
+      "e4f18507d51bdca6",
+      "59c5e73f86acdb77",
+      "98a8b6c862f971d4",
+      "17a9d2566cbe1f70",
+      "3af797c8852ee754",
+      "65945cca8cd56d84",
+      "504bdf5c55890a43",
+      "f354e194cbb05ce4",
+      "5c9da51a88352f01",
+      "ae151f47af512266",
+      "13b80f9abed58cad",
+      "ea0f13469d6432b9"
+    ]
+  },
+  {
+    "seed": 11,
+    "startWave": 38,
+    "checkpoints": [
+      "cac68a35b9ec34de",
+      "162d67a7e13d35a5",
+      "eb2bf38233bbc27b",
+      "00e7c43bb856390f",
+      "0d3d48bf53dca1cc",
+      "cbafd5657fcfc346",
+      "810b5fada8f85220",
+      "7c3d58e06f5a7222",
+      "d245d1b5deb9ae12",
+      "a839677425cdb0bc",
+      "6537bc87f956c6ed",
+      "364c9417b170beec",
+      "bf33d4dc93efed8e"
+    ]
+  },
+  {
+    "seed": 11,
+    "startWave": 52,
+    "checkpoints": [
+      "6ee8d6dfc4d1790f",
+      "1e4e8c2a7279cfab",
+      "5cd5235895185b73",
+      "01131d6eea9c523b",
+      "c1e4fa8dad1bd940",
+      "bcfbecb001328278",
+      "e1269d8ecec53aa2",
+      "7978acb93a11e251",
+      "51c527920910e135",
+      "2281e523e7936115",
+      "b95cb4feb7a4160b",
+      "fce84137c3fc4575",
+      "a4474d9581cfc1c9"
+    ]
+  },
+  {
+    "seed": 11,
+    "startWave": 64,
+    "checkpoints": [
+      "56cfa59552d6a2c8",
+      "2fca798d371eb928",
+      "483d8a0f3446f711",
+      "69deb8052b518a92",
+      "41b00797765699e6",
+      "3e896431e8f9334b",
+      "622f44215b7b8fad",
+      "4af444c5aa9bc8fb",
+      "1a89dedae85c65b7",
+      "617ef0e230360e6e",
+      "e6b79678cab7505d",
+      "3f36c3d125243b49",
+      "858c152e12a2507b"
+    ]
+  },
+  {
+    "seed": 11,
+    "startWave": 67,
+    "checkpoints": [
+      "efd807fdd2db0115",
+      "1d6424fdf2ff4687",
+      "fd33c00d4513c851",
+      "f5e0c7514d1c153a",
+      "2b7b598e472361b3",
+      "ac3b61556efd0781",
+      "4607cf8571ea9e94",
+      "358b865b6e739c15",
+      "73a5963e85db421b",
+      "558c49b611ba066b",
+      "dcfe48ffbc797140",
+      "957f331d28cea79b",
+      "3e5f00b3582edcfe"
+    ]
+  },
+  {
+    "seed": 11,
+    "startWave": 68,
+    "checkpoints": [
+      "bf8c350cd0760727",
+      "37258359a9820d60",
+      "039907873107fd41",
+      "fb16235c13ffaef4",
+      "9ccdef70d3e276fd",
+      "09041531701ce6ac",
+      "6209202f30139a16",
+      "be1d1829264ae496",
+      "d63cfd9203ff8a6d",
+      "ce80faca54f2c87a",
+      "71aa4499ce2ecfa4",
+      "786d673a034ecde7",
+      "e944dcb2dd5caa61"
+    ]
+  },
+  {
+    "seed": 2024,
+    "startWave": 4,
+    "checkpoints": [
+      "dbfaf87c8d127c4e",
+      "880575938b805c01",
+      "605829641ca9cb41",
+      "abac51dbc971c7d9",
+      "55c78ec19b6ab158",
+      "4cb8c0221b9e7f09",
+      "3351aeeb5dc3becd",
+      "2e9b45d30b0b538a",
+      "076d0be2a35e4e3f",
+      "486bdd2bcf9e4896",
+      "ad9ed9fc0f727bd3",
+      "0cf3f65ab8d7e0b2",
+      "bc6cb93f5da60b60"
+    ]
+  },
+  {
+    "seed": 2024,
+    "startWave": 12,
+    "checkpoints": [
+      "0adf0ec00c88f36c",
+      "03aea689a042edad",
+      "d644c29189079077",
+      "075fb03593aa94a5",
+      "9da56f8b0bd8f565",
+      "d3b3e635241a9531",
+      "91b9216e2e2dac11",
+      "852a03739b8a09ff",
+      "94e3d5a424e2218d",
+      "0459af594f2112f1",
+      "0c963e8248f0688b",
+      "b82553b8fe37b8c8",
+      "d33016dc0b7cff13"
+    ]
+  },
+  {
+    "seed": 2024,
+    "startWave": 23,
+    "checkpoints": [
+      "28d84e17432450d0",
+      "d6100348072a7a54",
+      "b89fe972413a5843",
+      "30aa6fdbe7be6e3c",
+      "139c312729b7b87d",
+      "65057c3b6a438e0d",
+      "4d613561b5d256d2",
+      "132474fbee41425a",
+      "475bdd446d06aa8f",
+      "d12a17d5bb3c3338",
+      "bde7957064353d88",
+      "2f6e86b4644465e3",
+      "fec502b6872e41d6"
+    ]
+  },
+  {
+    "seed": 2024,
+    "startWave": 38,
+    "checkpoints": [
+      "069a24c4c62c41d5",
+      "dabff333d936bd2f",
+      "0dd4e63683249f69",
+      "cb293f39a71c922d",
+      "e01397317764a4ff",
+      "04f17318fc3413d2",
+      "f0ff3db8a43afbbd",
+      "52951a1ccee37735",
+      "1a667c15df57d226",
+      "62446020bdfde5ba",
+      "a87e5714e9825d49",
+      "802974cbe2b20e30",
+      "916eba8f28363d4e"
+    ]
+  },
+  {
+    "seed": 2024,
+    "startWave": 52,
+    "checkpoints": [
+      "c2148a0d01e851a1",
+      "5df44f6046ecf7dd",
+      "c4e3fdd04f441407",
+      "c47ddbb5701788bf",
+      "dd31446fe4e676ec",
+      "4072a31d946fc9bb",
+      "4c4ab98a91969c8a",
+      "9ec403609404e232",
+      "b6a0dea8a34e061d",
+      "39ae4f364a0780e1",
+      "e3588e6c3ed7f1c7",
+      "eb96c2e2b7637538",
+      "41486c1f0e261d19"
+    ]
+  },
+  {
+    "seed": 2024,
+    "startWave": 64,
+    "checkpoints": [
+      "7a3d0e39c1cfe131",
+      "9abdd6d830c649b6",
+      "205b98048801ac8a",
+      "20f2f272153afd23",
+      "e1cbf05cc06387c0",
+      "515e1ca9239f0704",
+      "7ee81b30505e73ab",
+      "940aac920b506d43",
+      "d638184a323e737d",
+      "af8141dd91f9c797",
+      "9d04a03bcc694660",
+      "781ee30f7fd67b46",
+      "470ec7e2bb81a3ae"
+    ]
+  },
+  {
+    "seed": 2024,
+    "startWave": 67,
+    "checkpoints": [
+      "445e8ebdff0ef0a7",
+      "088d0d9df53e1f01",
+      "56de79be09b320f9",
+      "8b42f0cd92c05287",
+      "efb0f68d20c4e64c",
+      "8d416d5e73b21268",
+      "7d4d26c7fb03760a",
+      "5ace5bc4ae80975a",
+      "8ba8ef26a8c66de9",
+      "be6bb506609463bf",
+      "781f2406b3a741e2",
+      "01d0ca4d9db78666",
+      "8ebbf87560481eeb"
+    ]
+  },
+  {
+    "seed": 2024,
+    "startWave": 68,
+    "checkpoints": [
+      "a8268f033a652e9b",
+      "69183b5b4662d0d0",
+      "75a44de90341ffa8",
+      "587f2e3528c4d616",
+      "e48d0acf0afe312c",
+      "8d55e4866e289055",
+      "fcea19da1aa06760",
+      "b05bf2f5f712ce1d",
+      "c9c43dc044c3a870",
+      "51ba2f5a0545e6a3",
+      "35ad0b3adf90b80c",
+      "ea65971ed3db9007",
+      "3aae62bfd8ce3720"
+    ]
+  }
+]

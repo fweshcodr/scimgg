@@ -1,0 +1,138 @@
+.tile-marker-label-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100100;
+  pointer-events: none;
+}
+
+.tile-marker-label-editor {
+  position: fixed;
+  width: 244px;
+  background: var(--color-bg-solid);
+  border: 1px solid var(--modal-card-border);
+  border-radius: var(--modal-radius);
+  box-shadow: var(--modal-card-shadow);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  pointer-events: auto;
+  user-select: none;
+  animation: tile-marker-label-in 0.14s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@keyframes tile-marker-label-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tile-marker-label-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 7px 12px;
+  background: var(--color-bg-elevated);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.tile-marker-label-title {
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 14px;
+  line-height: 1.15;
+  color: var(--color-secondary);
+  text-shadow: 1px 1px 0 #000;
+  white-space: nowrap;
+}
+
+.tile-marker-label-subtitle {
+  font-family: "RuneScape Plain 12", sans-serif;
+  font-size: 11px;
+  line-height: 1.15;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.tile-marker-label-body {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  padding: 12px;
+}
+
+.tile-marker-label-input {
+  width: 100%;
+  box-sizing: border-box;
+  background: var(--color-surface-inset);
+  border: 1px solid var(--color-border);
+  color: var(--color-secondary);
+  font-family: "RuneScape Plain 12", sans-serif;
+  font-size: 13px;
+  padding: 7px 10px;
+  outline: none;
+  border-radius: 2px;
+  text-shadow: 1px 1px 0 #000;
+  transition: border-color 0.15s ease;
+}
+
+.tile-marker-label-input::placeholder {
+  color: var(--color-text-muted);
+}
+
+.tile-marker-label-input:hover {
+  border-color: var(--color-primary-structure);
+}
+
+.tile-marker-label-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+.tile-marker-label-clear {
+  align-self: flex-start;
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 11px;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.15s ease;
+}
+
+.tile-marker-label-clear:hover {
+  color: var(--color-secondary);
+}
+
+.tile-marker-label-footer {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  padding: 9px 12px;
+  background: var(--color-bg-elevated);
+  border-top: 1px solid var(--color-border);
+}
+
+.tile-marker-label-footer .osrs-btn {
+  min-width: 78px;
+  padding: 6px 14px;
+  font-size: 13px;
+}
+
+/* ---- Mobile (see ui/MobileSheet.css) ------------------------------------------------------
+   On a phone the on-screen keyboard rises over the bottom half of a landscape screen, so the
+   editor docks at the top center instead of beside its tile. The component leaves its inline
+   position unset in this case (isPhoneSheet). */
+@media (max-height: 540px), (max-width: 600px) {
+  :root[data-mobile-ui] .tile-marker-label-editor {
+    top: calc(8px + var(--safe-top, 0px));
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+  }
+}

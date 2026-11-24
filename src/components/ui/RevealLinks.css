@@ -1,0 +1,132 @@
+/* Links to a setting edited elsewhere (RevealLinks.tsx). Pointer and touch only: no focus styling,
+   and the mousedown that would focus them is canceled. */
+
+/* Inline: a sentence-sized text link, set like the Plugins panel's hint lines (Plain 12 on its
+   native 16px em and a whole-pixel line box) so it sits in a hint without changing its rhythm. */
+.reveal-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--color-secondary);
+  font-family: "RuneScape Plain 12", sans-serif;
+  font-size: 16px;
+  line-height: 20px;
+  text-align: left;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.reveal-link__text {
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, currentColor 45%, transparent);
+  text-underline-offset: 3px;
+}
+
+.reveal-link__arrow {
+  flex: none;
+  color: var(--color-text-muted);
+  transition: color 0.15s ease;
+}
+
+.reveal-link:hover {
+  color: var(--color-accent-text);
+}
+
+.reveal-link:hover .reveal-link__text {
+  text-decoration-color: currentColor;
+}
+
+.reveal-link:hover .reveal-link__arrow {
+  color: currentColor;
+}
+
+/* Row: shaped like the select it sits beside (.select-input), so it reads as one of the group's
+   controls; the arrow, where a select has its caret, says it leads somewhere else. */
+.setting-link {
+  display: flex;
+  flex-direction: column;
+}
+
+.setting-link__row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 8px 12px;
+  background: var(--color-surface-inset);
+  border: 1px solid var(--color-border);
+  border-radius: 2px;
+  color: var(--color-secondary);
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 14px;
+  line-height: 16px;
+  text-align: left;
+  text-shadow: 1px 1px 0 #000;
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    background-color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.setting-link__label {
+  flex: 1 1 auto;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.setting-link__value {
+  flex: none;
+  color: var(--color-text-body);
+  white-space: nowrap;
+}
+
+.setting-link__arrow {
+  flex: none;
+  color: var(--color-text-muted);
+  transition: color 0.15s ease;
+}
+
+.setting-link__row:hover {
+  background: var(--color-surface);
+  border-color: var(--color-primary-structure);
+  color: var(--color-accent-text);
+}
+
+.setting-link__row:hover .setting-link__arrow {
+  color: var(--color-secondary);
+}
+
+.setting-link__row:active {
+  background: var(--color-surface-inset);
+}
+
+/* Finger-sized, as MobileSheet.css makes the selects beside them. */
+:root[data-mobile-ui] .setting-link__row {
+  min-height: 40px;
+  touch-action: manipulation;
+}
+
+:root[data-mobile-ui] .reveal-link {
+  min-height: 40px;
+  touch-action: manipulation;
+}
+
+/* The destination cannot be reached now: said in place, in the warning tone, instead of a jump. */
+.setting-link__blocked {
+  color: var(--color-warning);
+}
+
+/* A link that cannot go anywhere from here: the reason, beside it, in the same tone as a row's. */
+.reveal-link__blocked {
+  margin-left: 6px;
+  color: var(--color-warning);
+}

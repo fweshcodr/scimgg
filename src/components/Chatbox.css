@@ -1,0 +1,150 @@
+/*
+ * Geometry is set inline: the box from chatboxPlacement (inside the fixed frame,
+ * or at the resizable screen's bottom-left), everything inside it from the cache
+ * rectangles in osrsClientLayout.ts times its scale. Nothing here may add a transform,
+ * filter, opacity or box-shadow to an element that carries or contains chat
+ * text: those are LCD-text vetoes, and the text is painted over a canvas that
+ * is only its SIBLING, so it has no opaque ancestor to fall back on.
+ */
+/*
+ * The overlay container this mounts into is `pointer-events: none` so clicks
+ * reach the scene; every overlay in it opts back in. The chatbox must, or a
+ * click on the tab row falls through and issues a move order to the scene.
+ */
+/*
+ * BELOW every other overlay in this container (z-index 10 and up). Draggable
+ * panels are not kept off the chatbox, so this order is what lets the side panel,
+ * minimap and the rest draw over it; only the launcher panes, the Chatbox infoboxes
+ * and the replay transport are placed clear of it (chatboxLayout.ts, topChromeLayout.ts). 0 rather than a negative: it must still clear the 3D
+ * viewport, which is a sibling container underneath this whole layer.
+ */
+.chatbox {
+  position: absolute;
+  z-index: 0;
+  pointer-events: auto;
+  /*
+   * The canvas covers this element completely, so this color is only seen in
+   * the frames before the sprites resolve — it is the parchment's own average
+   * so that is not a flash of something else.
+   *
+   * It is also what the chat text would need to keep subpixel AA, since its
+   * backdrop is painted by a SIBLING canvas and a sibling's fill does not count
+   * towards the text layer's opacity. That is latent today: the outer
+   * box-shadow on .game-viewport-frame--fixed (App.css) already forces every
+   * text element in the fixed frame to grayscale, this one included. Removing
+   * this fill would leave a second veto behind once that one is lifted.
+   * Check with scripts/verify-subpixel.mts --surface chatbox.
+   */
+  background: #afa082;
+}
+
+/*
+ * The client's transparent chatbox has no backing at all: its gradient and hairlines
+ * are painted into the canvas, and the scene shows through the rest. The text gives
+ * up LCD AA here, as the Mobile tool window's does over the scene, and carries the
+ * client's own black shadow instead (set inline, one cache pixel at the chat's scale).
+ */
+.chatbox--transparent {
+  background: transparent;
+}
+
+/*
+ * Clips the lines to SCROLLAREA without becoming a scroll container. An `overflow: auto`
+ * box would be its own layer and need an opaque fill of its own, and the parchment here is
+ * a sibling canvas, not a fill it could repeat. So scrolling moves the line column by
+ * `bottom` inside a clip, never by a scroller or a transform. `hidden` is the fallback
+ * for engines without `clip`. Check with verify-subpixel.mts --surface chatboxlines.
+ */
+.chatbox__scrollarea {
+  position: absolute;
+  overflow: hidden;
+}
+
+@supports (overflow: clip) {
+  .chatbox__scrollarea {
+    overflow: clip;
+  }
+}
+
+.chatbox__lines {
+  position: absolute;
+  font-family: "RuneScape Plain 12", sans-serif;
+  overflow-wrap: break-word;
+  pointer-events: none;
+}
+
+.chatbox__line--speaker {
+  display: flex;
+  align-items: flex-start;
+}
+
+.chatbox__speaker {
+  flex: none;
+  white-space: nowrap;
+}
+
+.chatbox__said {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.chatbox__scrollbar {
+  position: absolute;
+}
+
+.chatbox__arrow,
+.chatbox__trough {
+  position: absolute;
+  left: 0;
+  right: 0;
+}
+
+.chatbox__controls {
+  position: absolute;
+  left: 0;
+  right: 0;
+}
+
+/*
+ * "Click through transparent chatbox": the message area leaves hit-testing so a
+ * click there reaches the scene. The controls row, All, Collapse and the scrollbar
+ * opt back in, as the client keeps them; the wheel over the message area is
+ * caught in Chatbox.tsx, since this also takes it away from the scroll area.
+ */
+.chatbox--click-through {
+  pointer-events: none;
+}
+
+.chatbox--click-through .chatbox__controls,
+.chatbox--click-through .chatbox__tab--toggle,
+.chatbox--click-through .chatbox__report,
+.chatbox--click-through .chatbox__scrollbar {
+  pointer-events: auto;
+}
+
+.chatbox__input {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  font-family: "RuneScape Plain 12", sans-serif;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.chatbox__tab,
+.chatbox__report {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background: transparent;
+  font-family: "RuneScape Plain 11", sans-serif;
+  /*
+   * The stone row's labels are shadowed; the chat lines on the parchment are not,
+   * so putting a shadow on the messages too would be wrong.
+   */
+  text-shadow: 1px 1px 0 #000;
+}

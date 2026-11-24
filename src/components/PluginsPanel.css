@@ -1,0 +1,1250 @@
+.plugins-overlay {
+  position: absolute;
+  top: var(--top-inset, 0px);
+  right: 0;
+  width: 320px;
+  height: calc(100% - var(--top-inset, 0px));
+  z-index: 70;
+  overflow: hidden;
+  transform: translateX(100%);
+  transition:
+    transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1),
+    top 0.3s cubic-bezier(0.2, 0.8, 0.2, 1),
+    height 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  will-change: transform;
+  background: var(--color-bg-solid);
+  border-left: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  /* Shadow lives on .plugins-overlay-shadow, never here — an outer shadow makes
+     this layer wider than its opaque fill, which vetoes subpixel/bilevel text AA
+     for the whole panel. See SettingsSidebar.css for the full note. */
+  font-family: "RuneScape Bold 12", sans-serif;
+}
+
+.plugins-overlay.open {
+  transform: translateX(0);
+  /* See SettingsSidebar.css: drop the compositing hint at rest so Chrome can
+     use subpixel/bilevel text AA; the closed rule keeps it for a smooth slide. */
+  will-change: auto;
+}
+
+/* Drop shadow proxy — see .controls-overlay-shadow in SettingsSidebar.css.
+   Text-free sibling; geometry and slide MUST stay in sync with .plugins-overlay. */
+.plugins-overlay-shadow {
+  position: absolute;
+  top: var(--top-inset, 0px);
+  right: 0;
+  width: 320px;
+  height: calc(100% - var(--top-inset, 0px));
+  border-left: 1px solid transparent; /* match the panel's 321px border box */
+  z-index: 69; /* directly beneath .plugins-overlay */
+  pointer-events: none;
+  transform: translateX(100%);
+  transition:
+    transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1),
+    top 0.3s cubic-bezier(0.2, 0.8, 0.2, 1),
+    height 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  will-change: transform;
+}
+
+.plugins-overlay-shadow.open {
+  transform: translateX(0);
+  box-shadow: -10px 0 40px rgba(0, 0, 0, 0.5);
+}
+
+.plugins-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px;
+  /* Visual no-op (same color .plugins-overlay paints underneath), but it gives
+     the scrolling layer its own opaque fill so its text keeps subpixel/bilevel
+     AA. See .controls-content in SettingsSidebar.css. */
+  background: var(--color-bg-solid);
+}
+
+.plugin-row {
+  display: flex;
+  flex-direction: column;
+  border-bottom: 1px solid var(--color-border);
+  background: transparent;
+  transition: background 0.15s ease;
+}
+
+.plugin-row[data-expanded="true"] {
+  background: rgba(10, 8, 5, 0.5);
+}
+
+.plugin-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 8px;
+}
+
+.plugin-header:hover {
+  background: var(--color-surface-hover);
+}
+
+.plugin-title-btn {
+  background: transparent;
+  border: none;
+  color: inherit;
+  font: inherit;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.plugin-caret {
+  color: var(--color-text-muted);
+  width: 10px;
+  height: 10px;
+  transition:
+    transform 0.15s ease,
+    color 0.15s ease;
+  flex-shrink: 0;
+}
+
+/* Native 16px, the size of the control labels inside the row: at 15px the heading drew smaller
+   than its own options. Color, the caret and the row rule carry the heading role. */
+.plugin-name {
+  color: var(--color-secondary);
+  font-size: 16px;
+  user-select: none;
+}
+
+.plugin-row[data-expanded="true"] .plugin-caret {
+  transform: rotate(90deg);
+  color: var(--color-primary);
+}
+
+.plugin-row[data-expanded="true"] .plugin-name {
+  color: var(--color-accent-text);
+}
+
+/* The list's two groups: the loaded encounter's plugins under its name, then General. A quiet
+   structural label at the native em: Plain 11 (a smaller face than the rows' Bold 12) in muted
+   ink, so it reads as the frame of the list rather than as another row. The rule beneath closes
+   the top of its first row, as the rows' own rules close each other. */
+.plugins-group-label {
+  margin: 0;
+  padding: 4px 8px 8px;
+  border-bottom: 1px solid var(--color-border);
+  font-family: "RuneScape Plain 11", sans-serif;
+  font-size: 16px;
+  font-weight: normal;
+  line-height: 16px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  user-select: none;
+}
+
+/* Space, not another rule, separates the groups: the last row's rule already ends the first. */
+.plugin-row + .plugins-group-label {
+  margin-top: 20px;
+}
+
+/* An encounter plugin names where it acts beneath its name, in the hint face at the native em. */
+.plugin-title-btn--scoped {
+  text-align: left;
+}
+
+/* The block stays centered in the button (Mobile's is a 40px target), and the caret rises onto the
+   name's line: half of the 2px gap and 16px scope line below it. */
+.plugin-title-btn--scoped .plugin-caret {
+  margin-bottom: 18px;
+}
+
+.plugin-title-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.plugin-title-text .plugin-name {
+  line-height: 16px;
+}
+
+.plugin-scope {
+  font-family: "RuneScape Plain 11", sans-serif;
+  font-size: 16px;
+  line-height: 16px;
+  color: var(--color-text-muted);
+  user-select: none;
+}
+
+.plugin-body {
+  padding: 8px 16px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border-top: 1px solid var(--color-border);
+}
+
+.plugin-setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Field labels ("Keyboard speed:") are peers of the checkbox labels beside them: same face,
+   tone and native 16px size. */
+.plugin-setting-label {
+  color: var(--color-secondary);
+  font-size: 16px;
+  line-height: 16px;
+  text-shadow: 1px 1px 0 #000;
+}
+
+/* The grouping is entirely this 6px against .plugin-body's 12px — no border, no
+   fill. Raising it to 12px makes every interval equal and the groups stop
+   reading as groups; the label alone does not recover it. */
+.plugin-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* No text-shadow: the pixel face fuzzes below 14px. */
+.plugin-group-label {
+  margin-bottom: 2px;
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+/* Matches .setting-row's own padding-left, which reserves the modified bar's
+   gutter — without it the heading out-dents from the controls it names. Not on
+   .plugin-group-label itself: its other use sits INSIDE a .setting-row, which
+   has already applied that inset. */
+.plugin-group > .plugin-group-label {
+  padding-left: 6px;
+}
+
+.plugins-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.plugins-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.plugins-content::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 4px;
+  border: 2px solid var(--color-bg-solid);
+}
+
+.plugins-content::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary-structure);
+}
+
+.plugin-section-divider {
+  margin: 16px 0 10px 0;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+}
+
+.plugin-section-title {
+  /* Reads as structure above its controls: at --color-text-muted/12px the header
+     is lighter than the 16px control labels beneath it, and an Options zone reads
+     as a slab of bold text rather than a labeled group. */
+  color: var(--color-secondary);
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* The 1px hard shadow redraws every stem of the pixel face, which at control-label
+   size reads as faux-bold rather than as depth — DESIGN.md's no-shadow-under-14px rule starts right
+   here. Dropped panel-wide so one Options zone does not differ from the next;
+   the shared OsrsCheckbox keeps its shadow for surfaces that need it. */
+.plugin-row .osrs-checkbox__label {
+  text-shadow: none;
+}
+
+.tile-preset-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--color-border);
+  margin-bottom: 8px;
+}
+
+.tile-preset-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.tile-preset-title {
+  color: var(--color-text-muted);
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.tile-preset-bulk-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.tile-preset-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 2px;
+  padding: 6px;
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+.tile-preset-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.tile-preset-list::-webkit-scrollbar-track {
+  background: var(--color-surface-inset);
+}
+
+.tile-preset-list::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border: 1px solid #101010;
+}
+
+.tile-preset-list::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary-structure);
+}
+.tile-preset-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  background: transparent;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease;
+  cursor: pointer;
+}
+
+.tile-preset-item:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: var(--color-border-translucent);
+}
+
+.tile-preset-item.active {
+  background: rgba(10, 8, 5, 0.5);
+  border-color: var(--color-primary-structure);
+}
+
+.tile-preset-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.tile-preset-item-name {
+  color: var(--color-secondary);
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 13px;
+  transition: color 0.15s ease;
+}
+
+.tile-preset-item:hover .tile-preset-item-name {
+  color: var(--color-text-body);
+}
+
+.tile-preset-item.active .tile-preset-item-name {
+  color: var(--color-accent-text);
+}
+
+.tile-preset-item-count {
+  color: var(--color-text-muted);
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 11px;
+}
+
+.tile-preset-item-toggle {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: inherit;
+  font: inherit;
+  text-shadow: inherit;
+  text-align: left;
+}
+
+.tile-preset-item-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  flex-shrink: 0;
+  font-size: 10px;
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border);
+  border-radius: 3px;
+  padding: 1px 5px;
+  text-decoration: none;
+  transition: all 0.15s ease;
+  background: rgba(0, 0, 0, 0.2);
+  white-space: nowrap;
+}
+
+.tile-preset-item-link:hover {
+  color: var(--color-text-body);
+  border-color: var(--color-primary-structure);
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.tile-preset-export-btn {
+  flex-shrink: 0;
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 10px;
+  color: var(--color-text-muted);
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--color-border);
+  border-radius: 3px;
+  padding: 1px 5px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.tile-preset-export-btn:hover {
+  color: var(--color-text-body);
+  border-color: var(--color-primary-structure);
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.tile-preset-link-icon {
+  font-size: 10px;
+}
+
+.tile-preset-link-text {
+  font-family: inherit;
+}
+
+/* An Options block sits inside .tile-marker-panel, a block container, so its
+   rows miss .plugin-body's 12px flex gap and stacked flush. This restores that
+   rhythm with the same mechanism rather than sibling margins, and scopes it to
+   the rows: the 8/16/10px around the sections and the divider are deliberate. */
+.plugin-options-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tile-marker-panel-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.tile-marker-io-actions {
+  display: flex;
+  flex-direction: row;
+  gap: 6px;
+}
+
+.tile-marker-io-btn {
+  flex: 1;
+}
+/* The options sit after the list they modify, so they need the divider to read as a
+   separate group rather than as another action under the Clear All button. */
+.npc-highlight-options {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--color-border);
+}
+
+/* Wraps rather than squeezing the NPC name: three modes plus a long boss name do not
+   fit on one line in a 300px panel. */
+.npc-highlight-modes {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.npc-highlight-chip {
+  padding: 2px 6px;
+  font-size: 11px;
+  line-height: 1;
+}
+
+.tile-marker-io-status {
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 11px;
+  color: var(--color-secondary);
+  text-align: center;
+  padding: 4px 0;
+  animation: tileMarkerIoStatusFade 3s forwards;
+}
+
+/* Deliberately the same treatment as .plugin-setting-note: both are a single instructional
+   line built around a .kbd cap, and the cap is authored at the RuneScape faces' native 16px
+   grid. Inheriting the section's Bold 12 at 12px put this copy in the heading face on a
+   fractional 15.6px leading, so its baselines landed on half pixels and the glyphs fuzzed
+   beside the crisply hinted cap. The 20px leading is also what contains that 20px cap, so a
+   hint that wraps keeps even rhythm between its two lines. */
+.tile-marker-panel-empty {
+  text-align: center;
+  padding: 10px 6px;
+  border: 1px dashed var(--color-border-translucent);
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.01);
+  font-family: "RuneScape Plain 12", sans-serif;
+  font-size: 16px;
+  line-height: 20px;
+  /* A step below the .kbd cap beside it, so the key reads as the actionable part and this
+     as its caption. Mixed rather than tokenized: the palette jumps straight from
+     --color-text-body (9.7:1 here) to --color-text-muted (4.2:1, under the 4.5:1 floor),
+     and this is the only consumer, so it derives from the tokens the way
+     --primary-dim does. 85% lands at 7.3:1. */
+  color: color-mix(in srgb, var(--color-text-body) 85%, var(--color-bg-solid));
+  /* All four hints fit on one line today; this only decides how they break if a copy
+     edit ever pushes one over. Balanced beats a stranded last word,
+     because the chip centers its copy. */
+  text-wrap: balance;
+}
+
+@keyframes tileMarkerIoStatusFade {
+  0% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.ti-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.ti-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ti-group > .setting-row {
+  padding: 8px 0;
+  padding-left: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.ti-group > .setting-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.ti-group > .setting-row:first-child {
+  padding-top: 0;
+}
+
+/* 4px couples each axis marker to its own field, 8px separates the two pairs,
+   so the row reads as two things rather than four. */
+.tick-offset-fields {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tick-offset-field {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.tick-offset-axis {
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 11px;
+  line-height: 1;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+/* The inputs carry their own disabled opacity; without this the markers stay
+   lit and the row reads as half-available. */
+.tick-offset-fields.is-disabled .tick-offset-axis {
+  opacity: 0.5;
+}
+
+/* 8px against the chip set's own 4px: proximity alone groups the chips as the
+   set and reads the All handle as acting on them, so neither needs a container
+   or a divider. Top-aligned because the set wraps to four rows at a 20-tick
+   cycle and the handle belongs beside the first. */
+.tick-color-controls {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.tick-color-all,
+.tick-color-chip {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 22px;
+  background-color: var(--color-surface-inset);
+  border: 1px solid var(--color-border);
+  border-radius: 2px;
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.tick-color-all:hover,
+.tick-color-chip:hover {
+  border-color: var(--color-primary-structure);
+  background-color: var(--color-surface-highlight);
+}
+
+/* The native swatch is the control; the label or glyph on top of it is the
+   design. Without this the browser paints its own color well inside the
+   surface, beside the thing that is supposed to be showing the color. */
+.tick-color-all input[type="color"],
+.tick-color-chip input[type="color"] {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  border: none;
+  padding: 0;
+}
+
+.tick-color-all {
+  padding: 0 6px;
+  flex-shrink: 0;
+}
+
+.tick-color-all__label {
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 11px;
+  line-height: 1;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  /* Muted until the cycle actually is one color, at which point the label
+     takes that color and the handle becomes the readout for that state. */
+  color: var(--color-text-muted);
+  pointer-events: none;
+}
+
+.tick-color-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  /* The set is the right-hand item of a space-between row, so rows pack from
+     the left INSIDE it: right-packing strands a short final row under the
+     middle of the one above and stops reading as 1..max in order. */
+  justify-content: flex-start;
+  /* Five chips (5 × 24px border-box + 4 × 4px gap = 136, plus slack for
+     sub-pixel rounding at a fractional UI scale). The row has enough width for
+     six, which wraps the 20-tick maximum as 6/6/6/2; capping at five makes it
+     four even rows. */
+  max-width: 140px;
+}
+
+.tick-color-chip {
+  width: 22px;
+}
+
+.tick-color-chip.is-custom {
+  border-color: var(--color-primary);
+}
+
+.tick-color-chip__glyph {
+  font-family: "RuneScape Small", monospace;
+  font-size: 16px;
+  line-height: 1;
+  text-shadow:
+    1px 1px 0 #000,
+    -1px -1px 0 #000,
+    1px -1px 0 #000,
+    -1px 1px 0 #000;
+  pointer-events: none;
+}
+
+.ti-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ti-swatch {
+  position: relative;
+  width: 18px;
+  height: 18px;
+  border-radius: 2px;
+  border: 1px solid var(--color-border);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: border-color 0.15s ease;
+}
+
+.ti-swatch:hover {
+  border-color: var(--color-primary-structure);
+}
+
+.ti-swatch input[type="color"] {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  border: none;
+  padding: 0;
+}
+
+/* A control label, so the same native 16px as the "Corners only" checkbox beneath it; at 14px
+   the tile's own name drew smaller than its option. */
+.ti-label {
+  flex: 1;
+  color: var(--color-secondary);
+  font-size: 16px;
+  line-height: 16px;
+  text-shadow: 1px 1px 0 #000;
+}
+
+.ti-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-left: 26px; /* align with label (18px swatch + 8px gap) */
+  transition: opacity 0.15s ease;
+}
+
+.ti-control-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.ti-control-label {
+  color: var(--color-text-muted);
+  font-size: 12px;
+}
+
+.compact-orbs-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  min-width: 0;
+}
+
+.compact-orbs-field-label {
+  /* No text-shadow: the pixel face fuzzes below 14px. */
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.compact-orbs-segmented {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 3px;
+  padding: 3px;
+  background: var(--color-surface-inset);
+  border: 1px solid var(--color-border);
+  border-radius: 2px;
+}
+
+.compact-orbs-segment {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 3px 7px;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  background: transparent;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease,
+    background-color 0.15s ease;
+}
+
+/* Glyph reads at a legible neutral at rest so the shape is scannable before
+   selection, keeping the accent reserved for the active segment. */
+.compact-orbs-segment svg {
+  display: block;
+  color: var(--color-text-body);
+}
+
+.compact-orbs-segment__label {
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 11px;
+  line-height: 1;
+}
+
+.compact-orbs-segment:hover {
+  background: var(--color-surface-highlight);
+  color: var(--color-secondary);
+}
+
+.compact-orbs-segment.is-active {
+  border-color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 22%, transparent);
+  color: var(--color-accent-text);
+}
+
+.compact-orbs-segment.is-active svg {
+  color: var(--color-primary);
+}
+
+/* Active must survive hover. */
+.compact-orbs-segment.is-active:hover {
+  color: var(--color-accent-text);
+}
+
+/* The grid mirrors the chosen layout, so slot order needs no numbering.
+   Horizontal fills column-major to match COMPACT_ORBS_GEOMETRY. */
+.compact-orbs-slots {
+  display: grid;
+  gap: 4px;
+  justify-content: start;
+}
+
+.compact-orbs-slots--vertical {
+  grid-template-columns: 30px;
+}
+
+.compact-orbs-slots--horizontal {
+  grid-template-columns: repeat(2, 30px);
+  grid-template-rows: repeat(2, 30px);
+  grid-auto-flow: column;
+}
+
+.compact-orbs-slots--horizontal-wide {
+  grid-template-columns: repeat(4, 30px);
+}
+
+.compact-orbs-slot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 1px solid var(--color-border);
+  border-radius: 2px;
+  background: var(--color-surface);
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.compact-orbs-slot:hover {
+  background: var(--color-surface-hover);
+  border-color: var(--color-primary-structure);
+}
+
+.compact-orbs-slot.is-selected {
+  border-color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 22%, transparent);
+}
+
+/* Active must survive hover. */
+.compact-orbs-slot.is-selected:hover {
+  border-color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 22%, transparent);
+}
+
+/* A plugin whose setting the current client layout ignores. Grayed rather than
+   hidden, so the toggle a user already switched on still reads as theirs. */
+.plugin-unavailable-note {
+  font-family: "RuneScape Plain 12", sans-serif;
+  font-size: 12px;
+  line-height: 1.3;
+  color: var(--color-secondary);
+  padding-bottom: 6px;
+}
+
+.compact-orbs-segment:disabled,
+.compact-orbs-slot:disabled {
+  cursor: default;
+  opacity: 0.45;
+}
+
+/* Hover feedback would promise a click the disabled control refuses. */
+.compact-orbs-segment:disabled:hover {
+  background: transparent;
+  color: var(--color-text-muted);
+}
+
+.compact-orbs-slot:disabled:hover {
+  background: var(--color-surface);
+  border-color: var(--color-border);
+}
+
+.compact-orbs-hint {
+  font-family: "RuneScape Plain 12", sans-serif;
+  font-size: 12px;
+  line-height: 1.3;
+  color: var(--color-text-muted);
+}
+
+.stretched-mode-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 0 6px;
+}
+
+.stretched-mode-segmented {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 2px;
+  padding: 3px;
+  background: var(--color-surface-inset);
+  border: 1px solid var(--color-border);
+  border-radius: 2px;
+}
+
+.stretched-mode-segment {
+  padding: 6px 0 5px;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  background: transparent;
+  color: var(--color-text-muted);
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.stretched-mode-segment:hover {
+  background: var(--color-surface-highlight);
+  color: var(--color-secondary);
+}
+
+.stretched-mode-segment.is-active {
+  border-color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 22%, transparent);
+  color: var(--color-accent-text);
+}
+
+.stretched-mode-segment.is-active:hover {
+  color: var(--color-accent-text);
+}
+
+.stretched-mode-segment:disabled {
+  cursor: default;
+  opacity: 0.45;
+}
+
+.stretched-mode-segment:disabled:hover {
+  background: transparent;
+  color: var(--color-text-muted);
+}
+
+.plugin-setting-note {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 2px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+  font-family: "RuneScape Plain 12", sans-serif;
+  font-size: 16px;
+  line-height: 20px;
+  color: var(--color-text-body);
+}
+
+.plugin-setting-note .kbd {
+  margin: 0;
+}
+
+.menu-swaps-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.menu-swaps-field-label {
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 11px;
+  line-height: 1.2;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* 16px, not the panel's smaller steps: both 12-series faces carry unitsPerEm = 16, so
+   only 16px and its integer multiples land glyph edges on whole pixels. The line height
+   is in pixels for the same reason — 1.2 would resolve to 19.2px and put every baseline
+   on a half pixel. Scrolls, so it paints its own opaque fill rather than borrowing the
+   panel's, which would drop the rules to grayscale antialiasing. */
+.menu-swaps-input {
+  width: 100%;
+  /* No global border-box reset in this repo, and nothing constrains this box, since
+     it is not inside a SettingRow's flex row: content-box would push the padding and
+     border past the plugin body's right edge. */
+  box-sizing: border-box;
+  resize: vertical;
+  background: var(--color-surface-inset);
+  border: 1px solid var(--color-border);
+  border-radius: 2px;
+  padding: 6px 8px;
+  color: var(--color-text-body);
+  font-family: "RuneScape Plain 12", sans-serif;
+  font-size: 16px;
+  line-height: 20px;
+  outline: none;
+  caret-color: var(--color-primary);
+  transition: border-color 0.15s ease;
+}
+
+.menu-swaps-input:hover {
+  border-color: var(--color-primary-structure);
+}
+
+.menu-swaps-input:focus {
+  border-color: var(--color-primary);
+}
+
+/* Valid rule syntax stays outside the editor, so the placeholder can only be an instruction. */
+.menu-swaps-input::placeholder {
+  color: var(--color-text-dim);
+}
+
+/* Chrome paints selection, the resize grip and the scrollbar with defaults that belong
+   to no design system, and all three sit inside the only control here that is typed in. */
+.menu-swaps-input::selection {
+  background: var(--primary-dim);
+  color: var(--color-text-body);
+}
+
+.menu-swaps-input::-webkit-resizer {
+  background: transparent;
+}
+
+.menu-swaps-input::-webkit-scrollbar {
+  width: 8px;
+}
+
+.menu-swaps-input::-webkit-scrollbar-track {
+  background: var(--color-surface-inset);
+}
+
+.menu-swaps-input::-webkit-scrollbar-thumb {
+  background: var(--color-primary-structure);
+  border: 1px solid var(--color-surface-inset);
+}
+
+.menu-swaps-input::-webkit-scrollbar-thumb:hover {
+  background: var(--color-surface-hover);
+}
+
+/* A sub-group hairline rather than a bordered card: this is a caption for the box above
+   it, and giving it its own container made it compete with the control it explains.
+   16px/20px for the reason .menu-swaps-input states above — it sits directly under that
+   box, so a smaller step would fuzz beside crisply hinted rule text. */
+.menu-swaps-format {
+  margin: 0;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+  font-family: "RuneScape Plain 12", sans-serif;
+  font-size: 16px;
+  line-height: 20px;
+  color: var(--color-text-muted);
+}
+
+.menu-swaps-format-line {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0 12px;
+  margin: 0;
+}
+
+.menu-swaps-format-literal {
+  color: var(--color-secondary);
+}
+
+/* The group heading and the exact value on one line: the input is the heading's value. */
+.stretched-mode-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.stretched-mode-heading .plugin-group-label {
+  margin-bottom: 0;
+  cursor: help;
+}
+
+/* One muted line under the picker: how else to set it, or why it is locked. 16px/20px keeps
+   the 12-series face on its native grid. */
+.stretched-mode-hint,
+.tick-metronome-hint {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 0;
+  font-family: "RuneScape Plain 12", sans-serif;
+  font-size: 16px;
+  line-height: 20px;
+  color: var(--color-text-muted);
+}
+
+.stretched-mode-hint .kbd {
+  margin: 0;
+}
+
+/* Scoped under `.app-container:not(.has-fixed-layout)` so the user's explicit
+   fixed game-resolution choice survives a narrow window. See App.tsx for
+   the className composition. */
+@media (max-width: 720px) {
+  .app-container:not(.has-fixed-layout) .plugins-overlay {
+    width: 100vw;
+    max-width: 100vw;
+    border-left: none;
+  }
+
+  .app-container:not(.has-fixed-layout) .plugins-overlay-shadow {
+    width: 100vw;
+    max-width: 100vw;
+    border-left: none;
+  }
+
+  .app-container:not(.has-fixed-layout) .plugins-overlay-shadow.open {
+    box-shadow: 0 0 48px rgba(0, 0, 0, 0.6);
+  }
+
+  .app-container:not(.has-fixed-layout) .plugins-content {
+    padding: 10px 10px calc(16px + var(--safe-bottom, 0px));
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    touch-action: pan-y;
+  }
+
+  .app-container:not(.has-fixed-layout) .plugin-header {
+    padding: 12px 10px;
+  }
+
+  /* Enlarge the small inline controls to reach the 44px touch target. */
+  .app-container:not(.has-fixed-layout) .tile-preset-item {
+    padding: 10px 8px;
+  }
+  .app-container:not(.has-fixed-layout) .tile-preset-item-link,
+  .app-container:not(.has-fixed-layout) .tile-preset-export-btn {
+    padding: 4px 8px;
+    font-size: 11px;
+  }
+  .app-container:not(.has-fixed-layout) .ti-swatch {
+    width: 22px;
+    height: 22px;
+  }
+}
+
+/* ---- Mobile (see ui/MobileSheet.css) ------------------------------------------------------
+   Each plugin's name is the expand target and its switch the on/off one: both become 40px tall
+   and the row's own padding moves into them, so the row stays the height it was. */
+:root[data-mobile-ui] .plugins-overlay .panel-header {
+  padding: 2px 4px 2px 16px;
+}
+
+:root[data-mobile-ui] .plugins-overlay .plugin-header {
+  padding: 2px 8px;
+}
+
+:root[data-mobile-ui] .plugins-overlay .plugin-title-btn {
+  flex: 1 1 auto;
+  min-height: 40px;
+}
+
+:root[data-mobile-ui] .plugins-overlay .osrs-toggle {
+  padding: 0 4px;
+}
+
+/* Links out of a plugin's options (RevealLinks.tsx): placed where its options' text starts, past
+   SettingRow's modified bar, and kept to its own width so only the words take the click. */
+.plugin-reveal-link {
+  align-self: flex-start;
+  margin-left: 6px;
+}
+
+/* Fixed layout scale (FixedLayoutScaleField): its hint lines up with the select's text. */
+.fixed-scale-field .stretched-mode-hint {
+  padding-left: 6px;
+}
+
+/* An off plugin's options stay at full strength and editable; this says when they take effect.
+   Never auto-enabled: the switch in the row's header, kept in view below, is the player's. */
+.plugin-off-note {
+  margin: 0;
+  padding-left: 6px;
+  font-family: "RuneScape Plain 12", sans-serif;
+  font-size: 16px;
+  line-height: 20px;
+  color: var(--color-secondary);
+}
+
+/* An open row's header stays at the top of the list while its options scroll under it, so the
+   plugin's name and switch are in view wherever a search lands inside it. Opaque (the expanded
+   row's wash over the panel, resolved) because it becomes its own layer while stuck: a
+   translucent one would cost its text LCD antialiasing and show the options through it. */
+.plugin-row[data-expanded="true"] > .plugin-header {
+  position: sticky;
+  top: -8px;
+  z-index: 1;
+  background: color-mix(in srgb, rgb(10 8 5) 50%, var(--color-bg-solid));
+}
+
+.plugin-row[data-expanded="true"] > .plugin-header:hover {
+  background: var(--color-surface-hover);
+}

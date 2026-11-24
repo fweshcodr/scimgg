@@ -1,0 +1,11 @@
+# Search-tool ignore file. ripgrep and fd read it even outside a git checkout (a source archive),
+# where they skip .gitignore. Keeps file searches out of huge vendored and generated trees.
+node_modules/
+dist/
+coverage/
+/.setup-cache/
+/public/osrs-cache/
+/public/assets/
+/public/fonts/
+.test-cache/
+*.tsbuildinfo

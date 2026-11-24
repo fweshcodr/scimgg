@@ -1,0 +1,260 @@
+.credits-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--modal-backdrop);
+  z-index: 2000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 24px;
+}
+
+.credits-modal-card {
+  position: relative;
+  background: var(--color-bg-solid);
+  border: 1px solid var(--modal-card-border);
+  border-radius: var(--modal-radius);
+  /* There is no global border-box reset here, so without this the padding and border stack on
+     top of max-height and the card overflows the viewport by exactly that much again. The
+     widths below therefore measure the whole card, not its content. */
+  box-sizing: border-box;
+  width: min(358px, 90vw);
+  /* 100% is the overlay's content box, so the card can never outgrow the viewport and strand
+     its own close button. The 720px ceiling stops a long list from stretching a 358px-wide
+     card into a ribbon on a tall display; past it the names scroll instead. */
+  max-height: min(720px, 100%);
+  padding: 26px 28px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  font-family: "RuneScape Bold 12", sans-serif;
+  animation: credits-card-in 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* Moving this box-shadow back onto .credits-modal-card drops every glyph in
+   the card to grayscale AA, because an outer shadow on the element painting the background
+   behind text is a hard Blink LCD-text veto. Only safe here because the card never clips.
+   See the subpixel-aa skill. */
+.credits-modal-card::before {
+  content: "";
+  position: absolute;
+  /* --modal-card-shadow is an outer drop shadow plus an inset ring, and the two want
+     different boxes. An absolutely positioned child is laid out against the padding box,
+     so the -1px stretches its border box onto the card's (outer shadow lands right) while
+     the transparent border pulls its padding box back to the card's (inset ring lands
+     right). Dropping either offsets one of the two by a pixel — measured. */
+  inset: -1px;
+  border: 1px solid transparent;
+  border-radius: var(--modal-radius);
+  box-shadow: var(--modal-card-shadow);
+  pointer-events: none;
+}
+
+@keyframes credits-card-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* No header row to sit in: the X takes the card's corner, at the inset a header gives it. */
+.credits-modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.credits-modal-title {
+  margin: 0 0 4px;
+  font-size: 16px;
+  line-height: 20px;
+  font-weight: normal;
+  color: var(--color-secondary);
+  text-shadow: 1px 1px 0 #000;
+  flex-shrink: 0;
+}
+
+/* The names are the only zone that gives: the title and the licences link stay pinned so a
+   long list can never scroll the close button or the licence notices out of reach. */
+.credits-modal-names {
+  position: relative;
+  width: 100%;
+  margin-top: 16px;
+  min-height: 0;
+  display: flex;
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+  /* Both fade rules below clamp against this, so a list that overflows by less than one fade
+     height still resolves to a fully opaque edge instead of freezing part-way. */
+  --credits-fade-size: 24px;
+}
+
+.credits-modal-list {
+  list-style: none;
+  margin: 0;
+  padding: 16px 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow-y: auto;
+  /* both-edges, not plain stable: the names are centred, and a gutter on the right alone
+     would sit them half a scrollbar left of the title and the licences link. */
+  scrollbar-gutter: stable both-edges;
+  /* Opaque fill so this scrolling box's own layer is provably opaque and its text keeps
+     subpixel AA. Repaints the colour .credits-modal-card already paints underneath, so it is
+     a visual no-op. */
+  background: var(--color-bg-solid);
+  scroll-timeline: --credits-names block;
+}
+
+/* The modals' scrollbar language (see .shortcuts-modal-content): a wider bar with a reserved
+   gutter, rather than the 4px flush bar the sidebars' .panel-scroll paints. */
+.credits-modal-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.credits-modal-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.credits-modal-list::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 2px;
+  border: 2px solid var(--color-bg-solid);
+}
+
+.credits-modal-list::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary-structure);
+}
+
+/* Fades over the scroll edges: a name cut by a hard hairline reads as a clipping bug, the
+   same name fading out reads as a list that continues. Each is tied to the scroll position so
+   it only shows while there is more to see in that direction, and an inactive timeline (a
+   list short enough not to scroll, or a browser without scroll-driven animations) leaves both
+   at the opacity: 0 below. */
+.credits-modal-names::before,
+.credits-modal-names::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: var(--credits-fade-size);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.credits-modal-names::before {
+  top: 0;
+  background: linear-gradient(to bottom, var(--color-bg-solid), transparent);
+}
+
+.credits-modal-names::after {
+  bottom: 0;
+  background: linear-gradient(to top, var(--color-bg-solid), transparent);
+}
+
+@supports (animation-timeline: scroll()) {
+  .credits-modal-names {
+    timeline-scope: --credits-names;
+  }
+
+  .credits-modal-names::before {
+    animation: credits-edge-in linear both;
+    animation-timeline: --credits-names;
+    animation-range: 0 min(100%, var(--credits-fade-size));
+  }
+
+  .credits-modal-names::after {
+    animation: credits-edge-out linear both;
+    animation-timeline: --credits-names;
+    animation-range: max(0%, calc(100% - var(--credits-fade-size))) 100%;
+  }
+}
+
+@keyframes credits-edge-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes credits-edge-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+.credits-modal-name {
+  font-size: 16px;
+  line-height: 20px;
+  /* overflow-y: auto on the list computes overflow-x to auto too, so an alias longer than the
+     column would open a horizontal scrollbar rather than wrap. */
+  overflow-wrap: anywhere;
+  color: var(--color-secondary);
+  text-shadow: 1px 1px 0 #000;
+}
+
+.credits-modal-name a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px dotted transparent;
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.credits-modal-name a:hover {
+  color: var(--color-text-body);
+  border-bottom-color: currentColor;
+}
+
+.credits-modal-licenses {
+  margin-top: 14px;
+  width: 100%;
+  flex-shrink: 0;
+  font-size: 16px;
+  line-height: 20px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-muted);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.credits-modal-licenses:hover {
+  color: var(--color-secondary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .credits-modal-card {
+    animation: none;
+  }
+}
+
+@media (max-width: 720px) {
+  .credits-modal-card {
+    width: min(350px, 92vw);
+    padding: 24px 24px 20px;
+  }
+  .credits-modal-name a {
+    min-height: 44px;
+  }
+}

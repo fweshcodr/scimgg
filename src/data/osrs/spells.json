@@ -1,0 +1,355 @@
+[
+  {
+    "name": "Wind Strike",
+    "spellbook": "standard",
+    "element": "air",
+    "maxHit": 8
+  },
+  {
+    "name": "Water Strike",
+    "spellbook": "standard",
+    "element": "water",
+    "maxHit": 8
+  },
+  {
+    "name": "Earth Strike",
+    "spellbook": "standard",
+    "element": "earth",
+    "maxHit": 8
+  },
+  {
+    "name": "Fire Strike",
+    "spellbook": "standard",
+    "element": "fire",
+    "maxHit": 8
+  },
+  {
+    "name": "Wind Bolt",
+    "spellbook": "standard",
+    "element": "air",
+    "maxHit": 12
+  },
+  {
+    "name": "Water Bolt",
+    "spellbook": "standard",
+    "element": "water",
+    "maxHit": 12
+  },
+  {
+    "name": "Earth Bolt",
+    "spellbook": "standard",
+    "element": "earth",
+    "maxHit": 12
+  },
+  {
+    "name": "Fire Bolt",
+    "spellbook": "standard",
+    "element": "fire",
+    "maxHit": 12
+  },
+  {
+    "name": "Wind Blast",
+    "spellbook": "standard",
+    "element": "air",
+    "maxHit": 16
+  },
+  {
+    "name": "Water Blast",
+    "spellbook": "standard",
+    "element": "water",
+    "maxHit": 16
+  },
+  {
+    "name": "Earth Blast",
+    "spellbook": "standard",
+    "element": "earth",
+    "maxHit": 16
+  },
+  {
+    "name": "Fire Blast",
+    "spellbook": "standard",
+    "element": "fire",
+    "maxHit": 16
+  },
+  {
+    "name": "Wind Wave",
+    "spellbook": "standard",
+    "element": "air",
+    "maxHit": 20
+  },
+  {
+    "name": "Water Wave",
+    "spellbook": "standard",
+    "element": "water",
+    "maxHit": 20
+  },
+  {
+    "name": "Earth Wave",
+    "spellbook": "standard",
+    "element": "earth",
+    "maxHit": 20
+  },
+  {
+    "name": "Fire Wave",
+    "spellbook": "standard",
+    "element": "fire",
+    "maxHit": 20
+  },
+  {
+    "name": "Wind Surge",
+    "spellbook": "standard",
+    "element": "air",
+    "maxHit": 24
+  },
+  {
+    "name": "Water Surge",
+    "spellbook": "standard",
+    "element": "water",
+    "maxHit": 24
+  },
+  {
+    "name": "Earth Surge",
+    "spellbook": "standard",
+    "element": "earth",
+    "maxHit": 24
+  },
+  {
+    "name": "Fire Surge",
+    "spellbook": "standard",
+    "element": "fire",
+    "maxHit": 24
+  },
+  {
+    "name": "Saradomin Strike",
+    "spellbook": "standard",
+    "element": null,
+    "maxHit": 20
+  },
+  {
+    "name": "Claws of Guthix",
+    "spellbook": "standard",
+    "element": null,
+    "maxHit": 20
+  },
+  {
+    "name": "Flames of Zamorak",
+    "spellbook": "standard",
+    "element": null,
+    "maxHit": 20
+  },
+  {
+    "name": "Crumble Undead",
+    "spellbook": "standard",
+    "element": null,
+    "maxHit": 15
+  },
+  {
+    "name": "Iban Blast",
+    "spellbook": "standard",
+    "element": null,
+    "maxHit": 25
+  },
+  {
+    "name": "Magic Dart",
+    "spellbook": "standard",
+    "element": null,
+    "maxHit": 0,
+    "scalesWithMagic": "magic_dart"
+  },
+  {
+    "name": "Smoke Rush",
+    "spellbook": "ancient",
+    "element": null,
+    "maxHit": 13,
+    "secondaryEffect": {
+      "kind": "poison",
+      "severity": 10
+    }
+  },
+  {
+    "name": "Shadow Rush",
+    "spellbook": "ancient",
+    "element": null,
+    "maxHit": 14,
+    "secondaryEffect": {
+      "kind": "drain_attack",
+      "percent": 10
+    }
+  },
+  {
+    "name": "Blood Rush",
+    "spellbook": "ancient",
+    "element": null,
+    "maxHit": 15,
+    "secondaryEffect": {
+      "kind": "leech_hp",
+      "percentOfDamage": 25
+    }
+  },
+  {
+    "name": "Ice Rush",
+    "spellbook": "ancient",
+    "element": null,
+    "maxHit": 16,
+    "secondaryEffect": {
+      "kind": "freeze",
+      "durationTicks": 8
+    }
+  },
+  {
+    "name": "Smoke Burst",
+    "spellbook": "ancient",
+    "element": null,
+    "maxHit": 17,
+    "secondaryEffect": {
+      "kind": "poison",
+      "severity": 10
+    }
+  },
+  {
+    "name": "Shadow Burst",
+    "spellbook": "ancient",
+    "element": null,
+    "maxHit": 18,
+    "secondaryEffect": {
+      "kind": "drain_attack",
+      "percent": 10
+    }
+  },
+  {
+    "name": "Blood Burst",
+    "spellbook": "ancient",
+    "element": null,
+    "maxHit": 21,
+    "secondaryEffect": {
+      "kind": "leech_hp",
+      "percentOfDamage": 25
+    }
+  },
+  {
+    "name": "Ice Burst",
+    "spellbook": "ancient",
+    "element": null,
+    "maxHit": 22,
+    "secondaryEffect": {
+      "kind": "freeze",
+      "durationTicks": 16
+    }
+  },
+  {
+    "name": "Smoke Blitz",
+    "spellbook": "ancient",
+    "element": null,
+    "maxHit": 23,
+    "secondaryEffect": {
+      "kind": "poison",
+      "severity": 20
+    }
+  },
+  {
+    "name": "Shadow Blitz",
+    "spellbook": "ancient",
+    "element": null,
+    "maxHit": 24,
+    "secondaryEffect": {
+      "kind": "drain_attack",
+      "percent": 15
+    }
+  },
+  {
+    "name": "Blood Blitz",
+    "spellbook": "ancient",
+    "element": null,
+    "maxHit": 25,
+    "secondaryEffect": {
+      "kind": "leech_hp",
+      "percentOfDamage": 25
+    }
+  },
+  {
+    "name": "Ice Blitz",
+    "spellbook": "ancient",
+    "element": null,
+    "maxHit": 26,
+    "secondaryEffect": {
+      "kind": "freeze",
+      "durationTicks": 24
+    }
+  },
+  {
+    "name": "Smoke Barrage",
+    "spellbook": "ancient",
+    "element": null,
+    "maxHit": 27,
+    "secondaryEffect": {
+      "kind": "poison",
+      "severity": 20
+    }
+  },
+  {
+    "name": "Shadow Barrage",
+    "spellbook": "ancient",
+    "element": null,
+    "maxHit": 28,
+    "secondaryEffect": {
+      "kind": "drain_attack",
+      "percent": 15
+    }
+  },
+  {
+    "name": "Blood Barrage",
+    "spellbook": "ancient",
+    "element": null,
+    "maxHit": 29,
+    "secondaryEffect": {
+      "kind": "leech_hp",
+      "percentOfDamage": 25
+    }
+  },
+  {
+    "name": "Ice Barrage",
+    "spellbook": "ancient",
+    "element": null,
+    "maxHit": 30,
+    "secondaryEffect": {
+      "kind": "freeze",
+      "durationTicks": 32
+    }
+  },
+  {
+    "name": "Ghostly Grasp",
+    "spellbook": "arceuus",
+    "element": null,
+    "maxHit": 12
+  },
+  {
+    "name": "Skeletal Grasp",
+    "spellbook": "arceuus",
+    "element": null,
+    "maxHit": 17
+  },
+  {
+    "name": "Undead Grasp",
+    "spellbook": "arceuus",
+    "element": null,
+    "maxHit": 24
+  },
+  {
+    "name": "Inferior Demonbane",
+    "spellbook": "arceuus",
+    "element": null,
+    "maxHit": 16
+  },
+  {
+    "name": "Superior Demonbane",
+    "spellbook": "arceuus",
+    "element": null,
+    "maxHit": 23
+  },
+  {
+    "name": "Dark Demonbane",
+    "spellbook": "arceuus",
+    "element": null,
+    "maxHit": 30
+  }
+]

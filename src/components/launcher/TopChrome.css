@@ -1,0 +1,673 @@
+/* The chrome along the top of the game: the launcher row (Menu, Practice, Actions, Replay), the
+   pane it opens, Plugins and the FPS readout (TopChrome.tsx; geometry in
+   layout/topChromeLayout.ts).
+
+   Every surface here paints its own opaque fill behind its text and carries no outer box-shadow,
+   so the text keeps LCD antialiasing (docs/agent-reference.md, LCD text). Depth comes from the
+   border alone. Pointer and touch only: no focus rings (Keyboard and focus policy). */
+
+/* No box of its own: a full-window wrapper would be one transparent layer under every control, and
+   a composited layer that cannot be proven opaque drops LCD text for everything in it. Each item is
+   fixed to the window on its own, painting its own opaque fill. */
+.top-chrome {
+  display: contents;
+}
+
+.top-chrome__item {
+  position: fixed;
+  /* Below the drawers (70) and their shadow proxies (69): a drawer
+     slides over this chrome, never under it. */
+  z-index: 68;
+}
+
+.top-chrome__item[data-tucked="true"] {
+  visibility: hidden;
+}
+
+.practice-session {
+  overflow-y: auto;
+}
+
+.launcher-pane > .practice-retry-bar {
+  flex-shrink: 0;
+  max-width: none;
+  border: 0;
+  border-bottom: var(--unscaled-px, 1px) solid var(--color-border);
+  border-radius: 0;
+}
+
+/* The row and its pane follow the Settings drawer, and Plugins the Plugins drawer, on the drawers'
+   own curve, so they move with its edge rather than jumping ahead of it. Only while one opens or
+   closes: a resize places them at once. */
+.top-chrome--sliding .top-chrome__item {
+  transition: left 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .top-chrome--sliding .top-chrome__item {
+    transition: none;
+  }
+}
+
+/* While a spotlight (Driver.js) tutorial is up, its full-screen overlay (z-index 1200) would bury
+   this chrome. Raise it just above the overlay (at the popover's level, 1201, so the tutorial's
+   popover still wins on the rare overlap) so the pinned menu's Training cluster stays usable. */
+.top-chrome--elevated .top-chrome__item {
+  z-index: 1201;
+}
+
+/* Clicks come back for the Training cluster (Training and its Exit control) and for the Menu
+   launcher, which brings the menu with that cluster back over a pane a step had opened (Practice);
+   everything else keeps Driver.js's `.driver-active * { pointer-events: none }`. A control a step
+   points at is Driver's active element and takes clicks through Driver's own rule. */
+.driver-active .top-chrome--elevated .tutorials-button-anchor,
+.driver-active .top-chrome--elevated .tutorials-button-anchor *,
+.driver-active .top-chrome--elevated .launcher-btn--menu,
+.driver-active .top-chrome--elevated .launcher-btn--menu * {
+  pointer-events: auto;
+}
+
+/* Raised above the overlay, the rest can no longer be dimmed by it, so it is dimmed here, except a
+   control the step is pointing at and the Menu launcher, which stays live. */
+.driver-active .top-chrome--elevated .launcher-btn:not(.driver-active-element, .launcher-btn--menu),
+.driver-active .top-chrome--elevated .launcher-menu > button:not(.driver-active-element) {
+  opacity: 0.3;
+}
+
+.launcher-row {
+  display: flex;
+  gap: 4px;
+}
+
+/* The live row is a landmark only; each launcher is its own fixed item (TopChrome.tsx). */
+.launcher-row--live {
+  display: contents;
+}
+
+.launcher-row--probe {
+  position: fixed;
+  top: 0;
+  left: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* One stone button for the launchers and Plugins. 28 tall, so the row, its gap and the pane under it
+   land on the 4px grid. */
+.launcher-btn {
+  box-sizing: border-box;
+  height: 28px;
+  min-width: 28px;
+  margin: 0;
+  padding: 0 calc(10px + var(--border-give, 0px));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  background: var(--color-bg-solid);
+  border: var(--unscaled-px, 1px) solid var(--color-border);
+  border-radius: calc(2 * var(--unscaled-px, 1px));
+  color: var(--color-secondary);
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 16px;
+  /* Pinned: `normal` comes from the font's metrics, which engines resolve differently. */
+  line-height: 16px;
+  white-space: nowrap;
+  text-shadow: 1px 1px 0 #000;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+/* The Plugins button: one step narrower than a launcher, so it covers less of the minimap or the
+   Fixed stone column it sits over in the window's top-right corner. */
+.launcher-btn--plugins {
+  padding: 0 calc(8px + var(--border-give, 0px));
+}
+
+.launcher-btn--icon {
+  width: 28px;
+  padding: 0;
+}
+
+/* The launcher icons (launcherIcons.tsx): a fixed 16px cell, which the 28px button's flex centering
+   puts at (6,6) from its outer edge whatever the border's width; each glyph's origin centers its ink
+   in the cell. The shadow may run a pixel past the cell. */
+.launcher-icon {
+  display: block;
+  flex: none;
+  overflow: visible;
+  shape-rendering: crispEdges;
+}
+
+.launcher-btn:hover {
+  background: var(--color-surface-hover);
+  border-color: var(--color-primary-structure);
+  color: var(--color-text-body);
+}
+
+/* Open: the pane under it is this button's. Selection, not focus, and it stays under hover. */
+.launcher-btn.is-open,
+.launcher-btn.is-open:hover {
+  background: var(--color-surface-inset);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+/* Pressable (it explains itself on hover) but plainly off. Never `opacity`: that drops the label to
+   grayscale AA. */
+.launcher-btn[aria-disabled="true"],
+.launcher-btn[aria-disabled="true"]:hover {
+  background: var(--color-bg-solid);
+  border-color: var(--color-border);
+  color: var(--color-text-dim);
+  cursor: default;
+}
+
+.launcher-btn__notice {
+  color: var(--color-warning);
+}
+
+/* ---- Panes ---- */
+
+.launcher-pane {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--color-bg-solid);
+  border: var(--unscaled-px, 1px) solid var(--color-border);
+  border-radius: calc(2 * var(--unscaled-px, 1px));
+  color: var(--color-text-body);
+  font-family: "RuneScape Plain 12", sans-serif;
+  font-size: 16px;
+  text-align: left;
+}
+
+/* An icon-launched pane names itself, below the session when one is active. */
+.launcher-pane__title {
+  flex: none;
+  box-sizing: border-box;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 4px 0 8px;
+  border-bottom: var(--unscaled-px, 1px) solid var(--color-border);
+  background: var(--color-bg-solid);
+  color: var(--color-text-muted);
+  font-family: "RuneScape Plain 11", sans-serif;
+  font-size: 16px;
+  line-height: 16px;
+}
+
+.launcher-pane__head {
+  flex: none;
+  box-sizing: border-box;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 4px;
+  background: var(--color-bg-elevated);
+  border-bottom: var(--unscaled-px, 1px) solid var(--color-border);
+}
+
+.launcher-pane__close {
+  box-sizing: border-box;
+  width: 20px;
+  height: 20px;
+  margin-left: auto;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 16px;
+  line-height: 16px;
+  text-shadow: 1px 1px 0 #000;
+  cursor: pointer;
+}
+
+.launcher-pane__close svg {
+  width: 10px;
+  height: 10px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+}
+
+.launcher-pane__close:hover {
+  color: var(--color-accent-text);
+}
+
+@media (pointer: coarse) {
+  .launcher-pane__title {
+    height: 44px;
+  }
+
+  .launcher-pane__close {
+    position: relative;
+  }
+
+  .launcher-pane__title > .launcher-pane__close {
+    width: 44px;
+    height: 44px;
+  }
+
+  .launcher-pane__close::after {
+    content: "";
+    position: absolute;
+    inset: -4px -6px;
+  }
+
+  .launcher-pane__title > .launcher-pane__close::after {
+    inset: 0;
+  }
+}
+
+/* Setup / Stats: a segmented pair, the open one marked by a primary underline. */
+.launcher-tabs {
+  display: flex;
+  height: 20px;
+  border: var(--unscaled-px, 1px) solid var(--color-border);
+  border-radius: calc(2 * var(--unscaled-px, 1px));
+  overflow: hidden;
+}
+
+.launcher-tab {
+  margin: 0;
+  padding: 0 8px;
+  display: flex;
+  align-items: center;
+  background: var(--color-surface);
+  border: none;
+  color: var(--color-text-muted);
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 16px;
+  line-height: 16px;
+  text-shadow: 1px 1px 0 #000;
+  cursor: pointer;
+}
+
+.launcher-tab + .launcher-tab {
+  border-left: var(--unscaled-px, 1px) solid var(--color-border);
+}
+
+.launcher-tab:hover {
+  color: var(--color-text-body);
+}
+
+.launcher-tab.is-active,
+.launcher-tab.is-active:hover {
+  background: var(--color-surface-inset);
+  color: var(--color-heading);
+  box-shadow: inset 0 -1px 0 var(--color-primary);
+}
+
+.launcher-tab[aria-disabled="true"],
+.launcher-tab[aria-disabled="true"]:hover {
+  color: var(--color-text-dim);
+  cursor: default;
+}
+
+/* Fight / Mechanics / Aids: jumps within the one scrolling body, shown only when it scrolls. */
+.launcher-sections {
+  flex: none;
+  display: flex;
+  gap: 2px;
+  padding: 3px 4px;
+  border-bottom: var(--unscaled-px, 1px) solid var(--color-border);
+  background: var(--color-bg-solid);
+}
+
+.launcher-section {
+  flex: 1 1 auto;
+  margin: 0;
+  padding: 2px 0 3px;
+  background: none;
+  border: none;
+  border-radius: calc(2 * var(--unscaled-px, 1px));
+  color: var(--color-text-muted);
+  font-family: "RuneScape Plain 11", sans-serif;
+  font-size: 16px;
+  line-height: 16px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.launcher-section:hover {
+  color: var(--color-text-body);
+}
+
+.launcher-section.is-active,
+.launcher-section.is-active:hover {
+  background: var(--color-surface-inset);
+  color: var(--color-heading);
+  box-shadow: inset 0 -1px 0 var(--color-primary-structure);
+}
+
+/* The one scrolling body. Opaque on its own: the scrolling layer needs its own fill for LCD text. */
+.launcher-pane__body {
+  flex: 0 1 auto;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 6px 8px 8px;
+  background: var(--color-bg-solid);
+}
+
+/* Setup's sections measure their jumps from the body's own content (PracticePane `offsetWithin`). */
+.launcher-pane__body--setup {
+  position: relative;
+}
+
+.launcher-pane--narrow .launcher-pane__body {
+  padding: 6px 6px 8px;
+}
+
+.launcher-pane__body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.launcher-pane__body::-webkit-scrollbar-track {
+  background: var(--color-surface-inset);
+}
+
+.launcher-pane__body::-webkit-scrollbar-thumb {
+  background: var(--color-primary-structure);
+  border-radius: calc(2 * var(--unscaled-px, 1px));
+}
+
+@supports not selector(::-webkit-scrollbar) {
+  .launcher-pane__body {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-primary-structure) var(--color-surface-inset);
+  }
+}
+
+/* Narrow panes wrap a choice group's options and long labels instead of shrinking the type. */
+.launcher-pane--narrow .mechanics-choice-segmented {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.launcher-pane--narrow .mechanics-choice-segment {
+  flex: 1 1 auto;
+  min-width: max-content;
+}
+
+.launcher-pane--narrow .osrs-checkbox__label {
+  white-space: normal;
+}
+
+.launcher-pane--narrow .boss-health-head {
+  flex-wrap: wrap;
+}
+
+.launcher-pane .practice-panel .mechanics-choice {
+  width: auto;
+}
+
+.launcher-pane__note {
+  margin: 2px 0 8px;
+  color: var(--color-text-muted);
+  font-family: "RuneScape Plain 11", sans-serif;
+  font-size: 16px;
+  line-height: 18px;
+}
+
+/* ---- Lists: the Actions palette and the menu share one anatomy ---- */
+
+.launcher-pane .launcher-list {
+  display: flex;
+  flex-direction: column;
+  padding: 4px 0;
+}
+
+.launcher-list__row,
+.launcher-menu .controls-toggle-open {
+  position: static;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 28px;
+  margin: 0;
+  padding: 5px 12px 6px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  color: var(--color-secondary);
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 16px;
+  line-height: 17px;
+  text-align: left;
+  white-space: normal;
+  text-shadow: 1px 1px 0 #000;
+  cursor: pointer;
+}
+
+/* Faint separators: each action reads as its own target, quieter than a row of boxed buttons. */
+.launcher-list__row + .launcher-list__row {
+  border-top: var(--unscaled-px, 1px) solid color-mix(in srgb, var(--color-border) 75%, transparent);
+}
+
+.launcher-list__row:hover,
+.launcher-menu .controls-toggle-open:hover {
+  background: var(--color-surface-hover);
+  color: var(--color-text-body);
+}
+
+/* The whole row answers a press; the palette stays open for the next one. */
+.launcher-list__row:active {
+  background: var(--color-surface-inset);
+  color: var(--color-accent-text);
+}
+
+/* A touch screen's Actions get rows a finger can hit. */
+@media (pointer: coarse) {
+  .launcher-list__row {
+    min-height: 40px;
+  }
+}
+
+/* The desktop menu: Settings first, on a taller row of its own; a rule; then the places to go
+   (Encounters, Training). App renders the buttons once for both menus, in the Mobile menu's order,
+   so the desktop order is set here. */
+.launcher-menu > [data-menu-item="settings"] {
+  order: 0;
+  min-height: 32px;
+}
+
+.launcher-menu > .launcher-menu__rule--settings {
+  order: 1;
+}
+
+.launcher-menu > [data-tutorial="encounters-button"] {
+  order: 2;
+}
+
+.launcher-menu > [data-menu-item="quick-search"] {
+  order: 2;
+}
+
+.launcher-menu > .tutorials-button-anchor {
+  order: 3;
+}
+
+/* Quick search's Ctrl+K: the same quiet note, at the row's far end like a menu's accelerator. */
+.launcher-menu .controls-toggle-open.has-shortcut {
+  align-items: baseline;
+  gap: 16px;
+}
+
+.launcher-menu__shortcut {
+  margin-left: auto;
+}
+
+/* Training's "Start here", for a player who has not opened it yet: a quiet note on the label's
+   baseline, not a badge. */
+.launcher-menu .controls-toggle-open.has-note {
+  align-items: baseline;
+  gap: 8px;
+}
+
+.launcher-menu__note {
+  font-family: "RuneScape Plain 11", sans-serif;
+  font-size: 16px;
+  line-height: 16px;
+  color: var(--color-text-muted);
+  text-shadow: none;
+  white-space: nowrap;
+}
+
+/* While training runs, Training and its Exit share one row as a split control: Training takes the
+   row, Exit is the cell at its end, the row's full height, set off by the rows' own faint rule. A
+   flex row rather than an absolute X: the nav button's base rule (SettingsSidebar.css) pins
+   `left: 0`, which pulled an absolutely placed X back over the label. */
+.launcher-menu .tutorials-button-anchor {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+}
+
+.launcher-menu .controls-toggle-open--tutorial-mode {
+  flex: 1 1 auto;
+  color: var(--color-accent-text);
+}
+
+.launcher-menu .controls-toggle-open--split-right {
+  flex: none;
+  width: 36px;
+  padding: 0;
+  justify-content: center;
+  border-left: var(--unscaled-px, 1px) solid color-mix(in srgb, var(--color-border) 75%, transparent);
+  color: color-mix(in srgb, var(--color-error) 75%, var(--color-text-muted));
+}
+
+.launcher-menu .controls-toggle-open--split-right:hover {
+  background: color-mix(in srgb, var(--color-error) 14%, var(--color-surface-hover));
+  color: var(--color-error);
+}
+
+/* A finger gets a wider cell; the row's height is the menu's own. */
+@media (pointer: coarse) {
+  .launcher-menu .controls-toggle-open--split-right {
+    width: 44px;
+  }
+}
+
+.launcher-menu__rule {
+  margin: 4px 0;
+  border: 0;
+  border-top: var(--unscaled-px, 1px) solid var(--color-border);
+}
+
+/* ---- Stats ---- */
+
+.launcher-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.launcher-stats__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: 6px;
+}
+
+.launcher-stats__label,
+.launcher-stats__value {
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 16px;
+  line-height: 16px;
+  white-space: nowrap;
+  text-shadow: 1px 1px 0 #000;
+}
+
+.launcher-stats__label {
+  color: var(--color-secondary);
+}
+
+.launcher-stats__value {
+  margin-left: auto;
+  color: var(--color-text-body);
+  font-variant-numeric: tabular-nums;
+}
+
+.launcher-stats__value.is-empty {
+  color: var(--color-text-dim);
+}
+
+.launcher-stats__value.dps-lucky {
+  color: var(--color-success);
+}
+
+.launcher-stats__value.dps-unlucky {
+  color: var(--color-error);
+}
+
+.launcher-stats__bar {
+  height: 6px;
+  margin-top: 2px;
+  background: var(--color-surface-inset);
+  border: var(--unscaled-px, 1px) solid var(--color-border);
+  border-radius: var(--unscaled-px, 1px);
+  overflow: hidden;
+}
+
+.launcher-stats__fill {
+  height: 100%;
+}
+
+/* DPS: a label row, then Actual and Expected indented under it, their figures in the same right
+   column as every other value. */
+.launcher-stats__dps {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  row-gap: 4px;
+  align-items: baseline;
+}
+
+.launcher-stats__dps > .launcher-stats__label {
+  grid-column: 1 / -1;
+}
+
+.launcher-stats__sub {
+  padding-left: 8px;
+  color: var(--color-text-muted);
+  font-family: "RuneScape Plain 11", sans-serif;
+  font-size: 16px;
+  line-height: 16px;
+}
+
+.launcher-stats__dps > .launcher-stats__value {
+  margin-left: 0;
+  text-align: right;
+}
+
+.launcher-stats__rule {
+  width: 100%;
+  margin: 2px 0;
+  border: 0;
+  border-top: var(--unscaled-px, 1px) solid var(--color-border);
+}
+
+.launcher-stats__source {
+  color: var(--color-info);
+  font-family: "RuneScape Plain 11", sans-serif;
+  font-size: 16px;
+  line-height: 16px;
+}

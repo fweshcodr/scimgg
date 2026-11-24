@@ -1,0 +1,389 @@
+/* Search across Settings and Plugins (SidebarSearch.tsx), in both drawers.
+
+   LCD text: the bar and the results paint opaque --color-bg-solid themselves, the results list
+   being a scroller of its own (Veto 2 in the subpixel-aa skill), and neither carries an outer
+   shadow. Type stays on the RuneScape faces' native 16px em with whole-pixel line boxes. */
+
+/* Under the drawer's header and outside its scroller, so it stays put while the body scrolls. */
+.drawer-search-bar {
+  flex-shrink: 0;
+  padding: 8px 16px;
+  background: var(--color-bg-solid);
+  border-bottom: 1px solid var(--color-border);
+}
+
+/* Plugins rows start 8px in (the scroller's padding), and the field lines up with them. */
+.drawer-search-bar--plugins {
+  padding-inline: 8px;
+}
+
+.drawer-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.drawer-search__glyph {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-text-muted);
+  pointer-events: none;
+}
+
+.drawer-search__input {
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 6px 34px 6px 32px;
+  background: var(--color-surface-inset);
+  border: 1px solid var(--color-border);
+  border-radius: 2px;
+  color: var(--color-text-body);
+  font-family: "RuneScape Plain 12", sans-serif;
+  font-size: 16px;
+  /* Pinned: a single-line field's geometry must match across engines (cross-browser CSS rules). */
+  line-height: 20px;
+  outline: none;
+  caret-color: var(--color-primary);
+  transition: border-color 0.15s ease;
+}
+
+.drawer-search__input::placeholder {
+  color: var(--color-text-muted);
+  /* Blink lays the placeholder out at its own forced `line-height: normal` and clips it there,
+     which cuts the bottom row off the RuneScape face's descenders (g, j, p, q, y) at every zoom.
+     The padding gives that clip room; typed text is unaffected. Measured with QuickSearch's and
+     this field's placeholders at 1x and 2x. */
+  padding-bottom: 2px;
+}
+
+.drawer-search__input:hover {
+  border-color: var(--color-primary-structure);
+}
+
+/* Text fields keep their focus border (keyboard and focus policy). */
+.drawer-search__input:focus {
+  border-color: var(--color-primary);
+}
+
+.drawer-search__input::selection {
+  background: var(--primary-dim);
+  color: var(--color-text-body);
+}
+
+.drawer-search__clear {
+  position: absolute;
+  right: 3px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 2px;
+  background: transparent;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.drawer-search__clear:hover {
+  color: var(--color-text-body);
+}
+
+/* The body the results cover: the panel stays laid out underneath, so clearing the search puts
+   the player back exactly where they were. */
+.drawer-search-body {
+  position: relative;
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.drawer-search-results {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow-y: auto;
+  padding: 10px 8px 16px;
+  background: var(--color-bg-solid); /* load-bearing: LCD text in a scroller */
+  overscroll-behavior: contain;
+}
+
+.drawer-search-results::-webkit-scrollbar {
+  width: 8px;
+}
+
+.drawer-search-results::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.drawer-search-results::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 4px;
+  border: 2px solid var(--color-bg-solid);
+}
+
+@supports not selector(::-webkit-scrollbar) {
+  .drawer-search-results {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-border) transparent;
+  }
+}
+
+.drawer-search-results__heading,
+.drawer-search-results__empty {
+  margin: 0;
+  padding: 0 8px 6px;
+  font-family: "RuneScape Plain 11", sans-serif;
+  font-size: 16px;
+  font-weight: normal;
+  line-height: 18px;
+  color: var(--color-text-muted);
+}
+
+.drawer-search-results__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.drawer-search-result-item + .drawer-search-result-item {
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+/* One row per match: what it is, where it lives, what it does, and a chevron when it goes there. */
+.drawer-search-result {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 8px;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+button.drawer-search-result:hover {
+  background: var(--color-surface-hover);
+  border-color: var(--color-primary-structure);
+}
+
+.drawer-search-result__text {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  min-width: 0;
+}
+
+.drawer-search-result__chevron {
+  flex: none;
+  color: var(--color-text-muted);
+  transition: color 0.15s ease;
+}
+
+button.drawer-search-result:hover .drawer-search-result__chevron {
+  color: var(--color-secondary);
+}
+
+.drawer-search-result__title {
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 16px;
+  line-height: 18px;
+  color: var(--color-secondary);
+}
+
+button.drawer-search-result:hover .drawer-search-result__title {
+  color: var(--color-accent-text);
+}
+
+/* The words that matched: underlined in the accent, so the title still reads as one label. */
+.drawer-search-result__match {
+  background: transparent;
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: var(--color-primary);
+  text-underline-offset: 3px;
+}
+
+.drawer-search-result__crumb,
+.drawer-search-result__description,
+.drawer-search-result__reason {
+  font-family: "RuneScape Plain 11", sans-serif;
+  font-size: 16px;
+  line-height: 18px;
+}
+
+.drawer-search-result__crumb {
+  color: var(--color-text-muted);
+}
+
+.drawer-search-result__description {
+  color: var(--color-text-body);
+}
+
+/* Listed so the player learns it exists and what it needs; not itself a button. */
+.drawer-search-result.is-unavailable {
+  cursor: default;
+}
+
+.drawer-search-result.is-unavailable .drawer-search-result__title {
+  color: var(--color-text-muted);
+}
+
+.drawer-search-result__reason {
+  color: var(--color-warning);
+}
+
+/* The way to the prerequisite: a link-sized button, the row's only action. */
+.drawer-search-result__route {
+  margin: 2px 0 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--color-secondary);
+  font-family: "RuneScape Plain 12", sans-serif;
+  font-size: 16px;
+  line-height: 20px;
+  text-align: left;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, currentColor 45%, transparent);
+  text-underline-offset: 3px;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.drawer-search-result__route:hover {
+  color: var(--color-accent-text);
+  text-decoration-color: currentColor;
+}
+
+/* Sets the matches that cannot be used here apart from those that can. */
+.drawer-search-results__divider {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 10px 8px 4px;
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.drawer-search-results__divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--color-border);
+}
+
+.drawer-search-results__more {
+  display: block;
+  width: 100%;
+  margin: 8px 0 0;
+  padding: 10px 8px;
+  border: 1px solid var(--color-border);
+  border-radius: 2px;
+  background: var(--color-surface);
+  color: var(--color-secondary);
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 14px;
+  line-height: 16px;
+  text-shadow: 1px 1px 0 #000;
+  cursor: pointer;
+}
+
+.drawer-search-results__more:hover {
+  background: var(--color-surface-hover);
+  border-color: var(--color-primary-structure);
+  color: var(--color-accent-text);
+}
+
+/* The header magnifier (launcherIcons' Search glyph): crisp rects, recolored with the text. */
+.drawer-search-toggle .launcher-icon {
+  display: block;
+  overflow: visible;
+  shape-rendering: crispEdges;
+}
+
+.drawer-search-toggle.is-open {
+  color: var(--color-primary);
+}
+
+/* After a result took the player here: back to that search, where they left it. */
+.drawer-search-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  padding: 2px 0;
+  border: none;
+  background: transparent;
+  color: var(--color-secondary);
+  font-family: "RuneScape Plain 12", sans-serif;
+  font-size: 16px;
+  line-height: 20px;
+  text-align: left;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.drawer-search-back:hover {
+  color: var(--color-accent-text);
+}
+
+.drawer-search + .drawer-search-back {
+  margin-top: 6px;
+}
+
+/* Finger-sized, as MobileSheet.css makes the drawers' other controls. */
+:root[data-mobile-ui] .drawer-search__input {
+  min-height: 42px;
+}
+
+:root[data-mobile-ui] .drawer-search__clear {
+  width: 42px;
+  height: 42px;
+  right: 0;
+}
+
+:root[data-mobile-ui] .drawer-search-result,
+:root[data-mobile-ui] .drawer-search-results__more {
+  min-height: 44px;
+  touch-action: manipulation;
+}
+
+:root[data-mobile-ui] .drawer-search-result {
+  padding-block: 10px;
+}
+
+:root[data-mobile-ui] :is(.drawer-search-back, .drawer-search-result__route) {
+  min-height: 40px;
+  touch-action: manipulation;
+}
+
+/* A phone on its side has ~390px of height to share with the header and the keyboard. */
+@media (max-height: 540px) {
+  :root[data-mobile-ui] .drawer-search-bar {
+    padding-block: 4px;
+  }
+}

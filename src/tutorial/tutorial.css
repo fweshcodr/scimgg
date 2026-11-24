@@ -1,0 +1,718 @@
+/**
+ * biome-ignore-all lint/complexity/noImportantStyles: Driver.js writes its
+ * popover geometry and theme as inline styles on the elements it owns. Inline
+ * styles outrank every selector we can write, so every override in this file
+ * is only reachable with !important. Dropping it does not simplify the
+ * cascade, it silently un-skins the tutorial.
+ */
+.driver-overlay {
+  z-index: 1200 !important;
+}
+
+/* A modal, menu or popover the user opened from a tour step is up: the tour steps aside until it
+   closes (SpotlightRunner, TOUR_SUSPENDING_LAYER). */
+.tutorial-suspended .driver-overlay,
+.tutorial-suspended .driver-popover {
+  display: none !important;
+}
+
+.osrs-tutorial-popover.driver-popover * {
+  /* Override Driver.js font reset on all children so global classes like .kbd work.
+   *
+   * This is why every font-family in this file carries !important: a plain
+   * declaration on any descendant loses to this one and the element silently
+   * falls back to the OS system stack. */
+  font-family: inherit !important;
+}
+
+.osrs-tutorial-popover.driver-popover {
+  background: var(--color-bg-elevated) !important;
+  border: 1px solid var(--modal-card-border) !important;
+  border-radius: var(--modal-radius) !important;
+  color: var(--color-text-body) !important;
+  padding: 14px 18px !important;
+  min-width: 300px !important;
+  max-width: 420px !important;
+  /* The card itself must NOT scroll. Any non-visible overflow here forces
+   * overflow-x to compute as `auto` (CSS spec), which turns the absolutely-
+   * positioned Driver.js arrow — it sits just outside the card edge — into a
+   * phantom horizontal scrollbar (and clips the arrow). Height is bounded by
+   * scrolling the description instead (see .driver-popover-description). */
+  overflow: visible !important;
+  /* Shadow lives on the ::before below, NOT here — and driver.css's own
+   * `0 1px 10px #0006` has to be canceled explicitly, not merely left
+   * undeclared. An outer box-shadow on the element painting the background
+   * behind text vetoes LCD/subpixel AA for the card's entire text subtree:
+   * title, body and the step drawer all drop to blurry grayscale.
+   * See "LCD text" in docs/agent-reference.md. */
+  box-shadow: none !important;
+  z-index: 1201 !important;
+  animation: osrs-popover-in 0.22s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.osrs-tutorial-popover.driver-popover::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: var(--modal-radius);
+  box-shadow: var(--modal-card-shadow);
+  pointer-events: none;
+}
+
+.osrs-tutorial-popover .driver-popover-arrow {
+  border: 7px solid transparent !important;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.55)) !important;
+}
+.osrs-tutorial-popover .driver-popover-arrow-side-left {
+  border-left-color: var(--color-bg-elevated) !important;
+}
+.osrs-tutorial-popover .driver-popover-arrow-side-right {
+  border-right-color: var(--color-bg-elevated) !important;
+}
+.osrs-tutorial-popover .driver-popover-arrow-side-top {
+  border-top-color: var(--color-bg-elevated) !important;
+}
+.osrs-tutorial-popover .driver-popover-arrow-side-bottom {
+  border-bottom-color: var(--color-bg-elevated) !important;
+}
+
+.osrs-tutorial-popover .driver-popover-title {
+  display: block !important;
+  font-family: "RuneScape Bold 12", sans-serif !important;
+  font-size: 22px !important;
+  line-height: 1.15 !important;
+  color: var(--color-text-body) !important;
+  text-shadow: 1px 1px 0 #000 !important;
+  letter-spacing: 0.01em !important;
+  font-weight: normal !important;
+  background: none !important;
+  border: none !important;
+  margin: 0 28px 8px 0 !important;
+  padding: 0 !important;
+}
+
+.osrs-tutorial-popover .driver-popover-description {
+  font-family: "RuneScape Plain 12", sans-serif !important;
+  font-size: 15px !important;
+  color: var(--color-text-body) !important;
+  line-height: 1.4 !important;
+  text-shadow: 1px 1px 0 #000 !important;
+  /* The description scrolls, and a scrolling box gets its own compositing layer
+   * that does NOT inherit the card's fill for opacity purposes. Repainting the
+   * card's own color is a visual no-op that keeps this text subpixel. */
+  background: var(--color-bg-elevated) !important;
+  margin: 0 0 12px !important;
+  padding: 0 !important;
+  max-height: min(60vh, 460px) !important;
+  /* biome-ignore lint/suspicious/noDuplicateProperties: deliberate progressive-enhancement pair. Browsers without dvh keep the vh value; the cascade is the fallback mechanism. */
+  max-height: min(60dvh, 460px) !important;
+  overflow: hidden auto !important;
+}
+
+.osrs-tutorial-popover .driver-popover-description b,
+.osrs-tutorial-popover .driver-popover-description strong {
+  color: var(--color-secondary) !important;
+  font-family: "RuneScape Bold 12", sans-serif !important;
+  font-weight: normal !important;
+  text-shadow: 1px 1px 0 #000 !important;
+}
+
+/* Mirror global .kbd from App.css — needed because Driver.js uses `all: unset` on elements */
+.osrs-tutorial-popover .kbd {
+  display: inline-block !important;
+  padding: 2px 6px !important;
+  margin: 0 2px !important;
+  font-family: "RuneScape Plain 11", sans-serif !important;
+  /* 16px = native pixel grid of the TTF (unitsPerEm=16) — crisp key names. */
+  font-size: 16px !important;
+  color: var(--color-text-body) !important;
+  background: var(--color-surface) !important;
+  border: 1px solid var(--color-primary-structure) !important;
+  border-radius: 2px !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
+  line-height: 1 !important;
+  vertical-align: baseline !important;
+  white-space: nowrap !important;
+}
+
+.osrs-tutorial-popover .tutorial-action-indicator .kbd {
+  color: inherit !important;
+  border-color: var(--color-border) !important;
+}
+
+.osrs-tutorial-popover .driver-popover-footer {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  background: var(--color-surface) !important;
+  border-top: 1px solid var(--color-border) !important;
+  margin: 0 -18px -14px -18px !important;
+  padding: 10px 18px !important;
+  border-radius: 0 0 2px 2px !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03) !important;
+  /* Positioning context for .tutorial-stepnav-panel: the footer's padding box
+   * is exactly the card's full width, which is what lets the panel open as a
+   * flush drawer instead of a narrow menu hanging off the chip. */
+  position: relative !important;
+}
+
+/* ---- Progress ----
+ * The native readout is replaced by .tutorial-stepnav-trigger, which carries
+ * the same chip treatment plus the jump-to-step affordance. Driver keeps
+ * rewriting this node's text every step, so it is hidden rather than reused. */
+.osrs-tutorial-popover .driver-popover-progress-text.tutorial-stepnav-native {
+  display: none !important;
+}
+
+.osrs-tutorial-popover .driver-popover-progress-text {
+  font-family: "RuneScape Bold 12", sans-serif !important;
+  font-size: 13px !important;
+  color: var(--color-secondary) !important;
+  background: var(--color-surface-inset) !important;
+  padding: 4px 8px !important;
+  border-radius: 2px !important;
+  border: 1px solid var(--color-border) !important;
+  line-height: 1 !important;
+}
+
+/* Step-nav classes are built as plain DOM by stepNavPanel.ts and injected into
+ * Driver's footer, so nothing in JSX matches them. */
+/* driver.css themes EVERY button inside its footer for its default WHITE
+ * popover: `text-shadow: 1px 1px 0 #fff`, a `#fff` fill and a `#f7f7f7`
+ * :hover/:focus. The drawer is anchored in that footer, so the chip and every
+ * row match those selectors too and the theme has to be canceled per state,
+ * not merely restyled. The :focus rules below cancel driver's near-white
+ * :focus fill on whatever button a click leaves focused.
+ */
+.osrs-tutorial-popover .tutorial-stepnav-trigger:focus {
+  background: var(--color-surface);
+}
+
+.osrs-tutorial-popover .tutorial-stepnav-item-btn:focus {
+  background: transparent;
+}
+
+.osrs-tutorial-popover .tutorial-stepnav {
+  display: inline-flex;
+}
+
+.osrs-tutorial-popover .tutorial-stepnav-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 9px 7px 11px;
+  font-family: "RuneScape Bold 12", sans-serif !important;
+  font-size: 14px;
+  line-height: 1;
+  text-shadow: 1px 1px 0 #000;
+  color: var(--color-secondary);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 2px;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease,
+    transform 0.1s ease;
+}
+
+.osrs-tutorial-popover .tutorial-stepnav-trigger:hover {
+  background: var(--color-surface-hover);
+  border-color: var(--color-primary-structure);
+  color: var(--color-text-body);
+}
+
+.osrs-tutorial-popover .tutorial-stepnav-trigger:active {
+  background: var(--color-surface-inset);
+  transform: translateY(1px);
+  box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.4);
+}
+
+/* Open is the one persistent state on this control, so it is the only one that
+ * earns --color-primary. The :hover twin stops hover repainting it. */
+.osrs-tutorial-popover .tutorial-stepnav-trigger[aria-expanded="true"],
+.osrs-tutorial-popover .tutorial-stepnav-trigger[aria-expanded="true"]:hover {
+  color: var(--color-accent-text);
+  border-color: var(--color-primary);
+  background: var(--color-surface-inset);
+}
+
+.osrs-tutorial-popover .tutorial-stepnav-trigger[aria-expanded="true"] .tutorial-stepnav-current {
+  color: var(--color-accent-text);
+}
+
+.osrs-tutorial-popover .tutorial-stepnav-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.osrs-tutorial-popover .tutorial-stepnav-current {
+  color: var(--color-text-body);
+  transition: color 0.15s ease;
+}
+
+.osrs-tutorial-popover .tutorial-stepnav-sep,
+.osrs-tutorial-popover .tutorial-stepnav-total {
+  color: var(--color-text-muted);
+}
+
+.osrs-tutorial-popover .tutorial-stepnav-chevron {
+  /* `display: block` kills the inline baseline drop that would leave the chevron
+   * riding above the numerals. */
+  display: block;
+  flex: none;
+  width: 12px;
+  height: 8px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 0.15s ease;
+}
+
+.osrs-tutorial-popover .tutorial-stepnav.open .tutorial-stepnav-chevron {
+  transform: rotate(180deg);
+}
+
+/* ---- Panel ----
+ * Anchored to the FOOTER, not to the chip: the footer's padding box is exactly
+ * the card's inner width, so the panel opens flush across it and stays aligned
+ * to the card. Hanging it off the chip made it a narrow floating menu that left
+ * slivers of body text showing along its right edge.
+ *
+ * It carries its own border and depth in BOTH orientations because a long tour
+ * can extend past the card body, where a borderless band would end in mid-air. */
+.osrs-tutorial-popover .tutorial-stepnav-panel {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  right: 0;
+  /* Above .driver-popover-close-btn's z-index: 10, or the card's × paints
+   * through the middle of the open list. */
+  z-index: 12;
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--modal-card-border);
+  border-bottom: none;
+  border-radius: var(--modal-radius) var(--modal-radius) 0 0;
+  /* overflow stays visible so the depth shadow can live on an inset ::before
+   * instead of an outer box-shadow, which would drop the whole list to
+   * grayscale antialiasing. See docs/agent-reference.md, "LCD text". */
+  overflow: visible;
+  animation: osrs-stepnav-in 0.16s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* The closed state is the `hidden` attribute, which only keeps working while
+ * nothing declares `display` on this element — an author `display` beats the
+ * UA's [hidden] rule. Laying the head and list out with `display: flex` here
+ * would leave the drawer permanently open. */
+.osrs-tutorial-popover .tutorial-stepnav-panel[hidden] {
+  display: none;
+}
+
+.osrs-tutorial-popover .tutorial-stepnav-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: var(--modal-card-shadow);
+  pointer-events: none;
+}
+
+.osrs-tutorial-popover .tutorial-stepnav.flipped .tutorial-stepnav-panel {
+  bottom: auto;
+  top: 100%;
+  border-bottom: 1px solid var(--modal-card-border);
+  border-top: none;
+  border-radius: 0 0 var(--modal-radius) var(--modal-radius);
+}
+
+/* The footer sets text-align: right; every text block in here must reclaim it
+ * or the header floats away from the rows it labels. */
+.osrs-tutorial-popover .tutorial-stepnav-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0;
+  padding: 9px 16px;
+  font-family: "RuneScape Bold 12", sans-serif !important;
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  text-align: left;
+  color: var(--color-secondary);
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  border-radius: var(--modal-radius) var(--modal-radius) 0 0;
+}
+
+.osrs-tutorial-popover .tutorial-stepnav-head-count {
+  color: var(--color-text-muted);
+}
+
+.osrs-tutorial-popover .tutorial-stepnav.flipped .tutorial-stepnav-head {
+  border-radius: 0;
+}
+
+/* A scrolling box does not inherit an ancestor's fill for subpixel-AA
+ * purposes; it needs its own opaque background.
+ *
+ * Keep the row pitch and max-height in step when row padding or type size
+ * changes, so the list ends on a whole row instead of a half-row under the
+ * footer. */
+.osrs-tutorial-popover .tutorial-stepnav-list {
+  --stepnav-row: 34px;
+  --stepnav-gap: 2px;
+  /* Eight rows, not ten: at ten the viewport clamp binds first on a laptop and
+   * puts the chopped row back. */
+  --stepnav-rows-visible: 8;
+  list-style: none;
+  margin: 0;
+  padding: 6px 0 0;
+  display: grid;
+  gap: var(--stepnav-gap);
+  /* content-box height: the 6px top padding sits outside it, so adding the
+   * padding here would leave a 6px sliver of the next row showing. */
+  max-height: min(
+    calc(var(--stepnav-rows-visible) * var(--stepnav-row) + (var(--stepnav-rows-visible) - 1) * var(--stepnav-gap)),
+    42vh
+  );
+  /* biome-ignore lint/suspicious/noDuplicateProperties: deliberate progressive-enhancement pair. Browsers without dvh keep the vh value; the cascade is the fallback mechanism. */
+  max-height: min(
+    calc(var(--stepnav-rows-visible) * var(--stepnav-row) + (var(--stepnav-rows-visible) - 1) * var(--stepnav-gap)),
+    42dvh
+  );
+  overflow: hidden auto;
+  overscroll-behavior: contain;
+  background: var(--color-bg-elevated);
+  /* A non-`auto` scrollbar-color is what forces Chrome off its overlay
+   * scrollbar (invisible until you already scroll, which is the one moment the
+   * affordance is not needed) and onto a classic one that reserves width. The
+   * ::-webkit-scrollbar pseudo-elements are ignored once overlay scrollbars are
+   * the platform default, so they are not a substitute. */
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-primary-structure) var(--color-surface-inset);
+}
+
+.osrs-tutorial-popover .tutorial-stepnav-item {
+  list-style: none;
+}
+
+.osrs-tutorial-popover .tutorial-stepnav-item-btn {
+  display: grid;
+  grid-template-columns: 22px 1fr auto;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 6px 16px;
+  font-family: "RuneScape Plain 12", sans-serif !important;
+  font-size: 13px;
+  line-height: 1.3;
+  text-align: left;
+  /* Cancels driver.css's white light-theme halo. */
+  text-shadow: none;
+  /* Every row is a live destination, so the resting color is the palette's
+   * resting-interactive role, not one of its unavailable-state tokens. */
+  color: var(--color-secondary);
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+}
+
+.osrs-tutorial-popover .tutorial-stepnav-item-btn:hover {
+  outline: none;
+  background: var(--color-surface-hover);
+  color: var(--color-text-body);
+}
+
+.osrs-tutorial-popover .tutorial-stepnav-item.pending .tutorial-stepnav-item-btn {
+  color: var(--color-text-muted);
+}
+
+.osrs-tutorial-popover .tutorial-stepnav-item.active .tutorial-stepnav-item-btn,
+.osrs-tutorial-popover .tutorial-stepnav-item.active .tutorial-stepnav-item-btn:hover {
+  color: var(--color-text-body);
+  background: color-mix(in srgb, var(--color-secondary) 8%, var(--color-bg-elevated));
+}
+
+.osrs-tutorial-popover .tutorial-stepnav-marker {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  box-sizing: border-box;
+  font-family: "RuneScape Bold 12", sans-serif !important;
+  font-size: 12px;
+  line-height: 1;
+  color: var(--color-text-muted);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+}
+
+.osrs-tutorial-popover .tutorial-stepnav-marker svg {
+  width: 12px;
+  height: 12px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.osrs-tutorial-popover .tutorial-stepnav-item.active .tutorial-stepnav-marker {
+  background: color-mix(in srgb, var(--color-secondary) 18%, var(--color-surface));
+  border-color: var(--color-secondary);
+  color: var(--color-secondary);
+}
+
+.osrs-tutorial-popover .tutorial-stepnav-item.done .tutorial-stepnav-marker {
+  background: var(--color-surface-inset);
+  border-color: var(--color-border);
+  /* Held back off full --color-success: at full strength a column of checks
+   * beats the current row on the squint test. */
+  color: color-mix(in srgb, var(--color-success) 60%, var(--color-text-muted));
+}
+
+.osrs-tutorial-popover .tutorial-stepnav-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.osrs-tutorial-popover .tutorial-stepnav-item.active .tutorial-stepnav-label {
+  font-family: "RuneScape Bold 12", sans-serif !important;
+}
+
+.osrs-tutorial-popover .tutorial-stepnav-tag {
+  font-family: "RuneScape Bold 12", sans-serif !important;
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--color-secondary);
+}
+
+/* Opacity-only, matching osrs-popover-in: a running transform animation is an
+ * LCD-AA veto, and this one runs across the whole step list. */
+@keyframes osrs-stepnav-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.osrs-tutorial-popover .driver-popover-navigation-btns {
+  display: flex !important;
+  gap: 10px !important;
+  align-items: center !important;
+}
+
+.osrs-tutorial-popover .driver-popover-prev-btn,
+.osrs-tutorial-popover .driver-popover-next-btn {
+  font-family: "RuneScape Bold 12", sans-serif !important;
+  font-size: 14px !important;
+  text-shadow: 1px 1px 0 #000 !important;
+  cursor: pointer !important;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease !important;
+  border-radius: 2px !important;
+  padding: 7px 14px !important;
+  line-height: 1 !important;
+  height: auto !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.osrs-tutorial-popover .driver-popover-prev-btn {
+  background: var(--color-surface) !important;
+  border: 1px solid var(--color-border) !important;
+  color: var(--color-secondary) !important;
+}
+.osrs-tutorial-popover .driver-popover-prev-btn:hover {
+  background: var(--color-surface-hover) !important;
+  border-color: var(--color-primary-structure) !important;
+  color: var(--color-text-body) !important;
+}
+.osrs-tutorial-popover .driver-popover-prev-btn:active {
+  background: var(--color-surface-inset) !important;
+  transform: translateY(1px) !important;
+}
+
+.osrs-tutorial-popover .driver-popover-next-btn {
+  background: color-mix(in srgb, var(--color-primary) 6%, transparent) !important;
+  border: 1px solid var(--color-secondary) !important;
+  color: var(--color-accent-text) !important;
+  min-width: 80px !important;
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--color-accent-text) 4%, transparent) !important;
+}
+.osrs-tutorial-popover .driver-popover-next-btn:hover {
+  background: var(--color-surface-hover) !important;
+  border-color: var(--color-primary) !important;
+  color: var(--color-primary-hover) !important;
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--color-accent-text) 6%, transparent) !important;
+}
+.osrs-tutorial-popover .driver-popover-next-btn:active {
+  background: var(--color-surface-inset) !important;
+  transform: translateY(1px) !important;
+  box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.4) !important;
+}
+
+.osrs-tutorial-popover .driver-popover-btn-disabled,
+.osrs-tutorial-popover .driver-popover-btn-disabled:hover,
+.osrs-tutorial-popover .driver-popover-btn-disabled:active {
+  background: var(--color-surface) !important;
+  border-color: var(--color-border) !important;
+  color: var(--color-text-dim) !important;
+  cursor: not-allowed !important;
+  box-shadow: none !important;
+  transform: none !important;
+  opacity: 0.5 !important;
+}
+
+.osrs-tutorial-popover .driver-popover-close-btn {
+  color: var(--color-text-muted) !important;
+  font-family: "RuneScape Bold 12", sans-serif !important;
+  font-size: 24px !important;
+  cursor: pointer !important;
+  position: absolute !important;
+  top: 6px !important;
+  right: 6px !important;
+  z-index: 10 !important;
+  padding: 4px 8px !important;
+  line-height: 1 !important;
+  text-shadow: 1px 1px 0 #000 !important;
+  transition: color 0.15s ease !important;
+  width: auto !important;
+  height: auto !important;
+  background: transparent !important;
+  border: none !important;
+}
+.osrs-tutorial-popover .driver-popover-close-btn:hover {
+  color: var(--color-text-body) !important;
+  opacity: 1 !important;
+}
+.osrs-tutorial-popover .driver-popover-close-btn:active {
+  transform: translateY(1px) !important;
+}
+
+.osrs-tutorial-popover .tutorial-action-indicator {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  font:
+    normal 14px / 1.5 "RuneScape Bold 12",
+    sans-serif !important;
+  text-shadow: 1px 1px 0 #000 !important;
+  margin: 10px -18px 0 -18px;
+  padding: 10px 18px;
+  /* Opaque, not rgba(): a translucent fill behind text is an LCD-AA veto, and
+   * this strip carries the step's instruction. Same color it resolved to over
+   * the card, so it is a visual no-op. */
+  background: color-mix(in srgb, #000 25%, var(--color-bg-elevated));
+  border-top: 1px solid var(--color-border);
+}
+
+.osrs-tutorial-popover .tutorial-action-indicator-text {
+  min-width: 0;
+}
+
+.osrs-tutorial-popover .tutorial-action-indicator.waiting {
+  color: var(--color-secondary);
+}
+
+.osrs-tutorial-popover .tutorial-action-indicator.completed {
+  color: var(--color-success);
+  background: color-mix(in srgb, var(--color-success) 14%, color-mix(in srgb, #000 25%, var(--color-bg-elevated)));
+}
+
+.osrs-tutorial-popover .tutorial-skip-action {
+  flex: none;
+  margin: 0;
+  padding: 0;
+  font-family: "RuneScape Plain 12", sans-serif !important;
+  font-size: 13px;
+  line-height: inherit;
+  color: var(--color-text-dim);
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-decoration: underline;
+  transition: color 0.15s ease;
+}
+
+.osrs-tutorial-popover .tutorial-skip-action:hover {
+  color: var(--color-secondary);
+}
+
+.driver-active-element {
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+[data-tutorial="game-panel"].driver-active-element {
+  outline: none !important;
+}
+
+/* IMPORTANT: opacity-only. transform/translate/scale here breaks
+ * Driver.js positioning because getBoundingClientRect() returns the
+ * mid-animation rect. See tutorial.test.ts.
+ */
+@keyframes osrs-popover-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 720px) {
+  .osrs-tutorial-popover.driver-popover {
+    min-width: 280px !important;
+    max-width: 92vw !important;
+    padding: 12px 16px !important;
+  }
+  .osrs-tutorial-popover .driver-popover-title {
+    font-size: 18px !important;
+  }
+  .osrs-tutorial-popover .driver-popover-description {
+    font-size: 14px !important;
+  }
+  .osrs-tutorial-popover .driver-popover-footer {
+    margin: 0 -16px -12px -16px !important;
+    padding: 10px 16px !important;
+  }
+  .osrs-tutorial-popover .tutorial-stepnav-list {
+    max-height: 46vh;
+    /* biome-ignore lint/suspicious/noDuplicateProperties: deliberate progressive-enhancement pair. Browsers without dvh keep the vh value; the cascade is the fallback mechanism. */
+    max-height: 46dvh;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .osrs-tutorial-popover.driver-popover,
+  .osrs-tutorial-popover .tutorial-stepnav-panel {
+    animation: none !important;
+  }
+  .osrs-tutorial-popover .tutorial-stepnav-chevron,
+  .osrs-tutorial-popover .tutorial-stepnav-trigger,
+  .osrs-tutorial-popover .tutorial-stepnav-item-btn,
+  .osrs-tutorial-popover .tutorial-skip-action {
+    transition: none;
+  }
+}

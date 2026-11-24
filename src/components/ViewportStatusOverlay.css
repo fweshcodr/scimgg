@@ -1,0 +1,84 @@
+/* The 3D view's status layer. Everything inside its border is the shared SystemNotice
+   (ui/SystemNotice.css); this file owns only where that notice goes.
+
+   Grid places this over the VISIBLE scene rectangle (Grid's `visibleSceneRect`), not the canvas
+   box: the canvas is shifted sideways to keep the player centered behind an open drawer, and a
+   notice belongs in the UI area the player can see. That rectangle also carries no transform
+   animation or `will-change`, both of which are LCD-text vetoes over text that has to be read
+   (docs/agent-reference.md, LCD text).
+
+   z-index sits in Grid's layer ladder (Grid.tsx), above its HUD layer at 20 and below the Alt
+   overlap guide at 25. It has to clear 20: that one container holds every readout, and in the
+   Mobile layouts the side panel covers the middle of the scene, so a lower notice was simply
+   invisible on iPad and iPhone portrait, which is the state it exists to explain. Tooltips and
+   context menus portal out of here entirely and keep their own stacking. */
+.viewport-status {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 24;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-inline: max(16px, var(--safe-left, 0px)) max(16px, var(--safe-right, 0px));
+  padding-block: max(16px, var(--safe-top, 0px)) max(16px, var(--safe-bottom, 0px));
+  /* The layer itself is a hole: everything it does not paint stays the scene's. The opaque
+     notices inside it take their own presses (below), because a press that passed through
+     opaque text would land on an inventory slot the player cannot see. */
+  pointer-events: none;
+}
+
+/* Over a dead scene there is no panel to sit on, so the notice is the raised thing: the opaque
+   chrome fill the launcher row and the replay bar use, rather than the inset well the browser
+   support screen sits in. */
+.viewport-status .sys-notice {
+  --notice-fill: var(--color-bg-solid);
+  pointer-events: auto;
+}
+
+.viewport-status__notice {
+  width: 100%;
+  max-width: 400px;
+}
+
+/* A box taller than it is wide: Grid measures its rectangle and says so, rather than asking the
+   device. A centered card leaves most of a tall viewport empty and lands squarely on the Mobile
+   side panel, so the notice becomes a banner along the top edge, clear of the safe area. */
+.viewport-status--portrait {
+  align-items: flex-start;
+  padding-inline: max(12px, var(--safe-left, 0px)) max(12px, var(--safe-right, 0px));
+  padding-block-start: calc(12px + var(--safe-top, 0px));
+}
+
+.viewport-status--portrait .viewport-status__notice {
+  max-width: 560px;
+}
+
+/* The Mobile layout parks its restart and full-screen stones in the top-left corner, fixed at
+   z 67 (MobileMenu.css), outside this frame's stacking and therefore above every layer in it.
+   The banner goes beside that column rather than under it. On a tablet it already clears the
+   column by being centered; this only bites on a phone, where the banner spans the full width.
+   96px is the column at the frame scales the Mobile layout uses.
+
+   Driven by a class Grid sets from `clientLayoutMode`, not by `:has(.osm-menu)`: the app supports
+   iOS 15.0, where `:has()` does not exist and the reservation would silently not apply on the one
+   platform that needs it. MobileRestartStone mounts with the Mobile frame itself, so the layout
+   mode is the same answer. */
+.viewport-status--portrait.viewport-status--corner {
+  padding-inline-start: calc(96px + max(12px, var(--safe-left, 0px)));
+}
+
+/* A finger's target, not a cursor's: any touch-first device, and every portrait banner, which is
+   the layout a phone or tablet gets. */
+@media (pointer: coarse) {
+  .viewport-status__reload {
+    min-height: 44px;
+  }
+}
+
+.viewport-status--portrait .viewport-status__reload {
+  min-height: 44px;
+}

@@ -1,0 +1,744 @@
+{
+  "about": "What each draw of the per-draw GL state fixture in PicoGLRenderer.test.ts reads (decoded fields, long values as digests, each draw as its change from the one before), and baselineCalls: reference GL call counts for the fixture, which the renderer must not exceed, with strictly fewer VAO binds and depth masks. The regenerate command re-pins the draws and keeps baselineCalls; UPDATE_DRAW_STATE_GOLDEN=baseline re-pins both.",
+  "regenerate": "UPDATE_DRAW_STATE_GOLDEN=draws npx vitest run src/render/backends/picogl/PicoGLRenderer.test.ts -t \"per-draw GL state\"",
+  "baselineCalls": {
+    "attachShader": 4,
+    "bindBuffer": 148,
+    "bindVertexArray": 220,
+    "blendFuncSeparate": 4,
+    "bufferData": 96,
+    "bufferSubData": 62,
+    "clear": 4,
+    "clearColor": 1,
+    "clearDepth": 1,
+    "colorMask": 8,
+    "compileShader": 4,
+    "createBuffer": 86,
+    "createProgram": 2,
+    "createShader": 4,
+    "createVertexArray": 24,
+    "cullFace": 13,
+    "deleteBuffer": 8,
+    "deleteShader": 4,
+    "deleteVertexArray": 2,
+    "depthFunc": 5,
+    "depthMask": 64,
+    "disable": 13,
+    "disableVertexAttribArray": 92,
+    "drawArrays": 66,
+    "drawElements": 20,
+    "enable": 22,
+    "enableVertexAttribArray": 82,
+    "frontFace": 5,
+    "getError": 4,
+    "getExtension": 16,
+    "getParameter": 3,
+    "getProgramParameter": 6,
+    "getUniformLocation": 28,
+    "linkProgram": 2,
+    "shaderSource": 4,
+    "uniform1f": 136,
+    "uniform4f": 4,
+    "uniform4fv": 2,
+    "uniformMatrix4fv": 86,
+    "useProgram": 17,
+    "vertexAttrib1f": 46,
+    "vertexAttrib2f": 46,
+    "vertexAttribPointer": 82,
+    "viewport": 1
+  },
+  "draws": [
+    {
+      "call": "\"drawArrays\"",
+      "mode": "4",
+      "first": "0",
+      "count": "3",
+      "program": "2",
+      "uniforms.u_brightness": "[0.6]",
+      "uniforms.u_colorBanding": "[255]",
+      "uniforms.u_contrast": "[1]",
+      "uniforms.u_currentTick": "[0]",
+      "uniforms.u_discardAlpha": "[0]",
+      "uniforms.u_hasTextures": "[0]",
+      "uniforms.u_priorityStepNdc": "[5e-9]",
+      "uniforms.u_saturation": "[1]",
+      "uniforms.u_textureAnimations[0]": "sha256:983da4945a3343cc",
+      "uniforms.u_textureAnimTime": "[0]",
+      "uniforms.u_viewProjMatrix": "sha256:6efb3e39eeba912b",
+      "uniforms.u_zBias": "[0]",
+      "state.caps": "[2884,2929]",
+      "state.colorMask": "[true,true,true,true]",
+      "state.cullFace": "1029",
+      "state.depthFunc": "516",
+      "state.depthMask": "true",
+      "attributes.0": "[24,35,46,57,68,79,-7,4,15]",
+      "attributes.1": "{\"constant\":[0,0,0,1]}",
+      "attributes.2": "{\"constant\":[0,0,0,1]}",
+      "attributes.3": "{\"constant\":[0,0,0,1]}",
+      "attributes.4": "[727,837,947]",
+      "attributes.5": "{\"constant\":[-1000,0,0,1]}",
+      "attributes.6": "{\"constant\":[1,0,0,1]}",
+      "attributes.7": "{\"constant\":[0,0,0,1]}"
+    },
+    {
+      "uniforms.u_viewProjMatrix": "sha256:f6bf35c9fd4c1592"
+    },
+    {
+      "count": "6",
+      "uniforms.u_viewProjMatrix": "sha256:bb2b7c8a9a6dd91e",
+      "attributes.0": "sha256:d9eed2a185e6b176",
+      "attributes.4": "[497,607,717,827,937,77]",
+      "attributes.7": "[75,-11,0,11,22,33]"
+    },
+    {
+      "count": "3",
+      "uniforms.u_viewProjMatrix": "sha256:37f0d25612e2a11d",
+      "attributes.0": "[52,63,74,-12,-1,10,21,32,43]",
+      "attributes.4": "[37,147,257]",
+      "attributes.7": "[29,40,51]"
+    },
+    {
+      "uniforms.u_viewProjMatrix": "sha256:ddb0b8834e4bf793"
+    },
+    {
+      "uniforms.u_viewProjMatrix": "sha256:7b541dc195517fc3",
+      "state.caps": "[2929]"
+    },
+    {
+      "uniforms.u_viewProjMatrix": "sha256:e60296f350a14c5d",
+      "state.caps": "[2884,2929]",
+      "state.cullFace": "1028"
+    },
+    {
+      "count": "6",
+      "uniforms.u_viewProjMatrix": "sha256:625e718208168735",
+      "state.cullFace": "1029",
+      "attributes.0": "sha256:e2f9e4c73083ca16",
+      "attributes.4": "[607,717,827,937,77,187]",
+      "attributes.6": "[1,1,1,1,1,1]",
+      "attributes.7": "[-11,0,11,22,33,44]"
+    },
+    {
+      "uniforms.u_viewProjMatrix": "sha256:b56f609e8df578e5",
+      "state.depthMask": "false",
+      "attributes.0": "sha256:99ad1b17bb5a97f8",
+      "attributes.4": "[-3,107,217,327,437,547]",
+      "attributes.7": "[25,36,47,58,69,80]"
+    },
+    {
+      "state.colorMask": "[false,false,false,false]",
+      "state.depthMask": "true"
+    },
+    {
+      "count": "3",
+      "uniforms.u_discardAlpha": "[1]",
+      "uniforms.u_viewProjMatrix": "sha256:2936a025db32ac6e",
+      "state.caps": "[2884,2929,3042]",
+      "state.colorMask": "[true,true,true,true]",
+      "state.depthMask": "false",
+      "attributes.0": "[6,17,28,39,50,61,72,83,-3]",
+      "attributes.4": "[547,657,767]",
+      "attributes.6": "{\"constant\":[1,0,0,1]}",
+      "attributes.7": "[80,-6,5]",
+      "state.blendFunc": "[770,771,1,1]"
+    },
+    {
+      "uniforms.u_viewProjMatrix": "sha256:8fc5866e870f5cf7"
+    },
+    {
+      "uniforms.u_viewProjMatrix": "sha256:bb040033e2e83121",
+      "state.depthMask": "true",
+      "attributes.0": "[43,54,65,76,-10,1,12,23,34]",
+      "attributes.4": "[917,57,167]",
+      "attributes.7": "[20,31,42]"
+    },
+    {
+      "call": "\"drawElements\"",
+      "first": null,
+      "count": "6",
+      "uniforms.u_viewProjMatrix": "sha256:82c7e32871552a4c",
+      "state.depthMask": "false",
+      "attributes.0": "sha256:b3464ca18c03dcf6",
+      "attributes.4": "[457,677,567,787,37,897]",
+      "attributes.7": "[71,-4,82,7,29,18]",
+      "type": "5123",
+      "offset": "0"
+    },
+    {
+      "uniforms.u_viewProjMatrix": "sha256:5744c9ce11e929e4",
+      "attributes.0": "sha256:fbd0e5de6e7b45d8",
+      "attributes.4": "[797,687,577,467,357,247]",
+      "attributes.6": "[0.5,0.5,0.5,0.5,0.5,0.5]",
+      "attributes.7": "[8,-3,83,72,61,50]"
+    },
+    {
+      "uniforms.u_viewProjMatrix": "sha256:6d8ca84e8b2476e2",
+      "attributes.0": "sha256:fa7f80ddc65170fd",
+      "attributes.4": "[197,87,947,837,727,617]",
+      "attributes.7": "[45,34,23,12,1,-10]"
+    },
+    {
+      "count": "12",
+      "uniforms.u_viewProjMatrix": "sha256:0a956a2e455d4ac0",
+      "attributes.0": "sha256:4452a9ec72c78dc9",
+      "attributes.4": "[257,147,37,897,787,677,567,457,347,237,127,17]",
+      "attributes.6": "sha256:b67565eb69678c55",
+      "attributes.7": "[51,40,29,18,7,-4,82,71,60,49,38,27]"
+    },
+    {
+      "call": "\"drawArrays\"",
+      "count": "3",
+      "type": null,
+      "offset": null,
+      "uniforms.u_viewProjMatrix": "sha256:7a7c49159da66883",
+      "attributes.0": "[6,17,28,39,50,61,72,83,-3]",
+      "attributes.4": "[547,657,767]",
+      "attributes.6": "{\"constant\":[1,0,0,1]}",
+      "attributes.7": "[80,-6,5]",
+      "first": "0"
+    },
+    {
+      "program": "3",
+      "uniforms.u_viewProjMatrix": "sha256:b8523508c6b2247d",
+      "attributes.0": "[80,-6,5,16,27,38,49,60,71]",
+      "attributes.1": "[20,31,42,53,64,75,-11,0,11]",
+      "attributes.4": "[317,427,537]",
+      "attributes.7": "[57,68,79]",
+      "uniforms.u_animParams": "[1,2,3,4]"
+    },
+    {
+      "call": "\"drawElements\"",
+      "first": null,
+      "count": "6",
+      "program": "2",
+      "uniforms.u_animParams": null,
+      "uniforms.u_viewProjMatrix": "sha256:7fcf89c5bfdf9bf0",
+      "attributes.0": "sha256:b3464ca18c03dcf6",
+      "attributes.1": "{\"constant\":[0,0,0,1]}",
+      "attributes.4": "[457,677,567,787,37,897]",
+      "attributes.7": "[71,-4,82,7,29,18]",
+      "type": "5123",
+      "offset": "0"
+    },
+    {
+      "call": "\"drawArrays\"",
+      "count": "3",
+      "type": null,
+      "offset": null,
+      "uniforms.u_discardAlpha": "[0]",
+      "uniforms.u_viewProjMatrix": "sha256:992213b46bea99af",
+      "state.caps": "[2884,3042]",
+      "attributes.0": "[57,68,79,-7,4,15,26,37,48]",
+      "attributes.4": "[87,197,307]",
+      "attributes.7": "[34,45,56]",
+      "first": "0"
+    },
+    {
+      "uniforms.u_viewProjMatrix": "sha256:6efb3e39eeba912b",
+      "state.caps": "[2884,2929]",
+      "state.depthMask": "true",
+      "attributes.0": "[24,35,46,57,68,79,-7,4,15]",
+      "attributes.4": "[727,837,947]",
+      "attributes.7": "{\"constant\":[0,0,0,1]}"
+    },
+    {
+      "uniforms.u_viewProjMatrix": "sha256:f6bf35c9fd4c1592"
+    },
+    {
+      "count": "6",
+      "uniforms.u_viewProjMatrix": "sha256:bb2b7c8a9a6dd91e",
+      "attributes.0": "sha256:d9eed2a185e6b176",
+      "attributes.4": "[497,607,717,827,937,77]",
+      "attributes.7": "[75,-11,0,11,22,33]"
+    },
+    {
+      "count": "3",
+      "uniforms.u_viewProjMatrix": "sha256:37f0d25612e2a11d",
+      "attributes.0": "[52,63,74,-12,-1,10,21,32,43]",
+      "attributes.4": "[37,147,257]",
+      "attributes.7": "[29,40,51]"
+    },
+    {
+      "uniforms.u_viewProjMatrix": "sha256:ddb0b8834e4bf793"
+    },
+    {
+      "uniforms.u_viewProjMatrix": "sha256:7b541dc195517fc3",
+      "state.caps": "[2929]"
+    },
+    {
+      "uniforms.u_viewProjMatrix": "sha256:e60296f350a14c5d",
+      "state.caps": "[2884,2929]",
+      "state.cullFace": "1028"
+    },
+    {
+      "count": "6",
+      "uniforms.u_viewProjMatrix": "sha256:97acdaa2c337aaa2",
+      "state.cullFace": "1029",
+      "attributes.0": "sha256:9480860cd3c660ed",
+      "attributes.4": "[7,117,227,337,447,557]",
+      "attributes.6": "[1,1,1,1,1,1]",
+      "attributes.7": "[26,37,48,59,70,81]"
+    },
+    {
+      "count": "9",
+      "uniforms.u_viewProjMatrix": "sha256:88699ded33c94bb1",
+      "attributes.0": "sha256:ab0a9ed2b037369a",
+      "attributes.2": "sha256:4a87f09960b02bef",
+      "attributes.4": "[797,907,47,157,267,377,487,597,707]",
+      "attributes.6": "[1,1,1,1,1,1,1,1,1]",
+      "attributes.7": "[8,19,30,41,52,63,74,-12,-1]"
+    },
+    {
+      "count": "6",
+      "uniforms.u_viewProjMatrix": "sha256:2c5a639f762d065c",
+      "state.depthMask": "false",
+      "attributes.0": "sha256:ad1a57caeef56830",
+      "attributes.2": "{\"constant\":[0,0,0,1]}",
+      "attributes.4": "[367,477,587,697,807,917]",
+      "attributes.6": "[1,1,1,1,1,1]",
+      "attributes.7": "[62,73,-13,-2,9,20]"
+    },
+    {
+      "state.colorMask": "[false,false,false,false]",
+      "state.depthMask": "true"
+    },
+    {
+      "count": "3",
+      "uniforms.u_discardAlpha": "[1]",
+      "uniforms.u_viewProjMatrix": "sha256:2936a025db32ac6e",
+      "state.caps": "[2884,2929,3042]",
+      "state.colorMask": "[true,true,true,true]",
+      "state.depthMask": "false",
+      "attributes.0": "[6,17,28,39,50,61,72,83,-3]",
+      "attributes.4": "[547,657,767]",
+      "attributes.6": "{\"constant\":[1,0,0,1]}",
+      "attributes.7": "[80,-6,5]"
+    },
+    {
+      "uniforms.u_viewProjMatrix": "sha256:8fc5866e870f5cf7"
+    },
+    {
+      "uniforms.u_viewProjMatrix": "sha256:bb040033e2e83121",
+      "state.depthMask": "true",
+      "attributes.0": "[43,54,65,76,-10,1,12,23,34]",
+      "attributes.4": "[917,57,167]",
+      "attributes.7": "[20,31,42]"
+    },
+    {
+      "call": "\"drawElements\"",
+      "first": null,
+      "count": "6",
+      "uniforms.u_viewProjMatrix": "sha256:82c7e32871552a4c",
+      "state.depthMask": "false",
+      "attributes.0": "sha256:b3464ca18c03dcf6",
+      "attributes.4": "[457,677,567,787,37,897]",
+      "attributes.7": "[71,-4,82,7,29,18]",
+      "type": "5123",
+      "offset": "0"
+    },
+    {
+      "uniforms.u_viewProjMatrix": "sha256:5744c9ce11e929e4",
+      "attributes.0": "sha256:fa7f80ddc65170fd",
+      "attributes.4": "[197,87,947,837,727,617]",
+      "attributes.6": "[0.5,0.5,0.5,0.5,0.5,0.5]",
+      "attributes.7": "[45,34,23,12,1,-10]"
+    },
+    {
+      "uniforms.u_viewProjMatrix": "sha256:6d8ca84e8b2476e2",
+      "attributes.0": "sha256:9ac06b56f0abe36b",
+      "attributes.4": "[567,457,347,237,127,17]",
+      "attributes.7": "[82,71,60,49,38,27]"
+    },
+    {
+      "count": "12",
+      "uniforms.u_viewProjMatrix": "sha256:0a956a2e455d4ac0",
+      "attributes.0": "sha256:db07f2b07fc89eef",
+      "attributes.4": "[627,517,407,297,187,77,937,827,717,607,497,387]",
+      "attributes.6": "sha256:b67565eb69678c55",
+      "attributes.7": "[-9,77,66,55,44,33,22,11,0,-11,75,64]"
+    },
+    {
+      "call": "\"drawArrays\"",
+      "count": "3",
+      "type": null,
+      "offset": null,
+      "uniforms.u_viewProjMatrix": "sha256:7a7c49159da66883",
+      "attributes.0": "[6,17,28,39,50,61,72,83,-3]",
+      "attributes.4": "[547,657,767]",
+      "attributes.6": "{\"constant\":[1,0,0,1]}",
+      "attributes.7": "[80,-6,5]",
+      "first": "0"
+    },
+    {
+      "program": "3",
+      "uniforms.u_viewProjMatrix": "sha256:b8523508c6b2247d",
+      "attributes.0": "[80,-6,5,16,27,38,49,60,71]",
+      "attributes.1": "[20,31,42,53,64,75,-11,0,11]",
+      "attributes.4": "[317,427,537]",
+      "attributes.7": "[57,68,79]",
+      "uniforms.u_animParams": "[1,2,3,4]"
+    },
+    {
+      "call": "\"drawElements\"",
+      "first": null,
+      "count": "6",
+      "program": "2",
+      "uniforms.u_animParams": null,
+      "uniforms.u_viewProjMatrix": "sha256:7fcf89c5bfdf9bf0",
+      "attributes.0": "sha256:b3464ca18c03dcf6",
+      "attributes.1": "{\"constant\":[0,0,0,1]}",
+      "attributes.4": "[457,677,567,787,37,897]",
+      "attributes.7": "[71,-4,82,7,29,18]",
+      "type": "5123",
+      "offset": "0"
+    },
+    {
+      "call": "\"drawArrays\"",
+      "count": "3",
+      "type": null,
+      "offset": null,
+      "uniforms.u_discardAlpha": "[0]",
+      "uniforms.u_viewProjMatrix": "sha256:992213b46bea99af",
+      "state.caps": "[2884,3042]",
+      "attributes.0": "[57,68,79,-7,4,15,26,37,48]",
+      "attributes.4": "[87,197,307]",
+      "attributes.7": "[34,45,56]",
+      "first": "0"
+    },
+    {
+      "program": "60",
+      "uniforms.u_viewProjMatrix": "sha256:6efb3e39eeba912b",
+      "state.blendFunc": null,
+      "state.caps": "[2884,2929]",
+      "state.depthMask": "true",
+      "attributes.0": "[24,35,46,57,68,79,-7,4,15]",
+      "attributes.4": "[727,837,947]",
+      "attributes.7": "{\"constant\":[0,0,0,1]}"
+    },
+    {
+      "uniforms.u_viewProjMatrix": "sha256:f6bf35c9fd4c1592"
+    },
+    {
+      "count": "6",
+      "uniforms.u_viewProjMatrix": "sha256:bb2b7c8a9a6dd91e",
+      "attributes.0": "sha256:d9eed2a185e6b176",
+      "attributes.4": "[497,607,717,827,937,77]",
+      "attributes.7": "[75,-11,0,11,22,33]"
+    },
+    {
+      "count": "3",
+      "uniforms.u_viewProjMatrix": "sha256:37f0d25612e2a11d",
+      "attributes.0": "[52,63,74,-12,-1,10,21,32,43]",
+      "attributes.4": "[37,147,257]",
+      "attributes.7": "[29,40,51]"
+    },
+    {
+      "uniforms.u_viewProjMatrix": "sha256:ddb0b8834e4bf793"
+    },
+    {
+      "uniforms.u_viewProjMatrix": "sha256:7b541dc195517fc3",
+      "state.caps": "[2929]"
+    },
+    {
+      "uniforms.u_viewProjMatrix": "sha256:e60296f350a14c5d",
+      "state.caps": "[2884,2929]",
+      "state.cullFace": "1028"
+    },
+    {
+      "count": "6",
+      "uniforms.u_viewProjMatrix": "sha256:e95a241d78758504",
+      "state.cullFace": "1029",
+      "attributes.0": "sha256:d90100d0aaf2215b",
+      "attributes.4": "[747,857,-3,107,217,327]",
+      "attributes.6": "[1,1,1,1,1,1]",
+      "attributes.7": "[3,14,25,36,47,58]"
+    },
+    {
+      "uniforms.u_viewProjMatrix": "sha256:d1b019ea9a3c5352",
+      "state.depthMask": "false",
+      "attributes.0": "sha256:3a05342f79abf382",
+      "attributes.4": "[137,247,357,467,577,687]",
+      "attributes.7": "[39,50,61,72,83,-3]"
+    },
+    {
+      "state.colorMask": "[false,false,false,false]",
+      "state.depthMask": "true"
+    },
+    {
+      "count": "3",
+      "uniforms.u_discardAlpha": "[1]",
+      "uniforms.u_viewProjMatrix": "sha256:2936a025db32ac6e",
+      "state.caps": "[2884,2929,3042]",
+      "state.colorMask": "[true,true,true,true]",
+      "state.depthMask": "false",
+      "attributes.0": "[6,17,28,39,50,61,72,83,-3]",
+      "attributes.4": "[547,657,767]",
+      "attributes.6": "{\"constant\":[1,0,0,1]}",
+      "attributes.7": "[80,-6,5]",
+      "state.blendFunc": "[770,771,1,1]"
+    },
+    {
+      "uniforms.u_viewProjMatrix": "sha256:8fc5866e870f5cf7"
+    },
+    {
+      "uniforms.u_viewProjMatrix": "sha256:bb040033e2e83121",
+      "state.depthMask": "true",
+      "attributes.0": "[43,54,65,76,-10,1,12,23,34]",
+      "attributes.4": "[917,57,167]",
+      "attributes.7": "[20,31,42]"
+    },
+    {
+      "call": "\"drawElements\"",
+      "first": null,
+      "count": "6",
+      "uniforms.u_viewProjMatrix": "sha256:82c7e32871552a4c",
+      "state.depthMask": "false",
+      "attributes.0": "sha256:b3464ca18c03dcf6",
+      "attributes.4": "[457,677,567,787,37,897]",
+      "attributes.7": "[71,-4,82,7,29,18]",
+      "type": "5123",
+      "offset": "0"
+    },
+    {
+      "uniforms.u_viewProjMatrix": "sha256:5744c9ce11e929e4",
+      "attributes.0": "sha256:30a05e15379f7d43",
+      "attributes.4": "[937,827,717,607,497,387]",
+      "attributes.6": "[0.5,0.5,0.5,0.5,0.5,0.5]",
+      "attributes.7": "[22,11,0,-11,75,64]"
+    },
+    {
+      "uniforms.u_viewProjMatrix": "sha256:6d8ca84e8b2476e2",
+      "attributes.0": "sha256:5bf4d64ffa3f4fd8",
+      "attributes.4": "[337,227,117,7,867,757]",
+      "attributes.7": "[59,48,37,26,15,4]"
+    },
+    {
+      "count": "12",
+      "uniforms.u_viewProjMatrix": "sha256:0a956a2e455d4ac0",
+      "attributes.0": "sha256:9831342a45de0353",
+      "attributes.4": "[397,287,177,67,927,817,707,597,487,377,267,157]",
+      "attributes.6": "sha256:b67565eb69678c55",
+      "attributes.7": "[65,54,43,32,21,10,-1,-12,74,63,52,41]"
+    },
+    {
+      "call": "\"drawArrays\"",
+      "count": "3",
+      "type": null,
+      "offset": null,
+      "uniforms.u_viewProjMatrix": "sha256:7a7c49159da66883",
+      "attributes.0": "[6,17,28,39,50,61,72,83,-3]",
+      "attributes.4": "[547,657,767]",
+      "attributes.6": "{\"constant\":[1,0,0,1]}",
+      "attributes.7": "[80,-6,5]",
+      "first": "0"
+    },
+    {
+      "program": "61",
+      "uniforms.u_viewProjMatrix": "sha256:b8523508c6b2247d",
+      "attributes.0": "[80,-6,5,16,27,38,49,60,71]",
+      "attributes.1": "[20,31,42,53,64,75,-11,0,11]",
+      "attributes.4": "[317,427,537]",
+      "attributes.7": "[57,68,79]",
+      "uniforms.u_animParams": "[1,2,3,4]"
+    },
+    {
+      "call": "\"drawElements\"",
+      "first": null,
+      "count": "6",
+      "program": "60",
+      "uniforms.u_animParams": null,
+      "uniforms.u_viewProjMatrix": "sha256:7fcf89c5bfdf9bf0",
+      "attributes.0": "sha256:b3464ca18c03dcf6",
+      "attributes.1": "{\"constant\":[0,0,0,1]}",
+      "attributes.4": "[457,677,567,787,37,897]",
+      "attributes.7": "[71,-4,82,7,29,18]",
+      "type": "5123",
+      "offset": "0"
+    },
+    {
+      "call": "\"drawArrays\"",
+      "count": "3",
+      "type": null,
+      "offset": null,
+      "uniforms.u_discardAlpha": "[0]",
+      "uniforms.u_viewProjMatrix": "sha256:992213b46bea99af",
+      "state.caps": "[2884,3042]",
+      "attributes.0": "[57,68,79,-7,4,15,26,37,48]",
+      "attributes.4": "[87,197,307]",
+      "attributes.7": "[34,45,56]",
+      "first": "0"
+    },
+    {
+      "uniforms.u_viewProjMatrix": "sha256:6efb3e39eeba912b",
+      "state.caps": "[2884,2929]",
+      "state.depthMask": "true",
+      "attributes.0": "[24,35,46,57,68,79,-7,4,15]",
+      "attributes.4": "[727,837,947]",
+      "attributes.7": "{\"constant\":[0,0,0,1]}"
+    },
+    {
+      "uniforms.u_viewProjMatrix": "sha256:f6bf35c9fd4c1592"
+    },
+    {
+      "count": "6",
+      "uniforms.u_viewProjMatrix": "sha256:bb2b7c8a9a6dd91e",
+      "attributes.0": "sha256:d9eed2a185e6b176",
+      "attributes.4": "[497,607,717,827,937,77]",
+      "attributes.7": "[75,-11,0,11,22,33]"
+    },
+    {
+      "count": "3",
+      "uniforms.u_viewProjMatrix": "sha256:37f0d25612e2a11d",
+      "attributes.0": "[52,63,74,-12,-1,10,21,32,43]",
+      "attributes.4": "[37,147,257]",
+      "attributes.7": "[29,40,51]"
+    },
+    {
+      "uniforms.u_viewProjMatrix": "sha256:ddb0b8834e4bf793"
+    },
+    {
+      "uniforms.u_viewProjMatrix": "sha256:7b541dc195517fc3",
+      "state.caps": "[2929]"
+    },
+    {
+      "uniforms.u_viewProjMatrix": "sha256:e60296f350a14c5d",
+      "state.caps": "[2884,2929]",
+      "state.cullFace": "1028"
+    },
+    {
+      "count": "6",
+      "uniforms.u_viewProjMatrix": "sha256:c0aee97f7eec1ad8",
+      "state.cullFace": "1029",
+      "attributes.0": "sha256:b32c7e0fc1c82b8c",
+      "attributes.4": "[147,257,367,477,587,697]",
+      "attributes.6": "[1,1,1,1,1,1]",
+      "attributes.7": "[40,51,62,73,-13,-2]"
+    },
+    {
+      "count": "9",
+      "uniforms.u_viewProjMatrix": "sha256:f9a09da7502a039c",
+      "attributes.0": "sha256:74824081c577231e",
+      "attributes.2": "sha256:4a87f09960b02bef",
+      "attributes.4": "[937,77,187,297,407,517,627,737,847]",
+      "attributes.6": "[1,1,1,1,1,1,1,1,1]",
+      "attributes.7": "[22,33,44,55,66,77,-9,2,13]"
+    },
+    {
+      "count": "6",
+      "uniforms.u_viewProjMatrix": "sha256:ba0358ff8be95608",
+      "state.depthMask": "false",
+      "attributes.0": "sha256:d2c7fbb793d8d39f",
+      "attributes.2": "{\"constant\":[0,0,0,1]}",
+      "attributes.4": "[507,617,727,837,947,87]",
+      "attributes.6": "[1,1,1,1,1,1]",
+      "attributes.7": "[76,-10,1,12,23,34]"
+    },
+    {
+      "state.colorMask": "[false,false,false,false]",
+      "state.depthMask": "true"
+    },
+    {
+      "count": "3",
+      "uniforms.u_discardAlpha": "[1]",
+      "uniforms.u_viewProjMatrix": "sha256:2936a025db32ac6e",
+      "state.caps": "[2884,2929,3042]",
+      "state.colorMask": "[true,true,true,true]",
+      "state.depthMask": "false",
+      "attributes.0": "[6,17,28,39,50,61,72,83,-3]",
+      "attributes.4": "[547,657,767]",
+      "attributes.6": "{\"constant\":[1,0,0,1]}",
+      "attributes.7": "[80,-6,5]"
+    },
+    {
+      "uniforms.u_viewProjMatrix": "sha256:8fc5866e870f5cf7"
+    },
+    {
+      "uniforms.u_viewProjMatrix": "sha256:bb040033e2e83121",
+      "state.depthMask": "true",
+      "attributes.0": "[43,54,65,76,-10,1,12,23,34]",
+      "attributes.4": "[917,57,167]",
+      "attributes.7": "[20,31,42]"
+    },
+    {
+      "call": "\"drawElements\"",
+      "first": null,
+      "count": "6",
+      "uniforms.u_viewProjMatrix": "sha256:82c7e32871552a4c",
+      "state.depthMask": "false",
+      "attributes.0": "sha256:b3464ca18c03dcf6",
+      "attributes.4": "[457,677,567,787,37,897]",
+      "attributes.7": "[71,-4,82,7,29,18]",
+      "type": "5123",
+      "offset": "0"
+    },
+    {
+      "uniforms.u_viewProjMatrix": "sha256:5744c9ce11e929e4",
+      "attributes.0": "sha256:5bf4d64ffa3f4fd8",
+      "attributes.4": "[337,227,117,7,867,757]",
+      "attributes.6": "[0.5,0.5,0.5,0.5,0.5,0.5]",
+      "attributes.7": "[59,48,37,26,15,4]"
+    },
+    {
+      "uniforms.u_viewProjMatrix": "sha256:6d8ca84e8b2476e2",
+      "attributes.0": "sha256:26e219f95ebbf51c",
+      "attributes.4": "[707,597,487,377,267,157]",
+      "attributes.7": "[-1,-12,74,63,52,41]"
+    },
+    {
+      "count": "12",
+      "uniforms.u_viewProjMatrix": "sha256:0a956a2e455d4ac0",
+      "attributes.0": "sha256:eb68e106b2e0a2ce",
+      "attributes.4": "[767,657,547,437,327,217,107,-3,857,747,637,527]",
+      "attributes.6": "sha256:b67565eb69678c55",
+      "attributes.7": "[5,-6,80,69,58,47,36,25,14,3,-8,78]"
+    },
+    {
+      "call": "\"drawArrays\"",
+      "count": "3",
+      "type": null,
+      "offset": null,
+      "uniforms.u_viewProjMatrix": "sha256:7a7c49159da66883",
+      "attributes.0": "[6,17,28,39,50,61,72,83,-3]",
+      "attributes.4": "[547,657,767]",
+      "attributes.6": "{\"constant\":[1,0,0,1]}",
+      "attributes.7": "[80,-6,5]",
+      "first": "0"
+    },
+    {
+      "program": "61",
+      "uniforms.u_viewProjMatrix": "sha256:b8523508c6b2247d",
+      "attributes.0": "[80,-6,5,16,27,38,49,60,71]",
+      "attributes.1": "[20,31,42,53,64,75,-11,0,11]",
+      "attributes.4": "[317,427,537]",
+      "attributes.7": "[57,68,79]",
+      "uniforms.u_animParams": "[1,2,3,4]"
+    },
+    {
+      "call": "\"drawElements\"",
+      "first": null,
+      "count": "6",
+      "program": "60",
+      "uniforms.u_animParams": null,
+      "uniforms.u_viewProjMatrix": "sha256:7fcf89c5bfdf9bf0",
+      "attributes.0": "sha256:b3464ca18c03dcf6",
+      "attributes.1": "{\"constant\":[0,0,0,1]}",
+      "attributes.4": "[457,677,567,787,37,897]",
+      "attributes.7": "[71,-4,82,7,29,18]",
+      "type": "5123",
+      "offset": "0"
+    },
+    {
+      "call": "\"drawArrays\"",
+      "count": "3",
+      "type": null,
+      "offset": null,
+      "uniforms.u_discardAlpha": "[0]",
+      "uniforms.u_viewProjMatrix": "sha256:992213b46bea99af",
+      "state.caps": "[2884,3042]",
+      "attributes.0": "[57,68,79,-7,4,15,26,37,48]",
+      "attributes.4": "[87,197,307]",
+      "attributes.7": "[34,45,56]",
+      "first": "0"
+    }
+  ]
+}

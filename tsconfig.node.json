@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "composite": true,
+    "skipLibCheck": true,
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "allowSyntheticDefaultImports": true,
+    "rewriteRelativeImportExtensions": true,
+    "outDir": "./node_modules/.cache/tsc-node"
+  },
+  "include": [
+    "vite.config.ts",
+    "scripts/licenseNotices.ts",
+    "scripts/licensePolicy.ts",
+    "scripts/vendoredNotices.ts",
+    "scripts/check-licenses.ts",
+    "scripts/__tests__/licenseNotices.test.ts",
+    "scripts/__tests__/licensePolicy.test.ts"
+  ]
+}

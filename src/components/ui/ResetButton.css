@@ -1,0 +1,46 @@
+:root {
+  --setting-reset-size: 20px;
+  --setting-reset-gap: 4px;
+}
+
+.reset-button {
+  -webkit-appearance: none;
+  appearance: none;
+  box-sizing: border-box;
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: flex-start;
+  width: var(--setting-reset-size);
+  height: var(--setting-reset-size);
+  margin: 0;
+  padding: 1px;
+  border: 1px solid transparent;
+  border-radius: 0;
+  background: transparent;
+  color: var(--color-secondary);
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+.reset-button > canvas {
+  flex-shrink: 0;
+}
+
+.reset-button:hover:not(:disabled) > canvas {
+  filter: brightness(1.12);
+}
+
+.reset-button:active:not(:disabled) > canvas {
+  filter: brightness(1.05);
+}
+
+.reset-button:disabled {
+  color: var(--color-text-dim);
+  cursor: default;
+}
+
+.reset-button[aria-hidden="true"] {
+  visibility: hidden;
+  pointer-events: none;
+}

@@ -1,0 +1,414 @@
+@font-face {
+  font-family: "RuneScape Plain 12";
+  src: url("/fonts/RuneScape-Plain-12.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+  ascent-override: 81.25%;
+  descent-override: 18.75%;
+}
+
+@font-face {
+  font-family: "RuneScape Bold 12";
+  src: url("/fonts/RuneScape-Bold-12.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+  ascent-override: 81.25%;
+  descent-override: 18.75%;
+}
+
+@font-face {
+  font-family: "RuneScape Plain 11";
+  src: url("/fonts/RuneScape-Plain-11.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+  ascent-override: 81.25%;
+  descent-override: 18.75%;
+}
+
+@font-face {
+  font-family: "RuneScape Quill 8";
+  src: url("/fonts/RuneScape-Quill-8.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+  ascent-override: 87.5%;
+  descent-override: 12.5%;
+}
+
+@font-face {
+  font-family: "RuneScape Small";
+  src: url("/fonts/RuneScape-Small.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+  ascent-override: 87.5%;
+  descent-override: 12.5%;
+}
+
+:root {
+  /* The pixel face is the default so any text without its own rule still reads as
+     the game, not as a system sans. Rules choose Bold 12 / Plain 11 per role. */
+  font-family: "RuneScape Plain 12", sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: dark;
+  color: #ffffff;
+  background-color: var(--color-bg);
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  /* No forced font smoothing here: `-webkit-font-smoothing: antialiased` /
+     `-moz-osx-font-smoothing: grayscale` force grayscale AA on macOS and add
+     nothing on Windows/Linux. The RuneScape pixel fonts carry a gasp table
+     requesting bilevel (no-AA) rendering — crisp exactly when the browser is
+     allowed to honor it — and system-font text picks up subpixel AA where the
+     platform supports it. */
+
+  --glass-panel: var(--color-bg);
+  --glass-border: 1px solid var(--color-border);
+  --glass-blur: none;
+
+  --color-primary: #cf8a3e;
+  --color-primary-hover: #e6ad6a;
+  --color-primary-structure: #6a5e4e;
+  --color-secondary: #c3a777;
+  /* Quiet gold-tinted surface for "primary, persistent, on" controls
+     (Drills button while in Tutorial Mode, OsrsButton primary variant).
+     12% gold over the elevated bg reads as a clearly active surface
+     without competing with full-saturation accents. */
+  --primary-dim: color-mix(in srgb, var(--color-secondary) 12%, var(--color-bg-elevated));
+  /* Opaque: composited layers (draggable panels use translate3d, overlays use
+     position:fixed) can only keep subpixel/bilevel text AA when the layer's
+     background is fully opaque — a 0.96-alpha fill forced every panel's text
+     into blurry grayscale AA. */
+  --color-bg: rgb(34, 28, 20);
+  --color-bg-solid: #221c14;
+  --color-bg-elevated: #2a221a;
+  --color-surface: #181410;
+  --color-surface-inset: #0c0a06;
+  --color-surface-hover: #3e3828;
+  --color-surface-highlight: rgba(255, 255, 255, 0.05);
+  --color-border: #3e3428;
+  --color-text-body: #d3c2a3;
+  --color-text-muted: #9c8768;
+  --color-text-dim: #625340;
+  --color-error: #cf715f;
+  --color-success: #86b46e;
+  --color-warning: #e0b04a;
+  --color-info: #85a3bd;
+  --color-limited-notice: #8c8c8c;
+  --color-spawn-mager: #cf715f;
+  --color-spawn-meleer: #df914c;
+  --color-spawn-ranger: #86b46e;
+  --color-spawn-blob: #dabe66;
+  --color-spawn-bat: #949494;
+  --color-spawn-player: #80c7f2;
+  --color-heading: #e2cea3;
+  --color-accent-text: #e0a35c;
+  /* The OSRS interfaces' own text colors, frozen (theme.ts NativeTextColors). */
+  --native-orange: #ff981f;
+  --native-orange-hover: #ffac4d;
+  --native-label: #c8aa6e;
+  --native-body: #d6c4a8;
+  --native-muted: #8e7c5e;
+  --native-info: #60a5fa;
+
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 8px 16px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 16px 32px rgba(0, 0, 0, 0.6);
+  --shadow-glow: 0 0 10px rgba(207, 138, 62, 0.12);
+
+  /* Crest text family — the full-screen hero moments (EncounterTitleCard,
+     DeathModal, VictoryModal, tutorial step intro, fight-start countdown).
+
+     The pixel faces have a native 16px em, so crest type is only ever set at
+     16px and INTEGER multiples of it (16 / 32 / 48), with integer tracking and
+     whole-pixel line boxes. Off-grid sizes rasterize one stem of a glyph a
+     pixel wider than its twin, which is what made these heroes read as web type
+     in a pixel costume rather than in-game text. A fluid clamp() can never
+     satisfy it; step sizes at breakpoints instead. This is the canonical home
+     for that rule, and src/__tests__/crest-css.test.ts enforces it.
+
+     Depth is a solid-ink hard offset scaled with the glyph, so a 3x-scaled face
+     gets the 3x-scaled shadow its bitmap would have. Never reintroduce a blurred
+     or zero-offset glow.
+
+     A var() inside these composite tokens is substituted HERE, so a descendant
+     overriding --crest-ink alone keeps the root ink; it must redeclare the
+     composite too (see .death-modal-heading). */
+  --crest-ink: #0d0803;
+  --crest-shadow-sm: 1px 1px 0 var(--crest-ink);
+  --crest-shadow-md: 2px 2px 0 var(--crest-ink);
+  --crest-shadow-lg: 3px 3px 0 var(--crest-ink);
+  /* Omnidirectional 1px rim. ONLY for crest text floating over the live arena
+     (EncounterTitleCard, tutorial step intro, fight-start countdown), which has no backdrop of its own
+     to sit on. Crests that bring their own dimmed overlay (death, victory) take
+     the hard offset alone — a rim there reads as a half-drawn outline. */
+  --crest-rim: 1px 0 0 var(--crest-ink), -1px 0 0 var(--crest-ink), 0 1px 0 var(--crest-ink), 0 -1px 0 var(--crest-ink);
+  /* Shared by the two crests that float over the arena; they must resolve to the
+     same offset or the arrival title and the step-intro cue land in different
+     places on the same screen. */
+  --crest-floating-top: clamp(54px, 15vh, 176px);
+
+  /* Shared modal chrome — keeps every centered modal (encounter picker,
+     encounter config, training, etc.) one visual family. Composed from the
+     semantic tokens above. */
+  --modal-backdrop: rgba(8, 6, 4, 0.72);
+  --modal-radius: 2px;
+  --modal-card-border: var(--color-border);
+  --modal-card-shadow: var(--shadow-lg), inset 0 0 0 1px var(--color-border-translucent);
+
+  /* HUD tokens */
+  --hud-bg: rgba(34, 28, 20, 0.88);
+  --hud-border: rgba(62, 52, 40, 0.25);
+
+  --color-surface-translucent: rgba(24, 20, 14, 0.92);
+  --color-border-translucent: rgba(62, 52, 40, 0.5);
+  --infobox-tint: rgba(18, 14, 10, 0.75);
+}
+
+/* No focus rings anywhere: the app is driven by pointer and touch (docs/agent-reference.md,
+   Keyboard and focus policy). The loadout editor and text fields mark focus with their own
+   border, never an outline. */
+*:focus {
+  /* biome-ignore lint/complexity/noImportantStyles: the policy must outrank any component outline rule. */
+  outline: none !important;
+}
+
+/* --- GamePanel cursor policy -----------------------------------------------
+
+   The GamePanel never swaps the pointer for a hand. It is a reproduction of the
+   OSRS interface, and the real client keeps one cursor over its entire UI, so a
+   hand appearing over a sprite widget breaks the illusion.
+
+   The cost of dropping the hand is that clickability must be carried visually
+   instead — every control in the panel earns it at rest (sprite fill, border or
+   accent text) and on hover (text and surface shift on a 0.15s ease). Anything
+   new added to the panel owes the same, because there is no cursor left to fall
+   back on.
+
+   Scope is the GamePanel only. The settings sidebar, plugins panel, encounter
+   Configure panel, modals and top nav all keep ordinary web cursors — they are
+   app chrome, not the reproduced game interface. DraggablePanel's Alt-to-move
+   `grab` cursor is preserved by a higher-specificity rule in DraggablePanel.css. */
+.panel-surface * {
+  /* biome-ignore lint/complexity/noImportantStyles: the shared ui/ primitives
+     (OsrsButton, OsrsCheckbox, SettingRow, CollapsibleSection) each declare
+     `cursor: pointer` in their own stylesheet and render in app chrome too.
+     Scoping the override to the panel ancestor is what leaves that chrome alone,
+     and only `!important` can outrank those rules plus any inline cursor. */
+  cursor: default !important;
+}
+/* Text entry keeps its I-beam and disabled controls keep their affordance:
+   both communicate something the visual state does not. */
+.panel-surface :is(input[type="text"], input[type="search"], input[type="number"], textarea) {
+  /* biome-ignore lint/complexity/noImportantStyles: same cascade fight as above. */
+  cursor: text !important;
+}
+/* Disabled must also out-specify the text-entry rule above, not just follow it:
+   `.panel-surface :is(input[type="text"], …)` is (0,2,1) and a bare
+   `.panel-surface :disabled` is (0,2,0), so a disabled text/search/number input or
+   textarea still took the I-beam. Restating the same shape ties the specificity and
+   lets source order settle it. */
+.panel-surface :disabled,
+.panel-surface :is(input[type="text"], input[type="search"], input[type="number"], textarea):disabled {
+  /* biome-ignore lint/complexity/noImportantStyles: same cascade fight as above. */
+  cursor: not-allowed !important;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-surface-inset);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 0px;
+  border: 1px solid var(--color-surface-inset);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-surface-hover);
+}
+
+/* Inner scroller for app chrome: a small scroll box nested inside a panel painted with
+   --color-bg-solid. Its thumb matches the panel bodies around it because the gutter is the
+   only thing that varies between them — a body reserves 8px and insets its thumb 2px with
+   the panel color, rendering the identical 4px bar this one paints flush. Do not brighten
+   the thumb to make it easier to spot: --color-primary-structure is what every surface here
+   uses for HOVER, so a resting bar set to it outshouts the selected row beside it. */
+.panel-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+
+.panel-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.panel-scroll::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 2px;
+}
+
+.panel-scroll::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary-structure);
+}
+
+/* The same scroller inside the in-game panel, a different surface world: these boxes sit on
+   NineSliceBg sprite art rather than --color-bg-solid, so the thumb above was never measured
+   against anything it would paint on here. Not a duplicate of .panel-scroll to merge away. */
+.game-panel-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+
+.game-panel-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.game-panel-scroll::-webkit-scrollbar-thumb {
+  background: var(--color-primary-structure);
+  border-radius: 2px;
+}
+
+.game-panel-scroll::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary);
+}
+
+/* Firefox has no ::-webkit-scrollbar, so without this every themed scroller falls back to
+   the OS bar inside a dark surface.
+   The gate is load-bearing and must not be flattened into the rules above: Chrome 121+ and
+   Safari 18.2+ DO support scrollbar-width/color, and setting either one makes them discard
+   that element's ::-webkit-scrollbar rules wholesale — measured, a 20px webkit bar becomes
+   the UA's 10px one. `selector(::-webkit-scrollbar)` is false only in Firefox, which is
+   exactly the set of engines that needs the standard properties. */
+@supports not selector(::-webkit-scrollbar) {
+  .panel-scroll,
+  .controls-content,
+  .plugins-content,
+  .tile-preset-list,
+  .encounter-panel-body,
+  .loadout-saved-scroll,
+  .slot-picker__list,
+  .shortcuts-modal-content,
+  .credits-modal-list {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-border) transparent;
+  }
+
+  .game-panel-scroll,
+  .menu-swaps-input,
+  .tile-marker-panel-list {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-primary-structure) transparent;
+  }
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  /* Use dvh where available to account for iOS Safari's dynamic toolbar. */
+  height: 100vh;
+  /* biome-ignore lint/suspicious/noDuplicateProperties: deliberate progressive-enhancement pair. Browsers without dvh keep the vh value; the cascade is the fallback mechanism. */
+  height: 100dvh;
+  overflow: hidden;
+  -webkit-user-drag: none;
+  user-select: none;
+  -webkit-user-select: none;
+  /* Prevent iOS rubber-band / pull-to-refresh while keeping inner scrolls working. */
+  overscroll-behavior: none;
+  -webkit-tap-highlight-color: transparent;
+  /* No iOS long-press callout (Save Image, link previews) over sprites and chrome. */
+  -webkit-touch-callout: none;
+  /* Controls already opt out of double-tap zoom below; this covers the gaps between them
+     (inventory slot gutters, panel backgrounds), where a quick second tap zoomed the page.
+     Pinch zoom stays available. */
+  touch-action: manipulation;
+  /* Deep, atmospheric background */
+  background: var(--color-surface-inset);
+}
+
+/* Remove the 300ms tap delay and double-tap zoom on every interactive control.
+   Scroll containers intentionally override this to `pan-x pan-y`. */
+button,
+a,
+label,
+input[type="checkbox"],
+input[type="radio"],
+input[type="range"],
+input[type="button"],
+input[type="submit"],
+select,
+[role="button"],
+[role="tab"],
+[role="menuitem"],
+[role="option"] {
+  touch-action: manipulation;
+}
+
+/* iOS Safari zooms any <input>/<textarea> whose computed font-size is under 16px.
+   Pin the minimum on coarse pointers so forms stay calm when focused. */
+@media (pointer: coarse) {
+  input[type="text"],
+  input[type="search"],
+  input[type="number"],
+  input[type="email"],
+  input[type="password"],
+  input[type="url"],
+  textarea,
+  select {
+    font-size: max(16px, 1em);
+  }
+}
+
+img {
+  -webkit-user-drag: none;
+}
+
+/* Form controls take the UA's system font instead of inheriting. Zero specificity, so
+   any component rule that names a face still wins. */
+:where(button, input, select, textarea) {
+  font-family: inherit;
+}
+
+/* Text fields keep the system copy/paste callout that body turns off. */
+input,
+textarea {
+  -webkit-touch-callout: default;
+}
+
+/* Pull-to-refresh and edge bounce are governed by the ROOT element; body's
+   overscroll-behavior is not propagated to the viewport. Touch-only devices, so desktop
+   trackpads keep their swipe-to-go-back gesture. data-mobile-ui also catches phones that
+   report a fine pointer they do not have. */
+@media (any-pointer: coarse) and (not (any-pointer: fine)) {
+  html {
+    overscroll-behavior: none;
+  }
+}
+html[data-mobile-ui] {
+  overscroll-behavior: none;
+}
+
+#root {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+  /* Honor device safe areas (notches, home indicator). Inner chrome still
+     positions freely — these vars are consumed by `sidebar-nav` on narrow
+     viewports. */
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+}

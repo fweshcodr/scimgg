@@ -1,0 +1,86 @@
+name: Mechanic is wrong
+description: The simulator differs from the game in a timing, attack pattern, projectile, animation, sound or formula.
+title: "Mechanic: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: >-
+        Mechanics are fixed from evidence, not memory: see
+        [the evidence standard](https://github.com/scimgg/scimgg/blob/main/CONTRIBUTING.md#the-evidence-standard).
+        Link your sources rather than attaching files. Raw recordings and game files cannot be accepted.
+
+  - type: dropdown
+    id: encounter
+    attributes:
+      label: Encounter
+      options:
+        - Yama phase 3
+        - Sol Heredit
+        - Inferno, waves 1 to 68
+        - Inferno, wave 69 (TzKal-Zuk)
+        - Not specific to one encounter (formulas, prayers, equipment, special attacks)
+    validations:
+      required: true
+
+  - type: input
+    id: variant
+    attributes:
+      label: Contract, modifiers or wave
+      description: Only if they matter.
+      placeholder: Bloodied Blows contract; Bees and Frailty; wave 63
+
+  - type: textarea
+    id: simulator
+    attributes:
+      label: What the simulator does
+      description: Be exact. Give ticks, tiles, ids or damage where they apply.
+      placeholder: The projectile lands 4 ticks after the attack animation starts.
+    validations:
+      required: true
+
+  - type: textarea
+    id: game
+    attributes:
+      label: What the game does
+      placeholder: It lands 3 ticks after the animation starts.
+    validations:
+      required: true
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: >-
+        Where each fact comes from, precisely enough to check: an OSRS Wiki URL and section, a
+        video URL and timestamp (frame-stepped against the 0.6 s tick), a Jagex statement, a cache
+        id, or a fixture file and tick in this repository. Say whether you saw it once or every time.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: How to see it in the simulator
+      description: Steps from entering the encounter, with any loadout, prayer or setting that matters.
+      placeholder: |
+        1. Enter the encounter with the default loadout
+        2. ...
+    validations:
+      required: true
+
+  - type: input
+    id: commit
+    attributes:
+      label: Commit
+      description: Output of `git rev-parse --short HEAD`.
+
+  - type: checkboxes
+    id: sources
+    attributes:
+      label: Sources
+      options:
+        - label: >-
+            None of this comes from copyleft or unlicensed OSRS code, or from a decompiled client
+            ([source rules](https://github.com/scimgg/scimgg/blob/main/CONTRIBUTING.md#source-rules)).
+          required: true

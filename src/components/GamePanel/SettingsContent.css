@@ -1,0 +1,250 @@
+.settings-content-inner {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  gap: 4px;
+  padding: 6px 10px;
+  color: var(--color-secondary);
+  font:
+    16px / 18px "RuneScape Bold 12",
+    sans-serif;
+  text-shadow: 1px 1px 0 var(--color-surface-inset);
+  text-rendering: optimizeSpeed;
+}
+
+.settings-pages {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  margin: 0;
+  flex-shrink: 0;
+  gap: 4px;
+  padding: 0;
+  border: 0;
+}
+
+.settings-pages-fill {
+  inset: auto 0 0;
+  height: 1px;
+  pointer-events: none;
+}
+
+.settings-page-button {
+  flex: 1;
+  min-width: 0;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-secondary);
+  font: inherit;
+  text-shadow: inherit;
+  cursor: pointer;
+}
+
+.settings-page-button:hover {
+  color: var(--color-text-body);
+}
+
+.settings-page-label {
+  position: relative;
+}
+
+.settings-page-button::after {
+  content: "";
+  position: absolute;
+  inset: auto 12px 0;
+  height: 2px;
+  background: transparent;
+  pointer-events: none;
+}
+
+.settings-page-button:hover::after {
+  background: var(--color-primary-structure);
+}
+
+.settings-page-button[aria-pressed="true"],
+.settings-page-button[aria-pressed="true"]:hover {
+  color: var(--color-accent-text);
+}
+
+.settings-page-button[aria-pressed="true"]::after,
+.settings-page-button[aria-pressed="true"]:hover::after {
+  background: var(--color-primary);
+}
+
+.audio-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  gap: 12px;
+  margin-right: -4px;
+  padding: 8px 4px 2px 0;
+  overflow: auto;
+  overflow-x: hidden;
+  background: transparent;
+}
+
+.audio-volume {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.audio-master-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.audio-channels {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.audio-content .setting-row {
+  padding: 0;
+}
+
+.audio-content .setting-row::before {
+  display: none;
+}
+
+.audio-content .setting-row--modified:hover {
+  background: transparent;
+}
+
+.audio-volume .setting-row {
+  display: grid;
+  grid-template-columns: 1fr auto var(--setting-reset-size);
+  column-gap: 4px;
+  align-items: center;
+}
+
+.audio-volume-heading {
+  display: contents;
+}
+
+.audio-volume-heading label {
+  grid-column: 1;
+  color: var(--color-text-body);
+}
+
+.audio-volume-heading output {
+  grid-column: 2;
+  min-width: 32px;
+  color: var(--color-text-body);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  font-family: "RuneScape Plain 12", sans-serif;
+}
+
+.audio-volume .setting-row__reset {
+  grid-column: 3;
+  grid-row: 1;
+  margin: 0;
+}
+
+.audio-slider-control {
+  position: relative;
+  width: 184px;
+  height: 24px;
+  margin: 2px 0 0;
+}
+
+.audio-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  display: block;
+  box-sizing: border-box;
+  width: calc(100% - 32px);
+  height: 24px;
+  position: relative;
+  margin: 0 0 0 16px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.audio-slider::-webkit-slider-runnable-track {
+  height: 16px;
+  background: transparent;
+}
+
+.audio-slider::-moz-range-track {
+  height: 16px;
+  border: 0;
+  background: transparent;
+}
+
+.audio-slider::-moz-range-progress {
+  background: transparent;
+}
+
+.audio-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  box-sizing: border-box;
+  width: 16px;
+  height: 16px;
+  margin-top: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.audio-slider::-moz-range-thumb {
+  box-sizing: border-box;
+  width: 16px;
+  height: 16px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.audio-mute {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  gap: 6px;
+  min-height: 25px;
+  padding: 2px 0;
+  border: 0;
+  border-radius: 2px;
+  background: transparent;
+  color: var(--color-text-body);
+  text-align: left;
+  text-shadow: inherit;
+  cursor: pointer;
+}
+
+.audio-mute:hover {
+  background: var(--color-surface-highlight);
+}
+
+.audio-mute > canvas {
+  flex-shrink: 0;
+}
+
+.audio-mute > span {
+  font:
+    16px / 18px "RuneScape Plain 11",
+    sans-serif;
+}
+
+.audio-preference {
+  padding-left: 8px;
+}
+
+.audio-preference .setting-row__reset {
+  margin-top: 0;
+}

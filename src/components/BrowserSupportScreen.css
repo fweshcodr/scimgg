@@ -1,0 +1,55 @@
+/* The app cannot start, so this screen is one column and nothing else: the wordmark, then the
+   notice. No panel chrome around it; the page itself is the surface.
+
+   It is also the one screen that has to scroll. `.app-container` is a viewport-height box that
+   clips (App.css), and on a landscape phone this content is taller than that. Overriding `overflow` here alone keeps that clip everywhere else. The
+   scroller paints its own opaque fill already, which is what its text needs to keep LCD
+   antialiasing (docs/agent-reference.md, LCD text).
+
+   `.app-container` is sized in viewport units under the page's `content-box` default, so the
+   gutters below have to come out of that width rather than add to it. */
+.app-container.browser-support {
+  box-sizing: border-box;
+  flex-direction: column;
+  overflow: auto;
+  overscroll-behavior: contain;
+  /* `.app-container`'s own backdrop is a fixed navy outside the color tokens (App.css).
+     Everywhere else the scene covers it; here it is the whole page, right beside a notice painted
+     from the tokens, which is what made the card look like the wrong theme. The same vignette,
+     rebuilt from the tokens: `bg-elevated` lighter than `bg`, `surface-inset` darkest. */
+  background-color: var(--color-bg);
+  background-image: radial-gradient(
+    circle at center,
+    var(--color-bg-elevated) 0%,
+    var(--color-bg) 60%,
+    var(--color-surface-inset) 100%
+  );
+  padding-inline: max(16px, var(--safe-left, 0px)) max(16px, var(--safe-right, 0px));
+  padding-block: max(24px, var(--safe-top, 0px)) max(24px, var(--safe-bottom, 0px));
+}
+
+/* `margin: auto` centers on both axes while there is room and collapses to nothing when there is
+   not, so the top of the column stays scrollable into view. `justify-content: center` would cut
+   it off instead. */
+.browser-support__column {
+  margin: auto;
+  flex: 0 0 auto;
+  width: 100%;
+  max-width: 420px;
+}
+
+.browser-support__mark {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.browser-support__wordmark {
+  color: var(--color-text-muted);
+}
+
+/* Here the notice is the page's content rather than something laid over the scene, so it takes
+   the inset fill and reads as a well in the background. The in-viewport notices take the raised
+   chrome fill instead; the hairline, radius and type are the same in both. */
+.browser-support__notice {
+  --notice-fill: var(--color-surface);
+}

@@ -1,0 +1,78 @@
+/* Docking feedback stays deliberately quiet: no full-container glow (the dragged panel would read
+   as selected or modal) and no full-length channel bar (the 5px gap is spatial information, not a
+   progress meter). A compact in-gap marker plus two facing-edge ticks carry it instead. */
+
+.snap-guide-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.snap-gap-marker,
+.snap-edge-tick {
+  position: absolute;
+  pointer-events: none;
+  will-change: opacity, transform;
+}
+
+/* Short marker centered in the snap gap. Its max long-axis length is computed
+   in TS, so it never grows into a giant bar. */
+.snap-gap-marker {
+  border-radius: 999px;
+  transform-origin: center;
+}
+
+.snap-gap-marker.is-preview {
+  background: color-mix(in srgb, var(--color-primary) 22%, transparent);
+  opacity: 0.42;
+  animation: snap-marker-enter 120ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.snap-gap-marker.is-engaged {
+  background: color-mix(in srgb, var(--color-primary) 78%, transparent);
+  opacity: 0.78;
+  box-shadow: inset 0 0 0 1px rgba(255, 230, 168, 0.18);
+  animation: snap-marker-catch 150ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Tiny facing-edge ticks appear only once snapped. They anchor the relationship
+   to the actual panel edges without outlining the whole container. */
+.snap-edge-tick {
+  background: color-mix(in srgb, var(--color-primary) 68%, transparent);
+  opacity: 0.72;
+  border-radius: 1px;
+  animation: snap-tick-enter 150ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes snap-marker-enter {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+}
+
+@keyframes snap-marker-catch {
+  0% {
+    transform: scale(1.12);
+    opacity: 0.48;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0.78;
+  }
+}
+
+@keyframes snap-tick-enter {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .snap-gap-marker,
+  .snap-edge-tick {
+    animation: none;
+    transform: none;
+  }
+}

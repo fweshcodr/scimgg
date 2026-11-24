@@ -1,0 +1,74 @@
+/* The region a hint opens from: the whole label the mark is set on. It carries no box of its own
+   — it exists to be hovered and to let the mark answer for it. `help` announces that.
+
+   Never on a region that is itself the control, though: there the press is still the point, and
+   the hint is a footnote on it. Same rule the checkbox inside a toggle row gets by being a child
+   of its region rather than the region itself — this selector is what extends it to a region and
+   control that are one element. */
+.info-hint-region:not(button) {
+  cursor: help;
+}
+
+/* The mark is the `?` ink and nothing else. It must not gain a border, a background, a font or
+   padding: any of them turns a footnote mark back into a control, which is what the 4x6 re-cut
+   in MarkGlyph exists to undo — and a CSS border around an SVG glyph re-opens the fractional-
+   DPR drift that made the box and the `?` round to different edges.
+
+   `margin-bottom` is the whole superscript, and the items around it are CENTERED, so it buys half
+   its value in rise: 6px lifts the mark 3px, clearing the label's cap and leaving its foot at the
+   x-height. It needs no per-row offset because all three containers that hold a mark — the 14px
+   choice label, the 18px checkbox row with its 16px label, Practice's 16px one — center a 14-16px
+   label line box, and the 3px rise clears the cap in each.
+   Lower it and the mark sinks into the lowercase body, where it stops reading as a superscript
+   and starts reading as grit.
+
+   Color sits BETWEEN the label's `--color-secondary` and the `--color-text-muted` a caption
+   would take. Muted is correct for this role and wrong at this size: seven lit pixels carry so
+   much less ink than the word beside them that at a caption's value the mark reads as dirt on
+   the panel rather than as a mark. */
+.info-hint {
+  position: relative;
+  display: inline-flex;
+  margin-bottom: 6px;
+  width: 4px;
+  height: 6px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: color-mix(in srgb, var(--color-secondary) 55%, var(--color-text-muted));
+  cursor: inherit;
+  transition: color 0.15s ease;
+}
+
+/* The mark's tap target. Touch and pen open the hint from the mark alone — a tap on the label is
+   the control's (InfoHint.tsx) — and a 4x6 glyph is no target for a finger, so the button answers
+   across an invisible 24x24 box. The glyph neither moves nor grows, and the box takes no layout.
+
+   It reaches RIGHT from the mark, never left: in a checkbox row the 2px to the mark's left is all
+   that separates it from the checkbox's own label, which must keep every tap on its text.
+
+   Its height is centered on the label line, which `margin-bottom` puts at the glyph's foot, and
+   reaches `--info-hint-reach` above and below it. A list packed tighter than 24px a row lowers
+   that rather than let the box take taps meant for the rows and headings beside it. */
+button.info-hint::before {
+  content: "";
+  position: absolute;
+  inset: calc(6px - var(--info-hint-reach, 12px)) -18px calc(-1 * var(--info-hint-reach, 12px)) -2px;
+}
+
+/* A reset beside a mark keeps every tap on itself. Positioned and later in the tree, it stacks
+   above the mark's tap target, which otherwise covers it: positioned boxes take the pointer over
+   in-flow ones whatever their order. Moves nothing — it sets no offset. */
+.info-hint ~ .reset-button,
+.info-hint-region ~ .reset-button {
+  position: relative;
+}
+
+/* Brightens for the whole region, not just for the mark: the region is what the pointer is on,
+   and a 4x6 glyph that only answered to its own hover would look inert while the label under the
+   cursor was plainly the thing being pointed at. */
+.info-hint-region:hover .info-hint,
+.info-hint:hover,
+.info-hint.is-open {
+  color: var(--color-secondary);
+}

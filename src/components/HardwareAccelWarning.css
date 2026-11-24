@@ -1,0 +1,113 @@
+/* The software-rendering warning. The notice inside is the shared SystemNotice
+   (ui/SystemNotice.css); this file owns only where it goes and the one-line strip it is put
+   away to. */
+
+.hw-accel-warning {
+  box-sizing: border-box;
+  position: relative;
+}
+
+.hw-accel-warning.variant-loading {
+  width: 100%;
+  max-width: 420px;
+  margin: 16px auto 0;
+  text-align: left;
+}
+
+/* The gameplay notice and its strip span the room the open sidebars leave (App's --ui-inset-*)
+   and center in it with auto margins, rather than drawing over one. */
+.hw-accel-warning.variant-gameplay {
+  position: absolute;
+  bottom: 24px;
+  left: calc(24px + var(--ui-inset-left, 0px));
+  right: calc(24px + var(--ui-inset-right, 0px));
+  margin-inline: auto;
+  z-index: 9990;
+  max-width: 460px;
+}
+
+/* Room for the dismiss control, which overlaps the notice's own padding. */
+.hw-accel-warning.variant-gameplay .sys-notice {
+  padding-right: 34px;
+}
+
+.hw-accel-dismiss {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  border-radius: 2px;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  font-size: 12px;
+  line-height: 1;
+  padding: 0;
+  transition: color 0.15s ease;
+}
+
+.hw-accel-dismiss:hover {
+  color: var(--color-secondary);
+}
+
+/* Put away: the same hairline-on-opaque treatment as the notice, at one line. */
+.hw-accel-strip {
+  position: absolute;
+  bottom: 8px;
+  left: var(--ui-inset-left, 0px);
+  right: var(--ui-inset-right, 0px);
+  width: fit-content;
+  margin-inline: auto;
+  z-index: 9990;
+  box-sizing: border-box;
+  background-color: var(--color-bg-solid);
+  border: 1px solid var(--color-border);
+  border-radius: 2px;
+  padding: 6px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: "RuneScape Plain 11", sans-serif;
+  pointer-events: auto;
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.hw-accel-strip:hover {
+  border-color: var(--color-primary-structure);
+}
+
+.hw-accel-strip-icon {
+  flex-shrink: 0;
+  color: var(--color-warning);
+}
+
+.hw-accel-strip-text {
+  font-size: 16px;
+  line-height: 18px;
+  color: var(--color-text-muted);
+}
+
+.hw-accel-strip:hover .hw-accel-strip-text {
+  color: var(--color-text-body);
+}
+
+@media (pointer: coarse) {
+  .hw-accel-strip {
+    min-height: 44px;
+  }
+
+  .hw-accel-dismiss {
+    width: 44px;
+    height: 44px;
+    top: 2px;
+    right: 2px;
+  }
+}

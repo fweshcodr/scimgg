@@ -1,0 +1,103 @@
+/* The encounter session bar. It takes presses, so it is opaque on --color-bg-solid with a border
+   and no outer shadow, like the launcher panes it sits with (DESIGN.md, the Opacity Rule). */
+
+.session-bar {
+  box-sizing: border-box;
+  margin: 0;
+  min-inline-size: 0;
+  max-width: calc(100vw - 16px);
+  padding: 8px;
+  background: var(--color-bg-solid);
+  border: var(--unscaled-px, 1px) solid var(--color-border);
+  border-radius: calc(2 * var(--unscaled-px, 1px));
+  pointer-events: auto;
+}
+
+.session-bar__title {
+  margin-bottom: 4px;
+  color: var(--color-secondary);
+  font:
+    16px / 16px "RuneScape Bold 12",
+    sans-serif;
+}
+
+/* One line while both controls fit it, otherwise the secondary drops below. The break follows the
+   measured contents, not a width threshold, so every placement keeps both words. */
+.session-bar__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+}
+
+.session-bar__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1 1 auto;
+  min-height: 32px;
+  padding: 4px 8px;
+  background: var(--color-surface);
+  border: var(--unscaled-px, 1px) solid var(--color-border);
+  border-radius: calc(2 * var(--unscaled-px, 1px));
+  color: var(--color-secondary);
+  font:
+    16px / 20px "RuneScape Bold 12",
+    sans-serif;
+  cursor: pointer;
+}
+
+.session-bar__button:hover:not(:disabled) {
+  background: var(--color-surface-hover);
+  border-color: var(--color-primary-structure);
+  color: var(--color-accent-text);
+}
+
+.session-bar__button--primary {
+  background: var(--primary-dim);
+  border-color: var(--color-secondary);
+  color: var(--color-accent-text);
+}
+
+.session-bar__button--primary:hover:not(:disabled) {
+  border-color: var(--color-primary);
+  color: var(--color-primary-hover);
+}
+
+/* The alternative to the primary, not a second primary: plain face, no fill until hover. */
+.session-bar__button--quiet {
+  flex: 0 1 auto;
+  background: transparent;
+  border-color: var(--color-border);
+  font-family: "RuneScape Plain 12", sans-serif;
+}
+
+.session-bar__button--quiet:hover:not(:disabled) {
+  background: var(--color-surface-hover);
+  border-color: var(--color-primary-structure);
+}
+
+/* Narrow placements give up the title and the outer padding, not the words. */
+.session-bar--compact {
+  padding: 4px;
+}
+
+.session-bar--compact .session-bar__button {
+  padding-inline: 6px;
+}
+
+.session-bar--labelled {
+  padding-block: 6px;
+}
+
+@media (pointer: coarse) {
+  .session-bar__row button {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
+
+:root[data-mobile-ui] .session-bar__row button {
+  min-width: 44px;
+  min-height: 44px;
+}

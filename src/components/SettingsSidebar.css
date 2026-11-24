@@ -1,0 +1,711 @@
+.controls-overlay {
+  position: absolute;
+  top: var(--top-inset, 0px);
+  left: 0;
+  width: 320px;
+  height: calc(100% - var(--top-inset, 0px));
+  z-index: 70;
+  overflow: hidden;
+  transform: translateX(-100%);
+  transition:
+    transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1),
+    top 0.3s cubic-bezier(0.2, 0.8, 0.2, 1),
+    height 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  will-change: transform;
+  background: var(--color-bg-solid);
+  border-right: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  /* NO box-shadow here: an outer shadow paints beyond the border box, so the
+     panel's compositing layer is wider than its opaque background fill and Blink
+     can no longer prove the layer opaque — which vetoes subpixel/bilevel text AA
+     for every glyph in the panel. The shadow lives on .controls-overlay-shadow
+     below, a text-free sibling that slides in lockstep. */
+}
+
+.controls-overlay.open {
+  transform: translateX(0);
+  /* Drop the compositing hint once open + at rest so text regains subpixel/
+     bilevel AA in Chrome (will-change: transform is a hard Blink LCD-text veto,
+     even on an identity transform). The closed rule keeps will-change so the
+     open/close slide stays smooth; the layer is already promoted when we land
+     here, so nothing hitches. */
+  will-change: auto;
+}
+
+/* Drop shadow proxy — carries the panel's cast shadow so .controls-overlay
+   itself stays a provably-opaque layer (see the note above). Text-free, so its
+   own layer opacity is irrelevant and it can keep will-change permanently.
+   Geometry and slide MUST stay in sync with .controls-overlay above. */
+.controls-overlay-shadow {
+  position: absolute;
+  top: var(--top-inset, 0px);
+  left: 0;
+  width: 320px;
+  height: calc(100% - var(--top-inset, 0px));
+  border-right: 1px solid transparent; /* match the panel's 321px border box */
+  z-index: 69; /* directly beneath .controls-overlay */
+  pointer-events: none;
+  transform: translateX(-100%);
+  transition:
+    transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1),
+    top 0.3s cubic-bezier(0.2, 0.8, 0.2, 1),
+    height 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  will-change: transform;
+  /* Shadow is on .open below, NOT here — mirroring .plugins-overlay-shadow. */
+}
+
+.controls-overlay-shadow.open {
+  transform: translateX(0);
+  /* Closed, the proxy sits at translateX(-100%), but a 10px-offset 40px-blur shadow still
+     spills ~50px past its right edge — across x 0..50 of the viewport, which is exactly where
+     the left nav buttons live, darkening them by ~30% at their left edge. An off-screen panel
+     casts no shadow. */
+  box-shadow: 10px 0 40px rgba(0, 0, 0, 0.5);
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 12px 12px 12px 16px;
+  background: var(--color-bg-elevated);
+  /* The border carries the edge on its own: an outer shadow here would veto LCD text for the
+     header's own glyphs (subpixel-aa skill, Veto 1). */
+  border-bottom: 1px solid var(--color-border);
+  flex-shrink: 0;
+}
+
+.panel-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+/* The header's actions (search, shortcuts) sit as one tight group on the right, with
+   close set apart past a rule: it dismisses the sidebar rather than acting in it. */
+.panel-header-icons {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex: none;
+}
+
+.panel-header-divider {
+  flex: none;
+  width: 1px;
+  height: 16px;
+  margin: 0 6px;
+  background: var(--color-border);
+}
+
+/* Visually hidden but available to screen readers (icon-only links need it). */
+.panel-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.panel-title {
+  margin: 0;
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 20px;
+  color: var(--color-heading);
+  text-shadow: 1px 1px 0 #000;
+  font-weight: normal;
+}
+
+/* Mobile-only badge that tells the user this Settings panel is editing the
+   mobile preferences bucket, not their desktop settings. Quiet by design —
+   it's an indicator, not a call-to-action. */
+.panel-mode-badge {
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 9px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--color-secondary);
+  background: color-mix(in srgb, var(--color-primary) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-primary) 20%, transparent);
+  padding: 2px 6px;
+  border-radius: 2px;
+  white-space: nowrap;
+  /* Centered, as every container of an InfoHint mark is, so the mark's margin sets it as a
+     superscript to the label (InfoHint.css). */
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.panel-header-action {
+  background: transparent;
+  border: none;
+  color: var(--color-secondary);
+  cursor: pointer;
+  padding: 6px;
+  line-height: 0;
+  transition: color 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.panel-header-action:hover {
+  color: var(--color-text-body);
+}
+
+.controls-toggle-open {
+  position: fixed;
+  top: 24px;
+  left: 0;
+  z-index: 71;
+  padding: calc(6px + var(--border-give, 0px)) calc(10px + var(--border-give, 0px)) calc(6px + var(--border-give, 0px))
+    10px;
+  border-radius: 0 calc(2 * var(--unscaled-px, 1px)) calc(2 * var(--unscaled-px, 1px)) 0;
+  background: var(--color-bg-solid);
+  border: var(--unscaled-px, 1px) solid var(--color-border);
+  border-left: none;
+  color: var(--color-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-family: "RuneScape Bold 12", sans-serif;
+  /* 16px is the face's native grid (unitsPerEm 16); 15px scaled every glyph off it. */
+  font-size: 16px;
+  /* Pinned, not redundant: `normal` comes from the RuneScape font's metrics, which Firefox
+     resolves 3px taller than Chrome/Safari and compounds over the nav's three stacked
+     buttons. 15px, a pixel under the font size, keeps the button its old 29px tall. */
+  line-height: 15px;
+  white-space: nowrap;
+  text-shadow: 1px 1px 0 #000;
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+  min-width: 0;
+  text-align: center;
+}
+
+.controls-toggle-open:hover {
+  background: var(--color-surface-hover);
+  color: var(--color-text-body);
+  border-color: var(--color-primary-structure);
+}
+
+.tutorials-button-anchor {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Tutorial Mode sidebar variants follow the canonical osrs-btn--primary /
+ * osrs-btn--danger color vocabulary so the cluster reads as native chrome.
+ *
+ * The Drills variant is the "you are in tutorial mode" persistent signal —
+ * its gold accent is what tells the user the app's mechanics are in a
+ * paused-by-default + infinite-health configuration. The Exit Tutorial button
+ * is the persistent escape hatch.
+ */
+.controls-toggle-open--tutorial-mode {
+  background: var(--primary-dim, color-mix(in srgb, var(--color-primary) 6%, transparent));
+  border-color: var(--color-secondary);
+  color: var(--color-accent-text);
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--color-accent-text) 6%, transparent),
+    2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.controls-toggle-open--tutorial-mode:hover {
+  background: var(--color-surface-hover);
+  border-color: var(--color-primary);
+  color: var(--color-primary-hover);
+}
+
+/* Pause / Resume — neutral utility variant. Stays within the warm palette
+ * but does not compete with the primary Drills button for attention. */
+.controls-toggle-open--tutorial-pause {
+  background: var(--color-bg-solid);
+  border-color: color-mix(in srgb, var(--color-secondary) 30%, var(--color-border));
+  color: var(--color-text-body);
+}
+
+.controls-toggle-open--tutorial-pause:hover {
+  background: var(--color-surface-hover);
+  border-color: var(--color-secondary);
+  color: var(--color-secondary);
+}
+
+/* Exit Tutorial — destructive. Telegraphs at rest with an error-tinged
+ * border + dim text; hover deepens to full error tone. Mirrors the
+ * .osrs-btn--danger vocabulary. */
+.controls-toggle-open--tutorial-exit {
+  background: var(--color-bg-solid);
+  border-color: color-mix(in srgb, var(--color-error) 35%, var(--color-border));
+  color: color-mix(in srgb, var(--color-error) 75%, var(--color-text-muted));
+}
+
+.controls-toggle-open--tutorial-exit:hover {
+  background: color-mix(in srgb, var(--color-error) 14%, var(--color-surface-hover));
+  border-color: var(--color-error);
+  color: var(--color-error);
+}
+
+/* Split-button pair: "Training" stays in the sidebar column at its resting
+   80px; the exit cell hangs off the right edge via absolute positioning so
+   its width is NOT counted in the column's max-content. Sibling buttons
+   (Settings, Shortcuts) keep their resting width — no width pump on tutorial
+   entry/exit. The shared border between cells reads as one composed pill. */
+.controls-toggle-open--split-left {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+/* Specificity bumped to .sidebar-nav scope so this overrides the
+   `position: static; min-width: 80px` rule in App.css that targets every
+   nav button. */
+.sidebar-nav .controls-toggle-open--split-right {
+  position: absolute;
+  left: 100%;
+  top: 0;
+  bottom: 0;
+  min-width: 0;
+  padding: 0;
+  aspect-ratio: 1;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  border-left: none;
+}
+
+.controls-toggle-open--split-right svg {
+  width: 11px;
+  height: 11px;
+  display: block;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.controls-content {
+  /* Load-bearing, not decoration: this repaints the exact color .controls-overlay
+     already paints underneath, so it is a visual no-op — but a scrolling box gets
+     its OWN compositing layer, and an ancestor's background does not count towards
+     that layer's opacity. Without this fill the scrolled subtree is a transparent
+     layer and Blink drops every glyph in it to grayscale AA. */
+  background: var(--color-bg-solid);
+  overflow-y: auto;
+  padding: 16px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* The column scrolls rather than squeezing its zones. A zone only resists shrinking while its own
+   overflow is visible (min-height: auto), and a tour spotlighting a section inside one forces the
+   zone to overflow: hidden (driver.css), which let it collapse to nothing once the list overflowed. */
+.controls-content > * {
+  flex-shrink: 0;
+}
+
+.settings-zone {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.settings-zone-divider {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+}
+
+.settings-zone-divider::before,
+.settings-zone-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--color-border);
+}
+
+.settings-zone-label {
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 10px;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  white-space: nowrap;
+}
+
+.controls-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.controls-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.controls-content::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 4px;
+  border: 2px solid var(--color-bg-solid);
+}
+
+.controls-content::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary-structure);
+}
+
+.control-group--no-border {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+/* Interface-section control vocabulary. Control labels use RuneScape Bold 12
+   (matching .osrs-checkbox__label) at its native 16px on a 16px line box: crisp
+   10px capitals, a clear step above the hints' 8px Plain 11 ones. Hints follow the
+   legal footer below: Plain 11 at the faces' native 16px em, so glyph edges stay on
+   the pixel grid. The 18px line box stays on whole pixels and gives the face's 1px,
+   evenly spaced strokes a 2px lead over its own 16px ascent + descent: at 16px a
+   wrapped hint reads as one dense block, at 20px as two loose rows. */
+.settings-hint {
+  font-family: "RuneScape Plain 11", sans-serif;
+  font-size: 16px;
+  line-height: 18px;
+  color: var(--color-text-muted);
+  margin-top: 4px;
+}
+
+.settings-inline-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.settings-inline-label {
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 16px;
+  color: var(--color-secondary);
+  line-height: 16px;
+  text-shadow: 1px 1px 0 #000;
+  /* Centered and kept to its text like every other `?` container (InfoHint.css, Controls.css's
+     .group-title__label), so the mark rises clear of the label instead of sitting on its baseline. */
+  display: inline-flex;
+  align-items: center;
+  justify-self: start;
+  gap: 3px;
+  /* The mark's tap target at the default reach would end on the "Edit layout" button below. */
+  --info-hint-reach: 11px;
+}
+
+/* Unaffiliated-fan-project notice. It reuses the panel's own zone vocabulary —
+   a labeled divider followed by flowing text — rather than a bordered card, so
+   it reads as the panel's closing zone instead of one more setting container.
+   `margin-top: auto` on the divider parks the whole block against the bottom of
+   the scroll column. Deliberately no background and no box-shadow: the block
+   inherits .controls-content's opaque fill, which is what keeps its text on
+   subpixel AA (see the .controls-overlay-shadow note above).
+
+   Set in the RuneScape faces at their native size. These TTFs carry a
+   gasp table asking for bilevel (no-AA) rendering, which the browser only
+   honors on their native 16px em — measured in the UI harness, the same copy at
+   13px/14px comes out thin and soft, at 16px it is crisp. So both paragraphs
+   sit at 16px and take their size step from the faces themselves rather than
+   from font-size. Plain 12 has visibly taller glyphs than Plain 11, so the
+   claim and the attribution both run Plain 11: the footer is a step smaller
+   without a single glyph edge landing mid-pixel. (RuneScape Small is not a
+   smaller option: it measures identically to Plain 11 at 16px.)
+   Line boxes are whole pixels for the same reason the em is: a relative
+   `line-height: 1.3` resolves to 20.8px and puts every baseline on a fractional
+   row, undoing the bilevel win one line at a time. 18px keeps the baselines on
+   integers, matching .settings-hint: 16px (the face's bare ascent + descent)
+   packed these multi-line paragraphs too tight, and 20px read double-spaced
+   against Plain 11's 8px capitals.
+
+   Tone follows the panel's own label -> hint pattern rather than maximum
+   contrast, and deliberately steps off the accent. At --color-text-body these
+   paragraphs measured L=0.531 / 9.7:1, the brightest text in the panel; at
+   --color-secondary they measured 0.422 / 7.9:1 but wore the panel's brand
+   gold — the same token .settings-inline-label uses for live control labels — so
+   a non-interactive footnote kept reading as a control. --legal-ink desaturates
+   that step by mixing the body token into the caption token: 0.296 / 5.8:1 at
+   29% saturation against gold's 45%. Quieter and hue-neutral, still clear of
+   the 4.5:1 body-text floor, and derived from the color tokens.
+
+   The attribution stays at --color-text-muted, matching every .settings-hint.
+   That step is a deliberate, user-directed exception to the 4.5:1 floor: it
+   measures 4.2:1, it is the panel's established caption treatment, and the
+   pixel faces render bilevel, so the glyph edges stay sharp instead of blurring
+   the way antialiased text does at the same ratio. */
+.settings-zone-divider--footer {
+  margin-top: auto;
+}
+
+.settings-legal {
+  /* Quiet warm neutral for the footer's own voice: the caption token lifted
+     toward body brightness, so it clears the contrast floor without borrowing
+     --color-secondary's accent hue. */
+  --legal-ink: color-mix(in srgb, var(--color-text-body) 35%, var(--color-text-muted));
+}
+
+.settings-legal__lede {
+  margin: 0 0 4px;
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 14px;
+  line-height: 16px;
+  color: var(--legal-ink);
+}
+
+.settings-legal__body {
+  margin: 0;
+  font-family: "RuneScape Plain 11", sans-serif;
+  font-size: 16px;
+  line-height: 18px;
+  color: var(--legal-ink);
+  text-wrap: pretty;
+}
+
+.settings-legal__fine {
+  margin: 8px 0 0;
+  font-family: "RuneScape Plain 11", sans-serif;
+  font-size: 16px;
+  line-height: 18px;
+  color: var(--color-text-muted);
+  text-wrap: pretty;
+}
+
+.settings-legal__actions {
+  display: flex;
+  align-items: center;
+  margin-top: 8px;
+}
+
+/* Scoped under `.app-container:not(.has-fixed-layout)` so the user's explicit
+   fixed game-resolution choice ("custom layout size") survives a narrow
+   window. When `has-fixed-layout` is on the app-container, the desktop
+   sidebar geometry stays active and these rules are skipped — see App.tsx
+   for the className composition. */
+@media (max-width: 720px) {
+  .app-container:not(.has-fixed-layout) .controls-overlay {
+    width: 100vw;
+    max-width: 100vw;
+    border-right: none;
+  }
+
+  .app-container:not(.has-fixed-layout) .controls-overlay-shadow {
+    width: 100vw;
+    max-width: 100vw;
+    border-right: none;
+    box-shadow: 0 0 48px rgba(0, 0, 0, 0.6);
+  }
+
+  .app-container:not(.has-fixed-layout) .panel-header {
+    padding: calc(10px + var(--safe-top, 0px)) 14px 10px;
+  }
+
+  .app-container:not(.has-fixed-layout) .panel-close-button {
+    /* Hit area ≥ 44x44 without bloating the visual icon. */
+    padding: 12px;
+    margin: -12px -6px -12px 0;
+  }
+
+  .app-container:not(.has-fixed-layout) .controls-content {
+    padding: 14px 14px calc(20px + var(--safe-bottom, 0px));
+    /* Keep momentum scrolling on iOS without leaking to the page. */
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    touch-action: pan-y;
+  }
+
+  .app-container:not(.has-fixed-layout) .controls-toggle-open {
+    /* Move the floating opener just far enough from the edge that it clears
+       the notch/home-indicator area. */
+    top: calc(8px + var(--safe-top, 0px));
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+}
+
+/* Settings segmented control (Device Mode here, Infobox position in Plugins): an ARIA radiogroup whose
+   segments stack an 18px glyph over a short label. Quiet at rest, brighten on
+   hover, amber accent when active (matching the SettingRow modified bar) -
+   active is the only place --color-primary lands. */
+.settings-segmented {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 3px;
+  width: 100%;
+  padding: 3px;
+  background: var(--color-surface-inset);
+  border: 1px solid var(--color-border);
+  border-radius: 2px;
+}
+
+.settings-segmented__option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 3px 7px;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  background: transparent;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease,
+    background-color 0.15s ease;
+}
+
+/* Glyph reads at a legible neutral at rest so the choices are instantly
+   scannable, while the gold accent stays reserved for the active segment. */
+.settings-segmented__option svg {
+  display: block;
+  color: var(--color-text-body);
+}
+
+.settings-segmented__label {
+  /* No text-shadow: the pixel face fuzzes below 14px. */
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 11px;
+  line-height: 1;
+}
+
+.settings-segmented__option:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--color-secondary);
+}
+
+.settings-segmented__option.is-active {
+  border-color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 22%, transparent);
+  color: var(--color-accent-text);
+}
+
+.settings-segmented__option.is-active svg {
+  color: var(--color-primary);
+}
+
+/* Active must survive hover. */
+.settings-segmented__option.is-active:hover {
+  color: var(--color-accent-text);
+}
+
+/*
+ * A layout that cannot host this target. Dimmed with the disabled TOKENS rather than the
+ * `opacity: 0.5` .osrs-btn:disabled uses, because opacity below 1 is one of Blink's LCD-text
+ * vetoes: it would drop this segment's label, and only this one, to grayscale AA beside two
+ * subpixel-rendered siblings. `pointer-events` stays on so the title still answers a hover.
+ */
+.settings-segmented__option:disabled {
+  background: var(--color-surface-inset);
+  color: var(--color-text-dim);
+  cursor: not-allowed;
+}
+
+.settings-segmented__option:disabled svg {
+  color: var(--color-text-dim);
+}
+
+.settings-segmented__option:disabled:hover {
+  background: var(--color-surface-inset);
+  color: var(--color-text-dim);
+}
+
+.settings-segmented__option:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+@media (pointer: coarse) {
+  .settings-segmented__option {
+    padding: 10px 3px 9px;
+  }
+}
+
+/* ---- Mobile (see ui/MobileSheet.css) ------------------------------------------------------
+   The header keeps its height while its icons and close become 44px targets. */
+:root[data-mobile-ui] :is(.controls-overlay, .plugins-overlay) .panel-header {
+  padding: 0 4px 0 16px;
+  min-height: 44px;
+}
+
+:root[data-mobile-ui] :is(.controls-overlay, .plugins-overlay) .panel-header-action {
+  box-sizing: border-box;
+  min-width: 40px;
+  min-height: 44px;
+  padding: 0;
+}
+
+:root[data-mobile-ui] :is(.controls-overlay, .plugins-overlay) .panel-header-icons {
+  gap: 0;
+}
+
+/* A label above one control in a group (Game window's Resolution, Infobox appearance's Position):
+   a step below the group title, matching the control labels. Outranks `.control-group label`. */
+.control-group .settings-field-label {
+  display: block;
+  margin: 0;
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 16px;
+  line-height: 16px;
+  letter-spacing: normal;
+  text-transform: none;
+  color: var(--color-secondary);
+  text-shadow: 1px 1px 0 #000;
+}
+
+/* An inline link in a hint takes the hint's face, so the sentence reads as one. */
+.settings-hint .reveal-link {
+  font-family: inherit;
+  line-height: inherit;
+}
+
+/* The credits, moved here from the header: a link in the footer's own voice. */
+.settings-credits-link {
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  font-family: "RuneScape Plain 11", sans-serif;
+  font-size: 16px;
+  line-height: 20px;
+  color: var(--color-secondary);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.settings-credits-link:hover {
+  color: var(--color-primary-hover);
+}
+
+.settings-credits-link:active {
+  color: var(--color-accent-text);
+}
+
+:root[data-mobile-ui] .controls-overlay .settings-credits-link {
+  padding-block: 12px;
+}
+
+/* The header actions' pixel glyphs (launcherIcons: Search, keyboard, close), shared by
+   the Settings and Plugins headers: whole-pixel rects, kept crisp, the shadow free to spill. */
+.panel-header .launcher-icon {
+  display: block;
+  flex: none;
+  overflow: visible;
+  shape-rendering: crispEdges;
+}

@@ -1,0 +1,48 @@
+/* Group 728's framed stone in the left column: the full-screen stone (MobileFullscreenStone).
+   Text-free. */
+
+.osm-menu {
+  position: fixed;
+  /* Below the drawers (70). */
+  z-index: 67;
+  pointer-events: none;
+  transition:
+    opacity 0.22s cubic-bezier(0.2, 0.8, 0.2, 1),
+    transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* Tucked behind an open drawer, exactly like `.sidebar-nav--tucked`. */
+.osm-menu--tucked {
+  opacity: 0;
+  transform: translateX(-10px);
+}
+
+.osm-menu__frame {
+  position: absolute;
+  inset: 0;
+}
+
+.osm-menu__toggle {
+  position: absolute;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  cursor: default;
+  pointer-events: auto;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .osm-menu {
+    transition: none;
+  }
+}
+
+/* The full-screen stone's Home Screen steps (iPhone): three sentences want a wider measure
+   than a `?` hint's. */
+.hover-card.osm-fullscreen-card {
+  max-width: 220px;
+}

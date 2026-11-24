@@ -1,0 +1,289 @@
+.mechanics-settings {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0;
+}
+
+/* Match the checkbox label's inset without adding a second vertical rule inside the rail. */
+.mechanics-feature-keybindings {
+  box-sizing: border-box;
+  min-width: 0;
+  margin: 0 0 4px 32px;
+  padding: 0;
+}
+
+.mechanics-feature-keybindings .keybindings-label {
+  color: var(--color-text-body);
+  font:
+    16px / 20px "RuneScape Plain 12",
+    sans-serif;
+  text-shadow: none;
+}
+
+.mechanics-feature-keybindings .keybindings-content .keybindings-feedback {
+  color: var(--color-text-body);
+  font:
+    16px / 20px "RuneScape Plain 12",
+    sans-serif;
+  text-shadow: none;
+}
+
+.mechanics-feature-keybindings .keybindings-content .keybindings-feedback.is-warning {
+  color: var(--color-warning);
+}
+
+.mechanics-toggles {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Seam between the boss's own mechanics, the aids, and the pickers, full-width in the
+   configurer's column (the practice variant draws none). Same hairline as the settings/actions
+   edge below. */
+.mechanics-group-rule {
+  width: 100%;
+  flex-basis: 100%;
+  height: 0;
+  margin: 3px 0 1px;
+  border-top: var(--unscaled-px, 1px) solid var(--hud-border);
+}
+
+.mechanics-choice {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  min-width: 0;
+}
+
+.mechanics-choice-label {
+  display: flex;
+  /* Wraps so a trailing note that does not fit beside the label drops under it, right-aligned,
+     rather than being clipped by the 216px rail. */
+  flex-wrap: wrap;
+  align-items: center;
+  /* Matches .mechanics-toggle-info — see the note there for why a footnote mark takes this and
+     not the panel's standard control gap. */
+  gap: 2px;
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 14px;
+  line-height: 1.2;
+  color: var(--color-secondary);
+  text-shadow: 1px 1px 0 #000;
+}
+
+.mechanics-choice-segmented {
+  display: grid;
+  gap: 2px;
+  padding: calc(2px + var(--border-give, 0px));
+  background: var(--color-surface-inset);
+  border: var(--unscaled-px, 1px) solid var(--color-border);
+  border-radius: calc(2 * var(--unscaled-px, 1px));
+}
+
+.mechanics-choice-segment {
+  /* border-box because this project has no global reset: on content-box the 18px glyph and the
+     12px label each add their own height to the minimum and the two pickers stop matching. */
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+  min-height: 28px;
+  padding: calc(var(--segment-pad-y, 5px) + var(--border-give, 0px)) calc(2px + var(--border-give, 0px));
+  border: var(--unscaled-px, 1px) solid transparent;
+  border-radius: calc(2 * var(--unscaled-px, 1px));
+  background: var(--color-surface-inset);
+  color: var(--color-text-body);
+  font-family: "RuneScape Plain 11", sans-serif;
+  font-size: 14px;
+  line-height: 16px;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.mechanics-choice-segmented.has-icons .mechanics-choice-segment {
+  min-height: 46px;
+}
+
+.mechanics-choice-segment svg {
+  display: block;
+  flex: none;
+}
+
+.mechanics-choice-segment:hover {
+  background: var(--color-surface-hover);
+  color: var(--color-secondary);
+}
+
+.mechanics-choice-segment.is-active {
+  border-color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 18%, var(--color-surface-inset));
+  color: var(--color-accent-text);
+}
+
+/* Active must survive hover: the bare :hover rule above is (0,2,0) and would
+   otherwise repaint the selected segment's color on the way to clicking it. */
+.mechanics-choice-segment.is-active:hover {
+  color: var(--color-accent-text);
+}
+
+/* Explicit colors, NOT `opacity` on the wrapper: this control renders on the opaque configurer
+   surface, where `opacity < 1` is one of Blink's LCD text-AA vetoes and would drop the label and
+   all three chips to grayscale (docs/agent-reference.md, "LCD text"). The label dims with the chips
+   because dimming only the chips reads as "these options are unavailable" rather than "this
+   setting does not apply yet", which is what an unchecked parent mechanic means. */
+.mechanics-choice.is-disabled .mechanics-choice-label {
+  color: var(--color-text-dim);
+}
+
+.mechanics-choice.is-disabled .mechanics-choice-segmented {
+  border-color: color-mix(in srgb, var(--color-border) 55%, transparent);
+}
+
+/* The mark dims with the label it is set on — it paints its own color, so the label's dimming
+   does not reach it and it would otherwise be the brightest thing in an inapplicable row. Same
+   value as the disabled chips, and for the same reason they do not take `--color-text-dim`
+   straight: at that value a seven-pixel mark stops reading as a mark at all. It stays live while
+   dimmed, because why a picker does not apply yet is exactly what its hint explains. */
+.mechanics-choice.is-disabled .info-hint {
+  color: color-mix(in srgb, var(--color-text-muted) 58%, var(--color-text-dim));
+}
+
+/* Between the resting muted and the dim placeholder token, not `--color-text-dim` itself: these
+   chips are 12px on an inset well, and at the full dim value they stop reading as text at all. */
+.mechanics-choice-segment:disabled {
+  cursor: default;
+  color: color-mix(in srgb, var(--color-text-muted) 58%, var(--color-text-dim));
+}
+
+/* Hover feedback would promise a click the disabled control refuses. */
+.mechanics-choice-segment:disabled:hover {
+  background: var(--color-surface-inset);
+  color: color-mix(in srgb, var(--color-text-muted) 58%, var(--color-text-dim));
+}
+
+/* The active segment still has to read as the current value while disabled — the setting is
+   inapplicable, not unset, and it returns to exactly this value when the parent is re-enabled.
+   Muted rather than full accent, so it never competes with a live selection elsewhere. */
+.mechanics-choice-segment.is-active:disabled,
+.mechanics-choice-segment.is-active:disabled:hover {
+  border-color: color-mix(in srgb, var(--color-primary) 45%, transparent);
+  background: color-mix(in srgb, var(--color-primary) 10%, var(--color-surface-inset));
+  color: color-mix(in srgb, var(--color-primary) 62%, var(--color-text-dim));
+}
+
+.mechanics-fight-setup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.mechanics-settings--practice .mechanics-choice {
+  gap: 4px;
+}
+
+.mechanics-settings--practice .mechanics-choice-segmented .mechanics-choice-segment {
+  flex-direction: row;
+  min-height: 28px;
+  --segment-pad-y: 3px;
+}
+
+.mechanics-settings--practice .mechanics-choice-segment svg {
+  width: 14px;
+  height: 14px;
+}
+
+.mechanics-settings--practice [data-choice-icon="right"] svg {
+  order: 1;
+}
+
+/* Full axis labels stay readable in Practice without competing with an inline glyph. */
+.mechanics-settings--practice [data-choice-icon^="fireball-line-"] svg {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mechanics-choice-segment {
+    transition: none;
+  }
+}
+
+/* A rule, not just the gap: these are the only controls here that DO something rather than
+   configure something, and the tray ends in three same-width bordered rows — the segmented
+   picker's well then both buttons — so without a marked edge the setting reads as a third
+   button. Mirrors the divider `.boss-health` puts on its own bottom edge, the panel's other
+   change of purpose. */
+.mechanics-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  margin-top: 4px;
+  padding-top: calc(8px + var(--border-give, 0px));
+  border-top: var(--unscaled-px, 1px) solid var(--hud-border);
+}
+
+.mechanics-actions .osrs-btn {
+  flex: 1 1 auto;
+}
+
+/* Wraps a toggle and its `?` mark, and is the region that opens the hint. Never growing is the
+   load-bearing part: SettingRow stretches its first child, and gives bare `.osrs-checkbox` an
+   exemption so the row does not run the label out to its edge. Wrapping the checkbox moves it
+   out of that exemption's reach, so the wrapper has to claim it — and a stretched wrapper would
+   also make the hover region a whole empty row wide. It may still shrink, so a label wider than
+   a narrow column wraps instead of running past the panel edge.
+
+   The gap is letterspacing between a word and its footnote mark, not separation between two
+   controls, which is why it is far tighter than the 8 the panel's other label-and-control pairs
+   take. */
+.setting-row > .mechanics-toggle-info {
+  display: flex;
+  flex: 0 1 auto;
+  align-items: center;
+  gap: 2px;
+  min-width: 0;
+}
+
+/* A row carrying a trailing note takes the width instead of shrinking to its label, so the note
+   can sit at the far end of it. */
+.setting-row > .mechanics-toggle-info--noted {
+  flex: 1 1 auto;
+  flex-wrap: wrap;
+}
+
+/* When a control takes effect, where that is later than now ("From wave 69"). The row's own
+   trailing note, in the muted hint ramp the Inferno setup gives "3 standing": smaller face at the
+   same native em, so it supports the label without competing with it. Pushed to the end of the
+   row and wrapping under it when the rail is too narrow, like that one. No shadow: this is a
+   caption on an opaque panel, not a label over art. */
+.mechanics-row-note {
+  flex: none;
+  margin-left: auto;
+  padding-left: 8px;
+  color: var(--color-text-muted);
+  font:
+    16px / 16px "RuneScape Plain 11",
+    sans-serif;
+  text-shadow: none;
+  white-space: nowrap;
+}
+
+.mechanics-settings--practice .boss-health {
+  border-bottom: 0;
+}
+
+.mechanics-settings--practice .mechanics-actions {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
+}

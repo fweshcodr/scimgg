@@ -1,0 +1,38 @@
+/* Infobox appearance, a group in Settings → Interface. Its picker, inline row, field label and
+   hints are the settings vocabulary (SettingsSidebar.css); this only spaces the two fields. */
+
+.infobox-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.infobox-field + .infobox-field {
+  margin-top: 5px;
+}
+
+.infobox-field .settings-hint {
+  margin-top: 0;
+}
+
+/* Breaks from the hint above, which describes a different thing (the LIVE target). Keeps the
+   caption color instead of dimming to match the control it describes: this is the only text
+   explaining a segment the player just found grayed out, so it is read, not glanced at. */
+.infobox-field .infobox-field__unavailable {
+  margin-top: 2px;
+}
+
+/* Outline color: a labeled swatch so its role reads on the Text outline row. */
+.infobox-outline-colour {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex: none;
+}
+
+.infobox-outline-colour__label {
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 12px;
+  color: var(--color-text-muted);
+  line-height: 1;
+}

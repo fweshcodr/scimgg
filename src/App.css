@@ -1,0 +1,409 @@
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+.app-container {
+  width: 100vw;
+  height: 100vh;
+  /* Prefer the dynamic viewport height so the scene fills the visible
+     area on iOS Safari even as the URL bar shows/hides. */
+  /* biome-ignore lint/suspicious/noDuplicateProperties: deliberate progressive-enhancement pair. Browsers without dvh keep the vh value; the cascade is the fallback mechanism. */
+  height: 100dvh;
+  position: relative;
+  /* Clip, not hidden: a hidden box is still a scroll container, so scrollIntoView (a tour
+     spotlighting chrome that pokes a fraction of a pixel past a window-filling Fixed frame) could
+     scroll the whole UI sideways with no way back. `hidden` first for browsers without `clip`. */
+  overflow: hidden;
+  overflow: clip;
+  display: flex;
+  background-color: #0f0f14;
+  background-image: radial-gradient(circle at center, #1e1e28 0%, #0f0f14 60%, #050508 100%);
+}
+
+/* Desktop gets a hard minimum so the carefully-laid-out chrome never
+   squishes. On tablets/phones the mobile CSS below takes over and panels
+   reflow rather than forcing horizontal scroll. Touch-only devices skip the
+   minimum: a landscape phone is wider than 720px but only ~340px tall, and the
+   page cannot scroll, so the minimum pushed the tab row and HUD off-screen.
+   Touchscreen laptops still report a fine pointer and keep it. */
+@media (min-width: 721px) and (any-pointer: fine) {
+  .app-container {
+    min-width: 765px;
+    min-height: 503px;
+  }
+}
+
+/* Some Samsung phones report a fine pointer they do not have; the app's own
+   touch detection (published as data-mobile-ui) exempts them too. */
+[data-mobile-ui] .app-container {
+  min-width: 0;
+  min-height: 0;
+}
+
+/* Locked frames own their minimum size. The surrounding stage must still
+   match the browser so clipping and centering use the visible window. */
+.app-container--popout,
+.app-container.has-fixed-layout {
+  min-width: 0;
+  min-height: 0;
+}
+
+.main-layout {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.grid-panel {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  position: relative;
+  z-index: auto;
+}
+
+/* Game viewport letterbox frame ----------------------------------------
+   The stage fills .grid-panel and centers a single .game-viewport-frame.
+   In 'fit' mode the frame covers the stage entirely (no letterbox). In
+   'fixed' mode the frame is sized exactly to width×height and centered;
+   .game-viewport-stage's overflow: hidden clips if the locked resolution
+   is larger than the window (matching OSRS fixed-mode behavior).
+
+   IMPORTANT: do NOT add transform, filter, will-change: transform, or
+   perspective to either .game-viewport-stage or .game-viewport-frame here.
+   Any of those turn the element into a containing block for
+   position: fixed descendants (W3C spec). The only transforms on the
+   frame are App's inline ones (a fitted replay, Fixed's Stretch to
+   Window), which is why every window-anchored surface (the context menu,
+   the tooltip, the top chrome) renders outside the frame, not in it. */
+.game-viewport-stage {
+  position: absolute;
+  /* Reserve space at the top for any persistent top chrome by reading
+     --top-inset from :root. Currently always 0 (no top chrome is mounted);
+     the var hook stays in place so a future top banner can opt in by
+     publishing its measured height to :root from App.tsx. */
+  top: var(--top-inset, 0px);
+  right: 0;
+  bottom: 0;
+  left: 0;
+  overflow: hidden;
+  z-index: 0;
+  background: #050508;
+  /* Match the sidebar push transition (Grid.tsx: transform 0.3s cubic-bezier)
+     so chrome and viewport reflow in lockstep when the ribbon mounts/unmounts. */
+  transition: top 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* Window-style outer border — a crisp 2-layer stroke (dark edge +
+   brand-bronze bezel) plus an ambient drop shadow that make the
+   game viewport read as a framed window when there's letterbox
+   space around it.
+
+   Conditional visibility is handled implicitly: the stage has
+   overflow: hidden, so any outer box-shadow that extends past the
+   stage edge is clipped. That gives us the exact behavior the user
+   wants — border visible only when blank space surrounds the frame:
+     • fit mode              → frame == stage → shadow fully clipped
+     • letterbox (frame < win) → shadow sits in the letterbox → visible
+     • exact fit (frame == win)→ shadow 100% outside stage → clipped
+     • oversized (frame > win) → frame overflows → shadow outside → clipped
+   No React state or conditional class needed. */
+.game-viewport-frame--fixed {
+  /* 1px near-black outline at the frame edge — hard contrast
+       against the stage's #050508 background so the window 'pops'. */
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.9),
+    /* 1px brand-bronze bezel just outside the dark line — the 'metal
+       frame' color, using the existing --color-primary-structure token
+       (#5d5245, muted iron/bronze). */
+    0
+    0 0 2px var(--color-primary-structure),
+    /* Ambient drop shadow for depth when the frame floats in a
+       letterbox. Only visible when there's room below/around. */
+    0
+    28px 72px -28px rgba(0, 0, 0, 0.8);
+}
+
+.game-workspace {
+  position: absolute;
+  inset: 0;
+}
+
+.workspace-presentation-surface,
+.workspace-replay-host {
+  position: absolute;
+  pointer-events: none;
+  z-index: 40;
+}
+
+.workspace-cursor-host {
+  position: absolute;
+  pointer-events: none;
+}
+
+/* The desktop top chrome's layer (launcher/TopChrome.tsx): window-fixed, so it never takes the
+   presentation surface's scale, and it opens no stacking context of its own, so the chrome's own
+   z-index orders it against the drawers. */
+.workspace-chrome-host {
+  display: contents;
+}
+
+.workspace-cursor-host {
+  inset: 0;
+  z-index: 60;
+}
+
+.workspace-replay-host {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+}
+
+.intro-fade-overlay {
+  position: absolute;
+  inset: 0;
+  background: #000;
+  pointer-events: none;
+  z-index: 50;
+  opacity: 0;
+}
+
+.intro-fade-overlay--active {
+  opacity: 1;
+}
+
+.intro-fade-overlay--fading {
+  opacity: 0;
+  transition: opacity 1.8s ease-out;
+}
+
+.exit-fade-overlay {
+  position: absolute;
+  inset: 0;
+  background: #000;
+  pointer-events: none;
+  z-index: 50;
+  opacity: 0;
+  transition: opacity 0.8s ease-in;
+}
+
+.exit-fade-overlay--active {
+  opacity: 1;
+}
+
+.lobby-effect-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.lobby-alpha-slider {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 0 4px 0 24px;
+}
+
+.lobby-alpha-active {
+  color: var(--color-accent-text);
+}
+
+.lobby-alpha-value {
+  color: var(--color-secondary);
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 12px;
+  min-width: 36px;
+  text-align: right;
+}
+
+.osrs-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  background: transparent;
+  flex-grow: 1;
+}
+
+.osrs-slider:focus {
+  outline: none;
+}
+
+.osrs-slider::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 6px;
+  cursor: pointer;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 3px;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+.osrs-slider::-webkit-slider-thumb {
+  height: 14px;
+  width: 14px;
+  border-radius: 3px;
+  background: var(--color-secondary);
+  cursor: pointer;
+  -webkit-appearance: none;
+  margin-top: -5px;
+  border: 1px solid var(--color-border);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    0 1px 2px rgba(0, 0, 0, 0.5);
+  transition: all 0.2s ease;
+}
+
+.osrs-slider:hover::-webkit-slider-thumb {
+  background: var(--color-primary);
+  border-color: var(--color-primary-structure);
+  box-shadow:
+    0 0 6px color-mix(in srgb, var(--color-primary) 40%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+/* Modified slider — thumb turns orange to indicate non-default value */
+.osrs-slider-modified::-webkit-slider-thumb {
+  background: var(--color-primary);
+  border-color: var(--color-primary-structure);
+  box-shadow:
+    0 0 4px color-mix(in srgb, var(--color-primary) 30%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.osrs-slider::-moz-range-track {
+  width: 100%;
+  height: 6px;
+  cursor: pointer;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 3px;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+.osrs-slider::-moz-range-thumb {
+  height: 14px;
+  width: 14px;
+  border-radius: 3px;
+  background: var(--color-secondary);
+  cursor: pointer;
+  border: 1px solid var(--color-border);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    0 1px 2px rgba(0, 0, 0, 0.5);
+  transition: all 0.2s ease;
+}
+
+.osrs-slider-modified::-moz-range-thumb {
+  background: var(--color-primary);
+  border-color: var(--color-primary-structure);
+  box-shadow:
+    0 0 4px color-mix(in srgb, var(--color-primary) 30%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.osrs-slider:hover::-moz-range-thumb {
+  background: var(--color-primary);
+  border-color: var(--color-primary-structure);
+  box-shadow:
+    0 0 6px color-mix(in srgb, var(--color-primary) 40%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.sidebar-nav {
+  position: fixed;
+  /* The Mobile menu column; the desktop menu is the top chrome's (launcher/TopChrome.tsx). */
+  top: calc((24px + var(--safe-top, 0px) + var(--top-inset, 0px)) / var(--overlay-scale, 1));
+  left: calc(var(--safe-left, 0px) / var(--overlay-scale, 1));
+  /* Below the drawers (70) and their shadow proxies (69), permanently. The nav only ever
+     shares space with its own drawer, and it must stay under it for the WHOLE slide: a
+     z-index cannot be transitioned, so raising it on close would flip the nav on top of a
+     panel that is still 3/4 on screen and fade the buttons in over it. Nothing else in the
+     app occupies 68-70. */
+  z-index: 68;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition:
+    top 0.3s cubic-bezier(0.2, 0.8, 0.2, 1),
+    opacity 0.22s cubic-bezier(0.2, 0.8, 0.2, 1),
+    transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* Tucked = the nav's own drawer is open and covering it. The nav stays mounted rather than
+   unmounting, so closing the drawer UNCOVERS the buttons instead of conjuring them under the
+   cursor — they were there the whole time; the panel was simply on top of them.
+
+   The fade runs slightly behind that wipe rather than under it. `cubic-bezier(0.2, 0.8, 0.2, 1)`
+   is steeply front-loaded — it is already ~70% done at ~0.06s — so the drawer's trailing edge
+   clears the widest button (~110px) well before the 0.22s fade finishes. The buttons therefore
+   spend their last ~0.16s fading in the open, which is the point: at z-68 the panel is on top of
+   them the whole time it covers them, so what is left is a soft arrival rather than a pop. */
+.sidebar-nav--tucked {
+  opacity: 0;
+  transform: translateX(-10px);
+  pointer-events: none;
+}
+
+/* No slide for users who asked for less motion — the fade alone still avoids
+   the instant pop. */
+@media (prefers-reduced-motion: reduce) {
+  .sidebar-nav--tucked {
+    transform: none;
+  }
+}
+
+/* Layout reset for the nav-hosted variants of the toggle. Declared before the media-query rules
+   below so specificity ascends down the file. */
+.sidebar-nav .controls-toggle-open,
+.sp-wrapper .controls-toggle-open.sp-collapsed-tab {
+  position: static;
+  top: auto;
+  left: auto;
+  z-index: auto;
+  min-width: 80px;
+  box-sizing: border-box;
+}
+
+@media (max-width: 720px) {
+  /* Scoped under `.app-container:not(.has-fixed-layout)` so the user's
+     explicit fixed game-resolution choice survives a narrow window. See
+     App.tsx for the className composition. */
+  .app-container:not(.has-fixed-layout) .sidebar-nav {
+    top: calc((8px + var(--safe-top, 0px) + var(--top-inset, 0px)) / var(--overlay-scale, 1));
+    gap: 6px;
+  }
+  .app-container:not(.has-fixed-layout) .sidebar-nav .controls-toggle-open {
+    /* Compact touch target — still reaches the 44px minimum on iOS thanks to padding. */
+    padding: 10px 12px;
+    font-size: 13px;
+    min-width: 64px;
+  }
+}
+
+.kbd {
+  display: inline-block;
+  padding: 1px 5px;
+  margin: 0 2px;
+  /* Plain 11 face at 16px — the native pixel size of the RuneScape TTFs
+     (unitsPerEm=16). The face carries the "small" look; the 16px size keeps
+     every glyph edge on the pixel grid. At 11px the face renders on a
+     fractional grid and antialiases key names into mush. */
+  font-family: "RuneScape Plain 11", sans-serif;
+  font-size: 16px;
+  color: var(--color-text-body);
+  background: var(--color-surface);
+  border: 1px solid var(--color-primary-structure);
+  border-radius: 2px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  line-height: 1;
+  vertical-align: baseline;
+  /* Chords live in one cap ("Shift + Right-click"), and the plugins sidebar is narrow
+     enough to break one mid-chord — which splits the border into two ragged halves. */
+  white-space: nowrap;
+}

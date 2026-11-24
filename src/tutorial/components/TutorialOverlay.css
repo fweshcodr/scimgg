@@ -1,0 +1,1539 @@
+/* z-strata: game panels 10-30, EncounterTitleCard 40, tutorial chrome (beam,
+   perimeter meter) 50, codex 55, step intro 57, pause/completion 60, drawers 70+.
+   Beam and Codex share top: 184px, so moving between them resizes in place rather
+   than jumping. --color-primary is reserved for commitment CTAs. */
+.tutorial-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  pointer-events: none;
+  font-family: "RuneScape Plain 12", sans-serif;
+}
+
+.tutorial-perimeter-meter {
+  position: absolute;
+  left: -1px;
+  right: -1px;
+  bottom: -1px;
+  height: 5px;
+  background: var(--color-bg-solid);
+  display: flex;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.tutorial-perimeter-seg {
+  flex: 1;
+  background: var(--color-border);
+}
+
+/* Inset divider stays visible over any segment fill color. */
+.tutorial-perimeter-seg:not(:last-child) {
+  box-shadow: inset -1px 0 0 var(--color-bg-solid);
+}
+
+.tutorial-perimeter-seg.filled {
+  background: var(--color-secondary);
+}
+
+/* 0.6s must match PERIMETER_LOST_BLINK_MS in TutorialOverlay.tsx. */
+.tutorial-perimeter-seg.lost {
+  animation: tutorial-perimeter-lost 0.6s ease-out;
+}
+
+@keyframes tutorial-perimeter-lost {
+  0% {
+    background: var(--color-secondary);
+  }
+  20% {
+    background: var(--color-error);
+  }
+  45% {
+    background: var(--color-secondary);
+  }
+  70% {
+    background: var(--color-error);
+  }
+  100% {
+    background: var(--color-border);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tutorial-perimeter-seg.lost {
+    animation: none;
+  }
+}
+
+.tutorial-beam {
+  pointer-events: auto;
+  position: fixed;
+  top: 184px;
+  right: var(--safe-right, 0px);
+  width: 272px;
+  /* No min-height so content keeps the beam aligned with the Codex. */
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 8px 10px;
+  padding: 8px 10px;
+  /* Opaque: the beam takes clicks (DESIGN.md, Opacity). */
+  background: var(--color-bg-solid);
+  border: 1px solid var(--color-border);
+  z-index: 50;
+  animation: tutorial-beam-in 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes tutorial-beam-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Tone is a tinted background + border, never a side-stripe border. */
+.tutorial-beam[data-tone="awaiting"] {
+  border-color: color-mix(in srgb, var(--color-secondary) 35%, var(--color-border));
+  background: color-mix(in srgb, var(--color-secondary) 8%, var(--color-bg-solid));
+}
+.tutorial-beam[data-tone="error"] {
+  border-color: color-mix(in srgb, var(--color-error) 35%, var(--color-border));
+  background: color-mix(in srgb, var(--color-error) 8%, var(--color-bg-solid));
+}
+.tutorial-beam[data-tone="success"] {
+  border-color: color-mix(in srgb, var(--color-success) 35%, var(--color-border));
+  background: color-mix(in srgb, var(--color-success) 8%, var(--color-bg-solid));
+}
+.tutorial-beam[data-tone="paused"],
+.tutorial-beam[data-tone="watch"],
+.tutorial-beam[data-tone="running"] {
+  border-color: var(--color-border);
+}
+
+.tutorial-beam-status {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-secondary);
+  flex-shrink: 0;
+}
+.tutorial-beam[data-tone="error"] .tutorial-beam-status {
+  background: var(--color-error);
+}
+.tutorial-beam[data-tone="success"] .tutorial-beam-status {
+  background: var(--color-success);
+}
+.tutorial-beam[data-tone="paused"] .tutorial-beam-status {
+  background: var(--color-text-muted);
+}
+
+.tutorial-beam-stack {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.tutorial-beam-meta {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-family: "RuneScape Plain 12", sans-serif;
+  font-size: 12px;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tutorial-beam-tone-label {
+  color: var(--color-secondary);
+  font-family: "RuneScape Bold 12", sans-serif;
+}
+.tutorial-beam[data-tone="error"] .tutorial-beam-tone-label {
+  color: var(--color-error);
+}
+.tutorial-beam[data-tone="success"] .tutorial-beam-tone-label {
+  color: var(--color-success);
+}
+.tutorial-beam[data-tone="paused"] .tutorial-beam-tone-label {
+  color: var(--color-text-muted);
+}
+
+.tutorial-beam-step-of {
+  color: var(--color-text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.tutorial-beam-num {
+  color: var(--color-text-body);
+  font-family: "RuneScape Bold 12", sans-serif;
+}
+
+.tutorial-beam-title {
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 13px;
+  color: var(--color-text-body);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
+}
+
+.tutorial-beam-progress {
+  color: var(--color-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.tutorial-beam-rule {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 5px;
+  padding-top: 8px;
+  border-top: 1px solid color-mix(in srgb, var(--color-border) 70%, transparent);
+}
+
+.tutorial-beam-rule-row {
+  display: grid;
+  grid-template-columns: 54px 12px 1fr;
+  align-items: center;
+  gap: 8px;
+}
+
+.tutorial-beam-rule-cue {
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 13px;
+  line-height: 1.2;
+}
+
+.tutorial-beam-rule-arrow {
+  display: block;
+  color: var(--color-text-dim);
+}
+
+.tutorial-beam-rule-prayer {
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 13px;
+  line-height: 1.2;
+  color: var(--color-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tutorial-beam-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.tutorial-beam-btn {
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  padding: 0;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.tutorial-beam-btn:hover:not(:disabled) {
+  background: var(--color-surface-hover);
+  border-color: var(--color-primary-structure);
+  color: var(--color-text-body);
+}
+
+.tutorial-beam-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.tutorial-beam-btn svg {
+  width: 12px;
+  height: 12px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.tutorial-beam-btn svg circle {
+  fill: currentColor;
+  stroke: none;
+}
+
+.tutorial-beam-cta {
+  height: 32px;
+  padding: 0 12px;
+  background: var(--color-primary);
+  color: var(--color-bg-solid);
+  border: 1px solid var(--color-primary);
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 12px;
+  cursor: pointer;
+  letter-spacing: 0;
+}
+
+.tutorial-beam-cta:hover {
+  background: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
+}
+
+.tutorial-beam-cta--retry {
+  background: transparent;
+  color: var(--color-error);
+  border-color: color-mix(in srgb, var(--color-error) 60%, var(--color-border));
+}
+.tutorial-beam-cta--retry:hover {
+  background: color-mix(in srgb, var(--color-error) 14%, var(--color-surface));
+  border-color: var(--color-error);
+  color: var(--color-error);
+}
+
+.tutorial-beam-cta--secondary {
+  background: var(--color-surface);
+  color: var(--color-secondary);
+  border-color: var(--color-border);
+}
+.tutorial-beam-cta--secondary:hover {
+  background: var(--color-surface-hover);
+  border-color: var(--color-primary-structure);
+  color: var(--color-text-body);
+}
+
+.tutorial-beam-transport {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 6px;
+  padding-top: 8px;
+  border-top: 1px solid color-mix(in srgb, var(--color-border) 70%, transparent);
+}
+
+.tutorial-beam-transport-track,
+.tutorial-beam-seek {
+  display: block;
+  width: 100%;
+  height: 3px;
+  margin: 0;
+  border: none;
+  border-radius: 2px;
+  background: linear-gradient(
+    to right,
+    var(--color-secondary) 0%,
+    var(--color-secondary) var(--seek-progress, 0%),
+    rgba(255, 255, 255, 0.06) var(--seek-progress, 0%),
+    rgba(255, 255, 255, 0.06) 100%
+  );
+  outline: none;
+  transition: background 0.15s ease;
+}
+
+.tutorial-beam-seek {
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+}
+
+.tutorial-beam-seek:hover,
+.tutorial-beam-seek:active {
+  background: linear-gradient(
+    to right,
+    var(--color-primary) 0%,
+    var(--color-primary) var(--seek-progress, 0%),
+    rgba(255, 255, 255, 0.08) var(--seek-progress, 0%),
+    rgba(255, 255, 255, 0.08) 100%
+  );
+}
+
+.tutorial-beam-seek::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 6px;
+  height: 12px;
+  background: var(--color-secondary);
+  border: none;
+  border-radius: 1px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.tutorial-beam-seek:hover::-webkit-slider-thumb {
+  background: var(--color-text-body);
+}
+
+.tutorial-beam-seek::-moz-range-thumb {
+  width: 6px;
+  height: 12px;
+  background: var(--color-secondary);
+  border: none;
+  border-radius: 1px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.tutorial-beam-seek:hover::-moz-range-thumb {
+  background: var(--color-text-body);
+}
+
+.tutorial-beam-seek::-moz-range-track {
+  height: 3px;
+  background: transparent;
+  border: none;
+  border-radius: 2px;
+}
+
+.tutorial-beam-transport-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.tutorial-beam-btn.tutorial-beam-btn--play {
+  color: var(--color-secondary);
+}
+
+.tutorial-beam-transport-tick {
+  margin-left: 4px;
+  font-family: "RuneScape Plain 12", sans-serif;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.tutorial-beam-transport-tick-current {
+  color: var(--color-secondary);
+}
+
+.tutorial-beam-transport-tick-sep {
+  margin: 0 2px;
+  color: var(--color-text-dim);
+}
+
+.tutorial-beam-transport-tick-total {
+  color: var(--color-text-muted);
+}
+
+.tutorial-beam-transport-controls .tutorial-beam-cta {
+  margin-left: auto;
+  height: 28px;
+  padding: 0 10px;
+  font-size: 12px;
+}
+
+.tutorial-beam-inline-paused,
+.tutorial-beam-transport-paused {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 4px;
+  padding: 2px 6px;
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  background: color-mix(in srgb, var(--color-text-muted) 14%, transparent);
+  border-radius: 2px;
+  line-height: 1;
+}
+
+.tutorial-beam[data-tone="paused"] .tutorial-beam-transport-track {
+  opacity: 0.55;
+}
+
+@media (pointer: coarse) {
+  .tutorial-beam-seek {
+    height: 8px;
+    padding: 10px 0;
+    background-clip: content-box;
+  }
+  .tutorial-beam-seek::-webkit-slider-thumb {
+    width: 14px;
+    height: 14px;
+    border-radius: 2px;
+  }
+  .tutorial-beam-seek::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    border-radius: 2px;
+  }
+  .tutorial-beam-transport-controls .tutorial-beam-btn {
+    width: 32px;
+    height: 32px;
+  }
+  .tutorial-beam-transport-controls .tutorial-beam-cta {
+    height: 32px;
+  }
+}
+
+.tutorial-beam-menu {
+  position: absolute;
+  top: 60px;
+  right: 0;
+  width: 224px;
+  background: var(--color-bg-solid);
+  border: 1px solid var(--color-border);
+  /* Inset only: the drop shadow lives on ::before (below). */
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--color-accent-text) 6%, transparent);
+  z-index: 7;
+  padding: 4px 0;
+  animation: tutorial-beam-menu-in 0.16s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* An outer box-shadow on the element painting the text's background drops every glyph in it to
+   grayscale AA (subpixel-aa skill). The menu never clips, so a text-free ::before can carry the
+   drop shadow instead: `inset: -1px` lands it on the menu's border box, and `z-index: -1` keeps it
+   under the items inside the menu's own stacking context. */
+.tutorial-beam-menu::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  z-index: -1;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+}
+
+@keyframes tutorial-beam-menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tutorial-beam-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  font-family: "RuneScape Plain 12", sans-serif;
+  font-size: 13px;
+  color: var(--color-text-body);
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  width: 100%;
+  text-align: left;
+}
+
+.tutorial-beam-menu-item:hover:not(:disabled) {
+  background: var(--color-surface-hover);
+}
+
+.tutorial-beam-menu-item:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.tutorial-beam-menu-item svg {
+  width: 12px;
+  height: 12px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex-shrink: 0;
+  color: var(--color-text-muted);
+}
+
+.tutorial-beam-menu-item:hover:not(:disabled) svg {
+  color: var(--color-secondary);
+}
+
+.tutorial-beam-menu-divider {
+  height: 1px;
+  background: var(--color-border);
+  margin: 4px 0;
+}
+
+.tutorial-beam-menu-item--danger {
+  color: var(--color-error);
+}
+.tutorial-beam-menu-item--danger svg {
+  color: var(--color-error);
+}
+.tutorial-beam-menu-item--danger:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--color-error) 10%, var(--color-surface));
+}
+
+.tutorial-codex {
+  pointer-events: auto;
+  position: fixed;
+  top: 184px;
+  right: var(--safe-right, 0px);
+  width: 380px;
+  max-height: calc(100vh - 200px);
+  /* biome-ignore lint/suspicious/noDuplicateProperties: deliberate progressive-enhancement pair. Browsers without dvh keep the vh value; the cascade is the fallback mechanism. */
+  max-height: calc(100dvh - 200px);
+  background: var(--color-bg-solid);
+  border: 1px solid var(--color-border);
+  /* Inset only: the drop shadow lives on ::before, as on .tutorial-beam-menu. */
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--color-accent-text) 4%, transparent);
+  display: flex;
+  flex-direction: column;
+  z-index: 55;
+  animation: tutorial-codex-in 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.tutorial-codex::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  z-index: -1;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+}
+
+@keyframes tutorial-codex-in {
+  from {
+    opacity: 0;
+    transform: translateX(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.tutorial-codex-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 12px 14px 10px;
+  border-bottom: 1px solid var(--color-border);
+  background: transparent;
+}
+
+.tutorial-codex-head-text {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.tutorial-codex-eyebrow {
+  font-family: "RuneScape Plain 11", sans-serif;
+  font-size: 11px;
+  color: var(--color-secondary);
+  line-height: 1;
+}
+
+.tutorial-codex-title {
+  margin: 0;
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 16px;
+  color: var(--color-text-body);
+  line-height: 1.2;
+}
+
+.tutorial-codex-body {
+  padding: 12px 14px;
+  overflow-y: auto;
+  /* Load-bearing, not decoration: a scroller is its own layer, and the codex's fill does not make
+     it opaque, so without its own every glyph in it goes grayscale (subpixel-aa skill). */
+  background: var(--color-bg-solid);
+  flex: 1;
+  min-height: 0;
+}
+
+.tutorial-codex-rich {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tutorial-codex-text {
+  margin: 0;
+  font-family: "RuneScape Plain 12", sans-serif;
+  font-size: 13px;
+  color: var(--color-text-body);
+  line-height: 1.5;
+}
+
+.tutorial-codex-text b,
+.tutorial-codex-text strong {
+  color: var(--color-secondary);
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-weight: normal;
+}
+
+.tutorial-codex-image {
+  max-width: 100%;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  display: block;
+}
+
+.tutorial-codex-video {
+  width: 100%;
+  border: 1px solid var(--color-border);
+  background: #000;
+  display: block;
+}
+
+.tutorial-codex-video-fallback {
+  padding: 14px;
+  background: var(--color-surface-inset);
+  border: 1px dashed var(--color-border);
+  text-align: center;
+  color: var(--color-text-muted);
+  font-family: "RuneScape Plain 12", sans-serif;
+  font-size: 12px;
+}
+
+.tutorial-codex-video-fallback-title {
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 13px;
+  color: var(--color-secondary);
+  margin-bottom: 4px;
+}
+
+.tutorial-codex-video-fallback-text {
+  font-size: 11px;
+  word-break: break-all;
+  opacity: 0.7;
+}
+
+.tutorial-codex-callout {
+  margin: 0 14px 12px;
+  padding: 10px 12px;
+  background: color-mix(in srgb, var(--color-secondary) 6%, transparent);
+  border: 1px solid var(--color-border);
+  display: grid;
+  gap: 4px;
+}
+
+.tutorial-codex-callout-eyebrow {
+  font-family: "RuneScape Plain 11", sans-serif;
+  font-size: 11px;
+  color: var(--color-secondary);
+  line-height: 1;
+}
+
+.tutorial-codex-callout-title {
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 13px;
+  color: var(--color-text-body);
+  line-height: 1.2;
+}
+
+.tutorial-codex-foot {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.4fr;
+  gap: 6px;
+  padding: 10px 14px 12px;
+  border-top: 1px solid var(--color-border);
+  background: transparent;
+}
+
+.tutorial-codex-foot-btn {
+  height: 32px;
+  padding: 0 12px;
+  background: transparent;
+  color: var(--color-secondary);
+  border: 1px solid var(--color-border);
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 12px;
+  cursor: pointer;
+  letter-spacing: 0;
+}
+
+.tutorial-codex-foot-btn:hover:not(:disabled) {
+  color: var(--color-text-body);
+  border-color: var(--color-primary-structure);
+}
+
+.tutorial-codex-foot-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.tutorial-codex-foot-btn--primary {
+  background: var(--color-primary);
+  color: var(--color-bg-solid);
+  border-color: var(--color-primary);
+}
+
+.tutorial-codex-foot-btn--primary:hover:not(:disabled) {
+  background: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
+  color: var(--color-bg-solid);
+}
+
+/* Inside .tutorial-codex-body so the list inherits the codex's scroll bounds. */
+.tutorial-codex--steps .tutorial-codex-body {
+  padding: 8px 0;
+}
+
+.tutorial-steps-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 2px;
+  font-family: "RuneScape Plain 12", sans-serif;
+  font-size: 13px;
+}
+
+.tutorial-steps-item {
+  list-style: none;
+}
+
+.tutorial-steps-item-btn {
+  display: grid;
+  grid-template-columns: 24px 1fr auto;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 6px 16px;
+  line-height: 1.3;
+  color: var(--color-text-muted);
+  background: transparent;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: inherit;
+}
+
+.tutorial-steps-item-btn:hover:not(:disabled) {
+  background: var(--color-surface-hover);
+  color: var(--color-text-body);
+  outline: none;
+}
+
+.tutorial-steps-item-btn:disabled {
+  cursor: default;
+}
+
+.tutorial-steps-item.active .tutorial-steps-item-btn {
+  color: var(--color-text-body);
+  background: color-mix(in srgb, var(--color-secondary) 8%, var(--color-bg-elevated));
+}
+
+.tutorial-steps-item.done {
+  color: var(--color-text-muted);
+}
+
+.tutorial-steps-item.pending {
+  color: var(--color-text-dim);
+}
+
+.tutorial-steps-marker {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+.tutorial-steps-marker svg {
+  width: 12px;
+  height: 12px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.tutorial-steps-item.active .tutorial-steps-marker {
+  background: color-mix(in srgb, var(--color-secondary) 18%, var(--color-surface));
+  border-color: var(--color-secondary);
+  color: var(--color-secondary);
+}
+
+.tutorial-steps-item.done .tutorial-steps-marker {
+  background: var(--color-surface-inset);
+  border-color: var(--color-primary-structure);
+  color: var(--color-success);
+}
+
+.tutorial-steps-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tutorial-steps-item.active .tutorial-steps-label {
+  font-family: "RuneScape Bold 12", sans-serif;
+}
+
+.tutorial-steps-current-tag {
+  font-family: "RuneScape Plain 12", sans-serif;
+  font-size: 11px;
+  color: var(--color-secondary);
+  text-transform: lowercase;
+}
+
+/* The overlay sits beneath the sidebars (z 70), so its centered cards and the step intro center in
+   the room they leave (App's --ui-inset-*), as the death and victory dialogs do. */
+.tutorial-pause-backdrop {
+  pointer-events: auto;
+  position: fixed;
+  inset: 0;
+  padding-inline: var(--ui-inset-left, 0px) var(--ui-inset-right, 0px);
+  display: grid;
+  place-items: center;
+  background: var(--modal-backdrop);
+  z-index: 60;
+}
+
+@keyframes tutorial-pause-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.tutorial-pause-card {
+  width: 360px;
+  max-width: calc(100vw - 32px);
+  background: var(--color-bg-solid);
+  border: 1px solid var(--modal-card-border);
+  box-shadow: var(--modal-card-shadow);
+  border-radius: var(--modal-radius);
+  animation: tutorial-pause-fade 0.16s ease-out;
+  display: grid;
+  grid-template-rows: auto auto auto;
+  overflow: hidden;
+}
+
+.tutorial-pause-card-head {
+  padding: 16px 18px 12px;
+  border-bottom: 1px solid var(--color-border);
+  text-align: center;
+}
+
+.tutorial-pause-card-head h3 {
+  margin: 0;
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 18px;
+  color: var(--color-secondary);
+  line-height: 1.1;
+}
+
+.tutorial-pause-card-body {
+  padding: 14px 18px;
+  display: grid;
+  gap: 8px;
+}
+
+.tutorial-pause-card-meta {
+  margin: 0;
+  font-family: "RuneScape Plain 12", sans-serif;
+  font-size: 12px;
+  color: var(--color-text-muted);
+  text-align: center;
+  line-height: 1.2;
+}
+
+.tutorial-pause-card-step-of {
+  color: var(--color-text-body);
+}
+
+.tutorial-pause-card-helper {
+  margin: 0;
+  font-family: "RuneScape Plain 12", sans-serif;
+  font-size: 13px;
+  color: var(--color-text-body);
+  text-align: center;
+  line-height: 1.4;
+}
+
+.tutorial-pause-card-foot {
+  padding: 10px 14px 14px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 6px;
+  border-top: 1px solid var(--color-border);
+  background: var(--color-bg-elevated);
+}
+
+.tutorial-pause-card-btn {
+  height: 36px;
+  padding: 0 14px;
+  background: transparent;
+  color: var(--color-secondary);
+  border: 1px solid var(--color-border);
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 13px;
+  cursor: pointer;
+  letter-spacing: 0;
+}
+
+.tutorial-pause-card-btn:hover {
+  color: var(--color-text-body);
+  border-color: var(--color-primary-structure);
+}
+
+.tutorial-pause-card-btn--primary {
+  background: var(--color-primary);
+  color: var(--color-bg-solid);
+  border-color: var(--color-primary);
+}
+
+.tutorial-pause-card-btn--primary:hover {
+  background: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
+  color: var(--color-bg-solid);
+}
+
+.tutorial-pause-card-btn--danger {
+  color: var(--color-error);
+  border-color: color-mix(in srgb, var(--color-error) 40%, var(--color-border));
+}
+
+.tutorial-pause-card-btn--danger:hover {
+  background: color-mix(in srgb, var(--color-error) 10%, var(--color-surface));
+  border-color: var(--color-error);
+}
+
+.tutorial-completion-backdrop {
+  pointer-events: auto;
+  position: fixed;
+  inset: 0;
+  padding-inline: var(--ui-inset-left, 0px) var(--ui-inset-right, 0px);
+  display: grid;
+  place-items: center;
+  background: var(--modal-backdrop);
+  z-index: 60;
+}
+
+.tutorial-completion-card {
+  width: 420px;
+  max-width: calc(100vw - 32px);
+  background: var(--color-bg-solid);
+  border: 1px solid var(--modal-card-border);
+  box-shadow: var(--modal-card-shadow);
+  border-radius: var(--modal-radius);
+  overflow: hidden;
+  animation: tutorial-completion-rise 0.36s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes tutorial-completion-rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes tutorial-completion-lift {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tutorial-completion-crest {
+  padding: 22px 24px 18px;
+  text-align: center;
+  background: var(--color-surface-inset);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.tutorial-completion-mark {
+  display: block;
+  margin: 0 auto 12px;
+  animation: tutorial-completion-mark-in 0.34s cubic-bezier(0.16, 1, 0.3, 1) 0.06s both;
+}
+
+@keyframes tutorial-completion-mark-in {
+  from {
+    opacity: 0;
+    transform: scale(0.82);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.tutorial-completion-mark-outer {
+  fill: var(--color-secondary);
+  opacity: 0.26;
+}
+
+.tutorial-completion-mark-core {
+  fill: var(--color-primary);
+}
+
+/* The stroke is the crest's own background, so the check reads as cut out of the
+   flame core. 34 exceeds the path length so the stroke fully clears at rest. */
+.tutorial-completion-mark-check {
+  fill: none;
+  stroke: var(--color-surface-inset);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 34;
+  stroke-dashoffset: 0;
+  animation: tutorial-completion-strike 0.42s cubic-bezier(0.22, 1, 0.36, 1) 0.26s both;
+}
+
+@keyframes tutorial-completion-strike {
+  from {
+    stroke-dashoffset: 34;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.tutorial-completion-kicker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 0 0 8px;
+  animation: tutorial-completion-lift 0.3s cubic-bezier(0.16, 1, 0.3, 1) 0.16s both;
+}
+
+.tutorial-completion-kicker-rule {
+  height: 1px;
+  width: 26px;
+  background: linear-gradient(to right, transparent, var(--color-border));
+}
+
+.tutorial-completion-kicker-rule:last-child {
+  background: linear-gradient(to left, transparent, var(--color-border));
+}
+
+.tutorial-completion-kicker-text {
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  line-height: 1;
+}
+
+.tutorial-completion-title {
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 20px;
+  color: var(--color-secondary);
+  margin: 0;
+  line-height: 1.15;
+  animation: tutorial-completion-lift 0.3s cubic-bezier(0.16, 1, 0.3, 1) 0.22s both;
+}
+
+.tutorial-completion-place {
+  font-family: "RuneScape Plain 12", sans-serif;
+  font-size: 12px;
+  color: var(--color-text-muted);
+  margin: 6px 0 0;
+  line-height: 1.3;
+  animation: tutorial-completion-lift 0.3s cubic-bezier(0.16, 1, 0.3, 1) 0.28s both;
+}
+
+.tutorial-completion-body {
+  padding: 16px 24px 18px;
+  animation: tutorial-completion-lift 0.3s cubic-bezier(0.16, 1, 0.3, 1) 0.34s both;
+}
+
+.tutorial-completion-track-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.tutorial-completion-track-label {
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  line-height: 1;
+}
+
+.tutorial-completion-track-count {
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 13px;
+  color: var(--color-text-body);
+  line-height: 1;
+}
+
+.tutorial-completion-track {
+  display: flex;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tutorial-completion-seg {
+  flex: 1;
+  height: 6px;
+  background: var(--color-border);
+}
+
+.tutorial-completion-seg.is-done {
+  background: color-mix(in srgb, var(--color-secondary) 68%, var(--color-bg-solid));
+}
+
+.tutorial-completion-seg.is-earned {
+  background: var(--color-primary);
+  animation: tutorial-completion-earn 0.44s cubic-bezier(0.22, 1, 0.36, 1) 0.5s both;
+}
+
+/* Course finished: nothing is "upcoming", so every cleared segment reads at
+   full strength. Otherwise 6/6 looks like "you are on the last one". */
+.tutorial-completion-track.is-complete .tutorial-completion-seg.is-done {
+  background: var(--color-primary);
+}
+
+@keyframes tutorial-completion-earn {
+  from {
+    background: var(--color-border);
+    transform: scaleY(0.34);
+  }
+  to {
+    background: var(--color-primary);
+    transform: scaleY(1);
+  }
+}
+
+.tutorial-completion-next {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 12px 0 0;
+  line-height: 1.3;
+}
+
+/* No "Next up" pair to align against, so the closing line centers under the
+   full-width bar instead of stranding at the left edge. */
+.tutorial-completion-next.is-complete {
+  justify-content: center;
+}
+
+.tutorial-completion-next-label {
+  font-family: "RuneScape Plain 12", sans-serif;
+  font-size: 12px;
+  color: var(--color-text-muted);
+  flex: none;
+}
+
+.tutorial-completion-next-name {
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 13px;
+  color: var(--color-text-body);
+}
+
+.tutorial-completion-next-done {
+  font-family: "RuneScape Plain 12", sans-serif;
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+.tutorial-completion-foot {
+  padding: 12px 24px 18px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  background: var(--color-bg-elevated);
+  border-top: 1px solid var(--color-border);
+  animation: tutorial-completion-lift 0.3s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both;
+}
+
+.tutorial-completion-foot-btn {
+  height: 36px;
+  padding: 0 16px;
+  background: transparent;
+  color: var(--color-secondary);
+  border: 1px solid var(--color-border);
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 13px;
+  cursor: pointer;
+  letter-spacing: 0;
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease,
+    background 0.15s ease;
+}
+
+.tutorial-completion-foot-btn:hover {
+  color: var(--color-text-body);
+  border-color: var(--color-primary-structure);
+  background: var(--color-surface-hover);
+}
+
+.tutorial-completion-foot-btn--primary {
+  background: var(--color-primary);
+  color: var(--color-bg-solid);
+  border-color: var(--color-primary);
+  /* Keep the action on one line at the 36px row height. */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tutorial-completion-foot-btn--primary:hover {
+  background: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
+  color: var(--color-bg-solid);
+}
+
+.tutorial-completion-foot-btn--full {
+  grid-column: 1 / -1;
+}
+
+/* Narrow viewports: stack the actions, in DOM order. Primary stays last: bottom when
+   stacked, right when side by side. */
+@media (max-width: 420px) {
+  .tutorial-completion-foot {
+    grid-template-columns: 1fr;
+  }
+}
+
+.tutorial-step-intro {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: var(--crest-floating-top);
+  padding-inline: var(--ui-inset-left, 0px) var(--ui-inset-right, 0px);
+  box-sizing: border-box;
+  z-index: 57;
+}
+
+/* Keep the exit fade on content so the scrim can outlive the text. */
+.tutorial-step-intro-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.tutorial-step-intro-content--exiting {
+  animation: tutorial-step-intro-exit 200ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.tutorial-step-intro-scrim {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 130% 100% at 50% 44%, rgba(8, 6, 4, 0.09) 0%, rgba(8, 6, 4, 0.22) 100%);
+  opacity: 0;
+  animation: tutorial-step-intro-scrim 3200ms cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+@keyframes tutorial-step-intro-scrim {
+  0% {
+    opacity: 0;
+  }
+  16% {
+    opacity: 1;
+  }
+  52% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.tutorial-step-intro-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  animation: tutorial-step-intro-objective-in 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.tutorial-step-intro-label-line {
+  width: 26px;
+  height: 1px;
+}
+
+.tutorial-step-intro-label-line:first-child {
+  background: linear-gradient(90deg, transparent, var(--color-border-translucent));
+}
+
+.tutorial-step-intro-label-line:last-child {
+  background: linear-gradient(90deg, var(--color-border-translucent), transparent);
+}
+
+.tutorial-step-intro-label-text {
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 16px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+/* Floats over the live arena, so it takes the rim like the arrival title; the
+   death/victory crests supply their own dim instead. */
+.tutorial-step-intro-objective {
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 32px;
+  /* 32 x 1.5 keeps the line box on whole pixels. */
+  line-height: 1.5;
+  color: var(--color-text-body);
+  max-width: 80vw;
+  text-align: center;
+  text-shadow: var(--crest-rim), var(--crest-shadow-sm);
+  animation: tutorial-step-intro-objective-in 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes tutorial-step-intro-objective-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes tutorial-step-intro-exit {
+  to {
+    opacity: 0;
+    transform: scale(1.02);
+  }
+}
+
+@keyframes tutorial-step-intro-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tutorial-beam,
+  .tutorial-beam-menu,
+  .tutorial-codex,
+  .tutorial-pause-backdrop,
+  .tutorial-pause-card,
+  .tutorial-completion-backdrop,
+  .tutorial-steps-list {
+    animation: none;
+  }
+
+  /* The countdown strip's own reduced-motion rule lives in CountdownBeats.css. */
+  .tutorial-step-intro-label,
+  .tutorial-step-intro-objective {
+    animation: tutorial-step-intro-fade 160ms ease both;
+  }
+
+  .tutorial-step-intro-content--exiting {
+    animation: tutorial-step-intro-fade 160ms ease reverse both;
+  }
+
+  /* Completion modal: the staged spine collapses to one gentle fade for the
+     whole card. The crest check must end DRAWN, not undrawn, so it is pinned
+     to its finished dashoffset rather than merely having its animation
+     removed. Same for the earned segment's color. */
+  .tutorial-completion-mark,
+  .tutorial-completion-kicker,
+  .tutorial-completion-title,
+  .tutorial-completion-place,
+  .tutorial-completion-body,
+  .tutorial-completion-foot {
+    animation: none;
+  }
+
+  .tutorial-completion-mark-check {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+
+  .tutorial-completion-seg.is-earned {
+    animation: none;
+    background: var(--color-primary);
+    transform: none;
+  }
+
+  .tutorial-completion-card {
+    animation: tutorial-step-intro-fade 160ms ease both;
+  }
+
+  .tutorial-completion-foot-btn {
+    transition: none;
+  }
+}
+
+@media (max-width: 720px) {
+  .tutorial-beam {
+    top: 8px;
+    left: 8px;
+    right: 8px;
+    width: auto;
+    grid-template-columns: auto 1fr auto;
+  }
+
+  .tutorial-beam-menu {
+    top: 60px;
+    right: 8px;
+    width: auto;
+    min-width: 220px;
+    max-width: calc(100vw - 16px);
+  }
+
+  .tutorial-codex {
+    top: auto;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: auto;
+    max-height: 60vh;
+    /* biome-ignore lint/suspicious/noDuplicateProperties: deliberate progressive-enhancement pair. Browsers without dvh keep the vh value; the cascade is the fallback mechanism. */
+    max-height: 60dvh;
+    border: 1px solid var(--color-border);
+    border-bottom: none;
+  }
+
+  /* No bottom border here, so the border box ends where the padding box does. */
+  .tutorial-codex::before {
+    bottom: 0;
+  }
+
+  .tutorial-pause-card,
+  .tutorial-completion-card {
+    width: calc(100vw - 16px);
+  }
+
+  /* A sentence-length objective at 2x would wrap to a wall on a phone, so it
+   steps down a whole multiple to 1x rather than to an off-grid size between
+   them. The countdown is already at 1x and stays there. */
+  .tutorial-step-intro-objective {
+    font-size: 16px;
+  }
+}

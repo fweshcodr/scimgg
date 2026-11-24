@@ -1,0 +1,40 @@
+/* A secondary action in a system notice, cut from the same pattern as OsrsButton's default face:
+   `surface` fill, `border` hairline, `secondary` ink, and the same hover move. It is a link rather
+   than a button because it leaves the page, so it keeps a link's affordances and none of its
+   underline. Opaque and shadow-free, like everything else in the family. */
+.browser-suggestion {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  padding: 6px 12px;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 2px;
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 16px;
+  line-height: 16px;
+  color: var(--color-secondary);
+  text-decoration: none;
+  pointer-events: auto;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.browser-suggestion:hover {
+  background-color: var(--color-surface-hover);
+  border-color: var(--color-primary-structure);
+  color: var(--color-accent-text);
+}
+
+.browser-suggestion:active {
+  background-color: var(--color-surface-inset);
+}
+
+@media (pointer: coarse) {
+  .browser-suggestion {
+    min-height: 44px;
+  }
+}

@@ -1,0 +1,484 @@
+.picker-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  font:
+    16px / 20px "RuneScape Bold 12",
+    sans-serif;
+}
+.picker-overlay,
+.picker-overlay * {
+  box-sizing: border-box;
+}
+.picker-backdrop {
+  position: absolute;
+  inset: 0;
+  background: var(--modal-backdrop);
+}
+.picker {
+  position: relative;
+  display: grid;
+  grid-template-columns: 224px minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr) auto;
+  width: 860px;
+  max-width: 100%;
+  height: 560px;
+  max-height: 100%;
+  background: var(--color-bg-solid);
+  border: 1px solid var(--modal-card-border);
+  border-radius: var(--modal-radius);
+}
+.picker::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border: 1px solid transparent;
+  border-radius: inherit;
+  box-shadow: var(--modal-card-shadow);
+  pointer-events: none;
+}
+.picker-close {
+  position: absolute;
+  right: 8px;
+  top: 8px;
+  z-index: 2;
+  min-width: 44px;
+  min-height: 44px;
+}
+.picker-rail {
+  grid-column: 1;
+  grid-row: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: var(--color-surface);
+  border-right: 1px solid var(--color-border);
+}
+.picker-rail-head {
+  padding: 20px 16px 8px;
+}
+.picker-rail-head h2 {
+  margin: 0 0 16px;
+  font:
+    16px / 20px "RuneScape Bold 12",
+    sans-serif;
+  color: var(--color-heading);
+}
+.picker-search {
+  position: relative;
+}
+.picker-search svg {
+  position: absolute;
+  left: 12px;
+  top: 10px;
+  width: 16px;
+  height: 16px;
+  color: var(--color-text-muted);
+}
+.picker-search input {
+  width: 100%;
+  min-height: 36px;
+  padding: 6px 8px 6px 36px;
+  border: 1px solid var(--color-border);
+  border-radius: 2px;
+  background: var(--color-surface-inset);
+  color: var(--color-text-body);
+  font:
+    16px / 20px "RuneScape Plain 12",
+    sans-serif;
+}
+.picker-search input::placeholder {
+  color: var(--color-text-muted);
+}
+.picker-search input:focus {
+  border-color: var(--color-primary);
+}
+.picker-rail-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  background: var(--color-surface);
+  padding: 0 8px 12px;
+}
+.picker-rail-section {
+  color: var(--color-text-muted);
+  padding: 12px 8px 8px;
+  font-family: "RuneScape Plain 11", sans-serif;
+}
+.picker-boss {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 64px;
+  padding: 8px;
+  margin: 0 0 4px;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  background: transparent;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.picker-boss:hover {
+  background: var(--color-surface-hover);
+}
+.picker-boss.active,
+.picker-boss.active:hover {
+  border-color: var(--color-primary);
+  background: var(--color-surface-inset);
+}
+.picker-boss-pic {
+  display: grid;
+  place-items: center;
+  flex: 0 0 40px;
+  width: 40px;
+  height: 48px;
+}
+.picker-boss-pic img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.picker-boss-pic--cover img {
+  object-fit: cover;
+}
+.picker-boss-meta {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.picker-boss-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+}
+.picker-boss-name {
+  color: var(--color-secondary);
+}
+.picker-boss.active .picker-boss-name {
+  color: var(--color-accent-text);
+}
+.picker-boss-sub {
+  color: var(--color-text-muted);
+  font:
+    16px / 20px "RuneScape Plain 11",
+    sans-serif;
+}
+.picker-navigation-foot {
+  grid-column: 1;
+  grid-row: 2;
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+  border-right: 1px solid var(--color-border);
+  padding: 8px;
+}
+.picker .picker-lobby-link {
+  min-height: 44px;
+}
+.picker-mobile-select {
+  display: none;
+}
+.picker-detail {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  background: var(--color-bg-solid);
+}
+/* Identity and terms share one scroller, so a short screen never strands the list below an oversized hero. */
+.picker-detail-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: var(--color-bg-solid);
+}
+.picker-hero {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 152px;
+  gap: 12px;
+  min-height: 164px;
+  padding: 16px 44px 16px 20px;
+  background: var(--color-bg-elevated);
+  border-bottom: 1px solid var(--color-border);
+}
+.picker-hero-art {
+  grid-column: 2;
+  grid-row: 1;
+  align-self: center;
+  width: 152px;
+  height: 152px;
+  pointer-events: none;
+}
+.picker-hero-art img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.picker-hero-text {
+  grid-column: 1;
+  grid-row: 1;
+  min-width: 0;
+  align-self: center;
+}
+.picker-hero-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.picker-hero-text h1 {
+  margin: 0;
+  color: var(--color-heading);
+  font:
+    32px / 32px "RuneScape Bold 12",
+    sans-serif;
+}
+.picker-hero-tag {
+  display: block;
+  margin-top: 8px;
+  color: var(--color-secondary);
+  font:
+    16px / 20px "RuneScape Plain 11",
+    sans-serif;
+}
+.picker-hero-text p {
+  margin: 12px 0 0;
+  color: var(--color-text-body);
+  font:
+    16px / 20px "RuneScape Plain 12",
+    sans-serif;
+}
+.picker-hero-actions {
+  margin-top: 12px;
+}
+.picker-btn {
+  min-height: 32px;
+  padding: 4px 12px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 2px;
+  color: var(--color-secondary);
+  font: inherit;
+  cursor: pointer;
+}
+.picker-btn:hover {
+  background: var(--color-surface-hover);
+  border-color: var(--color-primary-structure);
+  color: var(--color-accent-text);
+}
+.picker-contracts {
+  padding: 8px 12px 16px;
+}
+.picker-cg-label {
+  padding: 16px 8px 8px;
+  color: var(--color-text-muted);
+  font:
+    16px / 20px "RuneScape Plain 11",
+    sans-serif;
+}
+.picker-contract {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr) auto;
+  width: 100%;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 8px;
+  margin: 0 0 4px;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  background: transparent;
+  font: inherit;
+  text-align: left;
+}
+.picker-contract.selected,
+.picker-contract.selected:hover {
+  border-color: var(--color-primary-structure);
+  background: var(--primary-dim);
+}
+.picker-contract-icon {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
+  color: var(--color-text-muted);
+}
+.picker-contract-icon svg {
+  width: 24px;
+  height: 24px;
+}
+.picker-contract-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  /* The canvas reward has its own layer; this text region must prove its own opaque backing. */
+  background: var(--color-bg-solid);
+}
+.picker-contract.selected .picker-contract-body {
+  background: inherit;
+}
+.picker-contract-heading {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.picker-contract-name {
+  color: var(--color-secondary);
+}
+.picker-contract-effect {
+  font:
+    16px / 20px "RuneScape Plain 12",
+    sans-serif;
+  color: var(--color-text-body);
+}
+.picker-contract-actions {
+  display: flex;
+  gap: 4px;
+}
+.picker-contract-actions .osrs-btn {
+  min-height: 32px;
+  padding: 4px 8px;
+}
+.picker-contract-actions .osrs-btn:not(.osrs-btn--ghost) {
+  border-color: var(--color-primary-structure);
+}
+.picker-badge {
+  color: var(--color-text-muted);
+  font-family: "RuneScape Plain 11", sans-serif;
+}
+.picker-empty {
+  padding: 24px;
+  color: var(--color-text-muted);
+  font:
+    16px / 20px "RuneScape Plain 12",
+    sans-serif;
+}
+.picker .status-badge {
+  font-size: 16px;
+  line-height: 20px;
+  letter-spacing: 0;
+}
+@media (max-width: 600px) {
+  .picker-overlay {
+    padding: 8px;
+  }
+  .picker {
+    width: 100%;
+    height: 100%;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr) auto;
+  }
+  .picker-rail {
+    border-right: 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .picker-rail-head {
+    padding: 12px 16px 8px;
+  }
+  .picker-rail-head h2 {
+    margin-bottom: 12px;
+    padding-right: 40px;
+  }
+  .picker-rail-scroll {
+    display: none;
+  }
+  .picker-mobile-select {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 16px 8px;
+    color: var(--color-text-muted);
+  }
+  .picker-mobile-select select {
+    flex: 1;
+    min-width: 0;
+    min-height: 44px;
+    border: 1px solid var(--color-border);
+    border-radius: 2px;
+    padding: 8px;
+    background: var(--color-surface-inset);
+    color: var(--color-secondary);
+    font: inherit;
+  }
+  .picker-detail {
+    grid-column: 1;
+    grid-row: 2;
+  }
+  .picker-navigation-foot {
+    grid-row: 3;
+    border-right: 0;
+    padding: 8px 16px;
+  }
+  .picker-hero {
+    grid-template-columns: minmax(0, 1fr) 100px;
+    min-height: 0;
+    padding: 16px;
+    gap: 12px;
+  }
+  .picker-hero-art {
+    width: 100px;
+    height: 136px;
+  }
+  .picker-contracts {
+    padding: 8px 8px 16px;
+  }
+  .picker-contract {
+    grid-template-columns: 32px minmax(0, 1fr);
+    gap: 8px 12px;
+  }
+  .picker-contract-actions {
+    grid-column: 2;
+  }
+}
+@media (max-width: 600px), (max-height: 540px), (pointer: coarse) {
+  .picker-contract-actions .osrs-btn,
+  .picker-btn,
+  .picker-search input {
+    min-height: 44px;
+  }
+  .picker-hero-text p a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+  .picker-search svg {
+    top: 14px;
+  }
+}
+:root[data-mobile-ui] .picker[data-msheet="card"] .picker-contract-actions .osrs-btn,
+:root[data-mobile-ui] .picker[data-msheet="card"] .picker-lobby-link {
+  min-height: 44px;
+}
+@media (max-height: 540px) and (min-width: 601px) {
+  .picker-overlay {
+    padding: 8px;
+  }
+  .picker {
+    height: 100%;
+    grid-template-columns: 216px minmax(0, 1fr);
+  }
+  .picker-hero {
+    padding: 16px 52px 16px 16px;
+    grid-template-columns: minmax(0, 1fr) 100px;
+    gap: 12px;
+    min-height: 0;
+  }
+  .picker-hero-art {
+    width: 100px;
+    height: 124px;
+  }
+}

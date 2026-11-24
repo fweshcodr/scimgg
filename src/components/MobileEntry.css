@@ -1,0 +1,475 @@
+/* Mobile entry flow: the welcome sheet (landscape, first visit) and the rotate invitation
+   (portrait). Mobile devices only; see useMobileEntry for when each shows.
+
+   Neither is a wall. The layer passes every touch through to the game except on the sheet
+   itself, the scrim only darkens the lower edge the sheet sits on, and the encounter keeps
+   running behind it.
+
+   LCD text: the sheet's frame is background images with transparent corners, so the text sits
+   on `.mobile-entry-sheet__body`, which paints its own opaque fill. No outer box-shadow on
+   either: the frame and the scrim give the depth. */
+
+.mobile-entry-layer {
+  position: fixed;
+  inset: 0;
+  /* Over the game chrome and drawers, under the loading screens (9999) and context menus
+     (100000): an open menu is closed on rotation instead (ContextMenuOverlay). */
+  z-index: 9985;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  padding: calc(12px + var(--safe-top, 0px)) calc(12px + var(--safe-right, 0px)) calc(12px + var(--safe-bottom, 0px))
+    calc(12px + var(--safe-left, 0px));
+  pointer-events: none;
+  font-family: "RuneScape Plain 12", sans-serif;
+}
+
+/* Only the band the sheet sits in darkens; the boss and the minimap above stay in full view. */
+.mobile-entry-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    color-mix(in srgb, var(--color-surface-inset) 82%, transparent) 0%,
+    color-mix(in srgb, var(--color-surface-inset) 55%, transparent) 32%,
+    transparent 62%
+  );
+  animation: mobile-entry-scrim-in 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes mobile-entry-scrim-in {
+  from {
+    opacity: 0;
+  }
+}
+
+/* The mobile client's own dark 9-slice (601:51-60), the frame the tab rail, pop-out and
+   hotkeys strip all wear. Images are set inline (pack paths); positions and sizes follow
+   their order: corners TL TR BL BR, then edges T B L R. */
+.mobile-entry-sheet {
+  position: relative;
+  box-sizing: border-box;
+  width: min(440px, 100%);
+  max-height: 100%;
+  padding: 3px;
+  overflow: hidden;
+  pointer-events: auto;
+  background-repeat: no-repeat;
+  background-position:
+    left top,
+    right top,
+    left bottom,
+    right bottom,
+    3px top,
+    3px bottom,
+    left 3px,
+    right 3px;
+  background-size:
+    3px 3px,
+    3px 3px,
+    3px 3px,
+    3px 3px,
+    calc(100% - 6px) 3px,
+    calc(100% - 6px) 3px,
+    3px calc(100% - 6px),
+    3px calc(100% - 6px);
+  image-rendering: pixelated;
+  color: var(--color-text-body);
+  animation: mobile-entry-sheet-in 360ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes mobile-entry-sheet-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
+.mobile-entry-layer--leaving .mobile-entry-scrim,
+.mobile-entry-layer--leaving .mobile-entry-sheet {
+  animation: mobile-entry-sheet-out 180ms cubic-bezier(0.7, 0, 0.84, 0) both;
+}
+
+@keyframes mobile-entry-sheet-out {
+  to {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+.mobile-entry-layer--leaving .mobile-entry-scrim {
+  animation-name: mobile-entry-scrim-out;
+}
+
+@keyframes mobile-entry-scrim-out {
+  to {
+    opacity: 0;
+  }
+}
+
+/* Load-bearing for LCD text: the 9-slice's own middle tone (rail_middle.png), opaque. The sheet
+   sets it from the sprite, which a pack may recolor; this is vanilla's, until that decodes. */
+.mobile-entry-sheet__body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px 16px 16px;
+  background: var(--mobile-entry-fill, #241f19);
+}
+
+.mobile-entry-title {
+  margin: 0;
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-weight: normal;
+  font-size: 32px;
+  line-height: 32px;
+  color: var(--color-heading);
+  text-shadow: 2px 2px 0 var(--color-surface-inset);
+}
+
+.mobile-entry-text {
+  margin: 0;
+  max-width: 46ch;
+  font-size: 16px;
+  line-height: 20px;
+  /* No one-word last line ("time.") at the widths the landscape sheet takes. */
+  text-wrap: pretty;
+  color: var(--color-text-body);
+  text-shadow: 1px 1px 0 var(--color-surface-inset);
+}
+
+.mobile-entry-text--quiet {
+  color: var(--color-text-muted);
+}
+
+.mobile-entry-nowrap {
+  white-space: nowrap;
+}
+
+/* The iPhone and iPad aside (MobileEntry.tsx IosNote). `text-muted` is already the quietest ink
+   that holds its contrast on this fill, so it steps below the quiet line above it by being ruled
+   off instead, as the system notices' own note does. The hairline is faint by design, so the air
+   around it carries the break: the body's own 8px gap above, 12px below. No `max-width` either,
+   unlike the copy above: a divider lines up with the body's edges and the stones under it rather
+   than stopping at a text measure.
+
+   It paints no background and casts no shadow, so its text keeps the LCD antialiasing it gets
+   from `.mobile-entry-sheet__body`'s opaque fill (docs/agent-reference.md, LCD text). */
+.mobile-entry-note {
+  margin: 0;
+  padding-top: 12px;
+  border-top: 1px solid var(--color-border);
+  font-family: "RuneScape Plain 11", sans-serif;
+  font-size: 16px;
+  line-height: 18px;
+  text-wrap: pretty;
+  color: var(--color-text-muted);
+  text-shadow: 1px 1px 0 var(--color-surface-inset);
+}
+
+.mobile-entry-share-glyph {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  margin: 0 1px;
+  vertical-align: -2px;
+  fill: none;
+  stroke: var(--color-secondary);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.mobile-entry-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+/* A stone like the mobile client's (TliButton01, popout_stone.png): a black outline, a lit
+   top rim and a shaded bottom one, all inset, around the stone's own body tone. Every tone is
+   read from the pixel of the pack's (tinted) stone it stands for (MobileEntry.tsx STONE_TONES);
+   the fallbacks are vanilla's, until that sprite decodes. */
+.mobile-entry-stone {
+  --stone-outline: var(--mobile-entry-stone-outline, #000001);
+  --stone-body: var(--mobile-entry-stone-body, #564e40);
+  --stone-lit: var(--mobile-entry-stone-lit, #7a7262);
+  --stone-lit-inner: var(--mobile-entry-stone-lit-inner, #6a6255);
+  --stone-shade: var(--mobile-entry-stone-shade, #3e3126);
+  --stone-shade-inner: var(--mobile-entry-stone-shade-inner, #43362a);
+  --stone-side: var(--mobile-entry-stone-side, #493d30);
+  --stone-pressed: var(--mobile-entry-stone-pressed, #4c4436);
+
+  /* Labels never wrap; on a narrow sheet the stones wrap instead, primary on top. */
+  flex: 1 1 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 46px;
+  padding: 2px 14px;
+  border: 1px solid var(--stone-outline);
+  border-radius: 3px;
+  background: var(--stone-body);
+  box-shadow:
+    inset 0 1px 0 var(--stone-lit),
+    inset 0 2px 0 var(--stone-lit-inner),
+    inset 0 -1px 0 var(--stone-shade),
+    inset 0 -2px 0 var(--stone-shade-inner),
+    inset 1px 0 0 var(--stone-side),
+    inset -1px 0 0 var(--stone-side);
+  color: var(--color-text-body);
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 16px;
+  line-height: 20px;
+  white-space: nowrap;
+  text-shadow: 1px 1px 0 var(--stone-outline);
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mobile-entry-stone--primary {
+  flex-grow: 1.6;
+  color: var(--color-accent-text);
+}
+
+/* Pressed: the rims swap, as a stone pushed in. */
+.mobile-entry-stone:active {
+  background: var(--stone-pressed);
+  box-shadow:
+    inset 0 1px 0 var(--stone-shade),
+    inset 0 2px 0 var(--stone-shade-inner),
+    inset 0 -1px 0 var(--stone-lit-inner),
+    inset 1px 0 0 var(--stone-side),
+    inset -1px 0 0 var(--stone-side);
+}
+
+/* The full-screen glyph before a label (MobileMenu.tsx StoneGlyph), at one CSS pixel to the art
+   pixel so its edges stay whole. The stone's 6px gap separates it from the label; the 2px pull
+   keeps the glyph-and-label pair centered by eye, since the glyph's open corners read lighter
+   than its box. */
+.mobile-entry-stone__glyph {
+  flex: none;
+  margin-left: -2px;
+}
+
+/* Landscape: the sheet sits in the open game area, between the left column and the side panel
+   beside its expanded rail, so the native chrome on both sides stays whole. The reserves are the
+   gameframe's as drawn (MobileEntry.tsx landscapeReserves), 12px clear of each; the fallbacks
+   are the native widths (58 and 289) for a sheet given no frame. */
+@media (orientation: landscape) {
+  .mobile-entry-layer--welcome {
+    padding-left: calc(var(--mobile-entry-reserve-left, 58px) + 12px + var(--safe-left, 0px));
+    padding-right: calc(var(--mobile-entry-reserve-right, 289px) + 12px + var(--safe-right, 0px));
+  }
+}
+
+/* A phone held sideways has under 480 rows: the title drops to the font's native size and the
+   sheet tightens, so it keeps to the lower edge and the boss stays in view above it. */
+@media (orientation: landscape) and (max-height: 480px) {
+  .mobile-entry-layer {
+    padding-bottom: calc(8px + var(--safe-bottom, 0px));
+  }
+
+  .mobile-entry-sheet__body {
+    gap: 6px;
+    padding: 10px 14px 12px;
+  }
+
+  .mobile-entry-title {
+    font-size: 16px;
+    line-height: 20px;
+    text-shadow: 1px 1px 0 var(--color-surface-inset);
+  }
+
+  .mobile-entry-note {
+    padding-top: 8px;
+  }
+
+  .mobile-entry-actions {
+    margin-top: 2px;
+  }
+
+  .mobile-entry-stone {
+    min-height: 44px;
+  }
+}
+
+/* ---- Rotate invitation ----------------------------------------------------------------- */
+
+.mobile-entry-sheet--rotate {
+  width: min(400px, 100%);
+}
+
+.mobile-entry-rotate {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr);
+  grid-template-areas:
+    "glyph title"
+    "text text"
+    "note note"
+    "actions actions";
+  align-items: center;
+  column-gap: 12px;
+}
+
+.mobile-entry-rotate__title {
+  grid-area: title;
+  text-wrap: balance;
+}
+
+.mobile-entry-rotate__text {
+  grid-area: text;
+  margin-top: 10px;
+  max-width: none;
+}
+
+.mobile-entry-rotate__note {
+  grid-area: note;
+  margin-top: 12px;
+}
+
+.mobile-entry-rotate__actions {
+  grid-area: actions;
+  margin-top: 14px;
+}
+
+.mobile-entry-rotate-glyph {
+  grid-area: glyph;
+  width: 72px;
+  height: 72px;
+  overflow: visible;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.mobile-entry-rotate-phone {
+  stroke: var(--color-primary);
+  stroke-width: 2.5;
+  transform-box: view-box;
+  transform-origin: 32px 32px;
+  animation: mobile-entry-turn 2.8s cubic-bezier(0.65, 0, 0.35, 1) 400ms infinite;
+}
+
+.mobile-entry-rotate-screen {
+  fill: color-mix(in srgb, var(--color-primary) 16%, transparent);
+  stroke: none;
+}
+
+.mobile-entry-rotate-arrow {
+  stroke: var(--color-secondary);
+  stroke-width: 2;
+  animation: mobile-entry-arrow 2.8s cubic-bezier(0.65, 0, 0.35, 1) 400ms infinite;
+}
+
+/* Upright, a quarter turn, hold sideways long enough to read, then back. */
+@keyframes mobile-entry-turn {
+  0%,
+  18% {
+    transform: rotate(0deg);
+  }
+  46%,
+  78% {
+    transform: rotate(-90deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+/* The arrow shows the way, then gets out of the way once the phone has turned. */
+@keyframes mobile-entry-arrow {
+  0%,
+  18% {
+    opacity: 1;
+  }
+  40%,
+  86% {
+    opacity: 0.2;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* ---- Full-screen stone attention ---------------------------------------------------------
+   The flow hands the full-screen offer to the stone in the left column; one sweep of light
+   across it says where the offer went. Rendered by MobileFullscreenStone. */
+
+.osm-fullscreen__glint {
+  position: absolute;
+  /* The stone only, inside the frame's three-pixel inset. */
+  inset: 3px;
+  overflow: hidden;
+  border-radius: 3px;
+  pointer-events: none;
+}
+
+.osm-fullscreen__glint::before {
+  content: "";
+  position: absolute;
+  top: -20%;
+  bottom: -20%;
+  left: 0;
+  width: 45%;
+  background: linear-gradient(
+    100deg,
+    transparent 0%,
+    color-mix(in srgb, var(--color-primary) 55%, transparent) 50%,
+    transparent 100%
+  );
+  transform: skewX(-12deg);
+  mix-blend-mode: screen;
+  /* An even pass the eye can follow, not a flash. */
+  animation: osm-fullscreen-glint 1100ms cubic-bezier(0.45, 0, 0.25, 1) 500ms both;
+}
+
+/* Transform, not `left`, so the sweep composites instead of laying out every frame. The
+   offsets are of the sweep's own 45% width: -60% and 130% of the stone. */
+@keyframes osm-fullscreen-glint {
+  from {
+    transform: translateX(-133.33%) skewX(-12deg);
+  }
+  to {
+    transform: translateX(288.89%) skewX(-12deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mobile-entry-scrim,
+  .mobile-entry-sheet,
+  .mobile-entry-layer--leaving .mobile-entry-scrim,
+  .mobile-entry-layer--leaving .mobile-entry-sheet {
+    animation-duration: 1ms;
+  }
+
+  .mobile-entry-rotate-phone {
+    animation: none;
+    transform: rotate(-90deg);
+  }
+
+  .mobile-entry-rotate-arrow {
+    animation: none;
+  }
+
+  /* No sweep: a brief, still gold edge instead. */
+  .osm-fullscreen__glint::before {
+    animation: none;
+    display: none;
+  }
+
+  .osm-fullscreen__glint {
+    box-shadow: inset 0 0 0 2px var(--color-primary);
+    animation: osm-fullscreen-mark 2s steps(1, end) both;
+  }
+
+  @keyframes osm-fullscreen-mark {
+    to {
+      box-shadow: none;
+    }
+  }
+}

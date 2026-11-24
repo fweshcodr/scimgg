@@ -1,0 +1,1017 @@
+.loadout-picker {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Transfer tools keep a stable home beside the section heading. Editing has its own
+   row beneath the identity, so clipboard utilities never compete with saving changes. */
+.loadout-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.loadout-bar-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.loadout-bar-heading .section-label {
+  margin: 0;
+}
+
+.loadout-bar-tools {
+  flex-shrink: 0;
+}
+
+/* Holds the name field while it is being typed, and the unsaved-state note. Nothing otherwise,
+   and then it takes no room: the set's name is the heading's value now. */
+.loadout-bar-identity {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 4px;
+  min-width: 0;
+}
+
+.loadout-bar-identity:empty {
+  display: none;
+}
+
+/* The heading's value: same line as the word it answers, so the pair reads as one statement
+   and the tile below is the only other place the set is named. */
+.loadout-bar-value {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--color-text-body);
+  font:
+    16px / 20px "RuneScape Bold 12",
+    sans-serif;
+}
+
+.loadout-current {
+  font-family: "RuneScape Bold 12", sans-serif;
+  /* The panel's subject, not a caption: the 11px structural label beside it and the 13px tile
+     names below are both smaller, so the readout outranks what it reads over. 16px is where
+     the 12-series faces rasterize cleanly. */
+  font-size: 16px;
+  line-height: 20px;
+  color: var(--color-text-body);
+  /* Without this the span's automatic minimum is the whole un-wrapped name, so it pushes out
+     of the group instead of ellipsizing inside it. */
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.loadout-current-state {
+  color: var(--color-text-muted);
+  font:
+    16px / 18px "RuneScape Plain 11",
+    sans-serif;
+}
+
+.loadout-bar-actions {
+  margin-top: 4px;
+}
+
+/* The unsaved note leads, its two answers follow, and the commit group keeps the right edge. */
+.loadout-bar-draft {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+}
+
+.loadout-bar-draft > .loadout-current-state {
+  flex: 0 0 auto;
+}
+
+.loadout-bar-commit {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-left: auto;
+}
+
+/* Both answers to a draft are buttons, and they carry the footer's own pairing at bar scale:
+   the way back takes the default shape, the way to keep it takes the commitment shape. The
+   accent is affordable because a draft and a selected tile are mutually exclusive, so while
+   these exist no tile below carries the gold. */
+.loadout-bar-back,
+.loadout-bar-save {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  min-height: var(--loadout-action-height);
+  padding: 3px 10px;
+  border: 1px solid;
+  border-radius: 2px;
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 16px;
+  line-height: 20px;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease,
+    opacity 0.18s ease;
+}
+
+/* Revert and Cancel share this slot and this skin: whichever is offered, the row keeps one
+   shape in that position. The label is the verb alone, so a saved set's name can never
+   stretch or ellipsize the control; the name it puts back is the accessible name. */
+.loadout-bar-back {
+  background: var(--color-surface);
+  border-color: var(--color-border);
+  color: var(--color-secondary);
+}
+
+.loadout-bar-back:hover {
+  background: var(--color-surface-hover);
+  border-color: var(--color-primary-structure);
+  color: var(--color-text-body);
+}
+
+.loadout-bar-save {
+  position: relative;
+  background: var(--primary-dim, color-mix(in srgb, var(--color-primary) 6%, transparent));
+  border-color: var(--color-secondary);
+  color: var(--color-accent-text);
+}
+
+.loadout-bar-save:hover {
+  background: var(--color-surface-hover);
+  border-color: var(--color-primary);
+  color: var(--color-primary-hover);
+}
+
+:root[data-focus-source="keyboard"] .loadout-bar-back:focus-visible,
+:root[data-focus-source="keyboard"] .loadout-bar-save:focus-visible {
+  border-color: var(--color-primary);
+  box-shadow: inset 0 0 0 1px var(--color-primary);
+  outline: none;
+}
+
+/* The answers to a draft arrive with the draft instead of appearing out of nothing. Only the
+   fill animates: the row they arrive in was already standing there. */
+@starting-style {
+  .loadout-bar-action {
+    opacity: 0;
+  }
+}
+
+.loadout-io {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+/* A standing box, because a labeled control that paints nothing at rest reads as a caption
+   and these have to be findable without being hovered. The gold stays out of it: the accent is
+   this section's commitment signal, and a clipboard copy is not a commitment. */
+.loadout-io-btn {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 5px;
+  min-height: var(--loadout-action-height);
+  padding: 3px 8px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 2px;
+  color: var(--color-secondary);
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 13px;
+  line-height: 1.2;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+
+/* Every word the button can show, stacked in one cell so the box measures the widest of them and
+   a confirmation never widens the control under the pointer. The stack is rendered by
+   `LoadoutIoButton`, which is the only thing that knows what those words are. */
+.loadout-io-label {
+  display: grid;
+  justify-items: center;
+}
+
+.loadout-io-label > span {
+  grid-area: 1 / 1;
+}
+
+/* No superscript mark: the button's own label names the action and the hover card explains
+   it, so a mark would be ornament rather than hierarchy. */
+.loadout-io-label-face {
+  display: flex;
+  align-items: center;
+}
+
+.loadout-io-label-lock {
+  visibility: hidden;
+}
+
+.loadout-io-btn:hover {
+  background: var(--color-surface-hover);
+  border-color: var(--color-primary-structure);
+  color: var(--color-text-body);
+}
+
+.loadout-io-btn:active {
+  background: var(--color-surface-inset);
+}
+
+.loadout-io-btn:focus-visible {
+  color: var(--color-text-body);
+}
+
+:root[data-focus-source="keyboard"] .loadout-io-btn:focus-visible {
+  border-color: var(--color-primary);
+  box-shadow: inset 0 0 0 1px var(--color-primary);
+  outline: none;
+}
+
+/* Off. It holds its place rather than unmounting, so the pair never moves when a draft opens,
+   and it loses the fill rather than the border so the box still reserves its width. Fully
+   transparent, never a translucent wash: an alpha fill behind this label costs it subpixel AA. */
+.loadout-io-btn--export[aria-disabled="true"],
+.loadout-io-btn--export[aria-disabled="true"]:hover {
+  background: transparent;
+  border-color: var(--color-border);
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+}
+
+/* Integer coordinates at 12px: these marks sit among 32px pixel-art sprites and a hinted pixel
+   face, and the fractional geometry they replaced put every edge across a device-pixel
+   boundary. Redraw them off the whole-pixel grid and they go soft against their neighbors. */
+.loadout-io-icon {
+  flex-shrink: 0;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: square;
+  stroke-linejoin: miter;
+}
+
+/* It landed. Success color rather than the section's gold: gold is the commitment signal for
+   which set is worn, and a clipboard write is not a commitment. The lit surface is the hover
+   the pointer already put there, so the state arrives without the box changing shape. */
+.loadout-io-btn--confirmed,
+.loadout-io-btn--confirmed:hover {
+  background: var(--color-surface-hover);
+  border-color: var(--color-primary-structure);
+  color: var(--color-success);
+}
+
+/* The check draws itself on. 13 is the check path's own length (3,3 then 5,-6 => 12.05) rounded
+   up: the dash has to cover the whole stroke or the last frame keeps a gap, and any larger
+   value spends the head of the animation parked in the pattern's gap, showing nothing. */
+.loadout-io-btn--confirmed .loadout-io-icon path {
+  stroke-dasharray: 13;
+  animation: loadout-check-draw 0.24s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+@keyframes loadout-check-draw {
+  from {
+    stroke-dashoffset: 13;
+  }
+
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* It refused. Deliberately the confirmation's twin — same lit surface, same swapped ink, only
+   the semantic changed — because these are one channel answering one press two ways, and a
+   refusal that also changed its border weight or its fill would read as a different component
+   arriving rather than the same one saying no. */
+.loadout-io-btn--failed,
+.loadout-io-btn--failed:hover {
+  background: var(--color-surface-hover);
+  border-color: color-mix(in srgb, var(--color-error) 45%, var(--color-primary-structure));
+  color: var(--color-error);
+}
+
+/* The cross draws on like the check, over the same 0.24s: 8 is one stroke's length (5,5 => 7.08)
+   rounded up, applied to both, so the two arms sweep together rather than one chasing the other. */
+.loadout-io-btn--failed .loadout-io-icon path {
+  stroke-dasharray: 8;
+  animation: loadout-cross-draw 0.24s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+@keyframes loadout-cross-draw {
+  from {
+    stroke-dashoffset: 8;
+  }
+
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Carries the confirmation for screen readers, which get nothing from a repainted label. */
+.loadout-io-sr-status {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  clip-path: inset(50%);
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.loadout-draft-name {
+  flex: 1;
+  min-width: 0;
+  margin: -2px 0;
+  padding: 2px 6px;
+  background: var(--color-surface-inset);
+  /* Two corrections put the field's outer box on exactly the readout's line box it stands
+     in for, so opening it moves nothing in a column that scrolls and closing it moves
+     nothing back: the stroke is an inset shadow rather than a border, and 20px is the
+     readout's own line box at 16px. */
+  border: 0;
+  border-radius: 2px;
+  box-shadow: inset 0 0 0 1px var(--color-border);
+  color: var(--color-text-body);
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 16px;
+  line-height: 20px;
+  text-overflow: ellipsis;
+  transition:
+    box-shadow 0.15s ease,
+    opacity 0.18s ease;
+}
+
+/* It arrives as a state change, not out of nothing: the row it arrives in was already
+   standing there at exactly this height. */
+@starting-style {
+  .loadout-draft-name {
+    opacity: 0;
+  }
+}
+
+.loadout-draft-name:hover {
+  box-shadow: inset 0 0 0 1px var(--color-primary-structure);
+}
+
+:root[data-focus-source="keyboard"] .loadout-draft-name:focus-visible {
+  box-shadow: inset 0 0 0 1px var(--color-primary);
+  outline: none;
+}
+
+/* Reports on the readout and the tile names, so it may not outrank them: same 13px they use.
+   At 16px it was the largest text in the section and a line that leaves was shouting over the
+   ones that stay. `4.2s` is `LOADOUT_STATUS_LIFETIME_MS`, which unmounts this element; change
+   one without the other and the message is cut off mid-fade or the closed row lingers. */
+.loadout-status {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  margin: 8px 0 0;
+  color: var(--color-text-body);
+  font-family: "RuneScape Plain 12", sans-serif;
+  font-size: 16px;
+  line-height: 20px;
+  max-height: 60px;
+  overflow: hidden;
+  animation: loadout-status-lifetime 4.2s ease both;
+}
+
+/* The row opens before the text arrives and empties before it closes, so what the eye catches
+   is a line fading in rather than a block appearing. Collapsing these back onto shared stops
+   is what made it pop: height and opacity landing on the same frame reads as a step. */
+@keyframes loadout-status-lifetime {
+  0% {
+    max-height: 0;
+    margin-top: 0;
+    opacity: 0;
+  }
+
+  7% {
+    max-height: 60px;
+    margin-top: 8px;
+    opacity: 0;
+  }
+
+  18%,
+  84% {
+    max-height: 60px;
+    margin-top: 8px;
+    opacity: 1;
+  }
+
+  94% {
+    max-height: 60px;
+    margin-top: 8px;
+    opacity: 0;
+  }
+
+  100% {
+    max-height: 0;
+    margin-top: 0;
+    opacity: 0;
+  }
+}
+
+.loadout-status-icon {
+  flex-shrink: 0;
+  margin-top: 3px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.loadout-status-icon--success {
+  color: var(--color-success);
+}
+
+/* A refused save has to be told apart from a completed one at a glance; success stays
+   in the quiet caption voice. */
+.loadout-status--error {
+  color: var(--color-error);
+}
+
+/* While the live loadout matches no set, the frame the diagram sits in drops to the
+   editing surface and its border goes provisional. The difference has to be readable
+   without spending the gold the selected tile and the selected slot already own, so it
+   is carried by surface and stroke, not by hue. */
+
+.loadout-section--drafting .loadout-editor {
+  background: var(--color-surface-inset);
+  border-style: dashed;
+  border-color: var(--color-primary-structure);
+}
+
+.loadout-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.loadout-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.loadout-grid-tiles {
+  display: grid;
+  /* Keep empty tracks so a single saved set stays tile-sized, not full-width. */
+  grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
+  gap: 8px;
+}
+
+.loadout-tile {
+  /* Each opaque tile owns its sprite/text paint order, not a transparent saved-cell wrapper. */
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 0;
+  padding: 8px 6px;
+  background: var(--color-surface-inset);
+  border: 1px solid var(--color-border);
+  border-radius: 2px;
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease;
+}
+
+.loadout-saved {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.loadout-group-heading {
+  margin: 0;
+  color: var(--color-secondary);
+  font:
+    16px / 20px "RuneScape Bold 12",
+    sans-serif;
+}
+
+/* A named shelf of shipped sets (a speedrun layout, say), folded under the main presets. It
+   takes Saved's heading voice and bracketed count, and the configurer's disclosure mark. The
+   toggle is transparent: the body under it is already opaque. */
+.loadout-shelf {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.loadout-shelf-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: var(--loadout-action-height, 32px);
+  margin: 0;
+  padding: 6px 0;
+  background: transparent;
+  border: 0;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.loadout-shelf-toggle:hover {
+  color: var(--color-text-body);
+}
+
+.loadout-shelf-items {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.loadout-saved-count {
+  color: var(--color-text-body);
+  font-family: "RuneScape Plain 11", sans-serif;
+  font-variant-numeric: tabular-nums;
+}
+
+.loadout-saved-scroll {
+  max-height: 268px;
+  overflow-y: auto;
+  /* Opaque fill so this scrolling box's own layer is provably opaque and the set names in
+     it keep subpixel AA. Repaints the color .encounter-panel-body already paints. */
+  background: var(--color-bg-solid);
+}
+
+/* Same scrollbar language as the panel body it sits in. */
+.loadout-saved-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+
+.loadout-saved-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.loadout-saved-scroll::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border: 2px solid var(--color-bg-solid);
+  border-radius: 2px;
+}
+
+/* Saved names can be arbitrary. Keep their footprint bounded like the preview;
+   the full name remains the option's accessible name and the selection readout. */
+.loadout-tile--saved .loadout-tile-name {
+  display: block;
+  max-width: 100%;
+  overflow: clip;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.loadout-saved-cell {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  /* The wrapper can overlap accelerated sprites; it must own an opaque backing. */
+  background: var(--color-bg-solid);
+}
+
+/* The visible mark sits in the corner margin, not in the centered gear strip.
+   Its hit area grows inward for touch without changing the tile or moving its preview. */
+.loadout-saved-delete {
+  position: absolute;
+  z-index: 1;
+  top: 1px;
+  right: 1px;
+  display: inline-flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  box-sizing: border-box;
+  width: 24px;
+  height: 24px;
+  margin: 0;
+  padding: 2px;
+  background: transparent;
+  border: 0;
+  border-radius: 2px;
+  color: var(--color-secondary);
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.loadout-saved-delete:hover,
+.loadout-saved-delete:focus-visible,
+.loadout-saved-delete[aria-expanded="true"] {
+  color: var(--color-error);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .loadout-saved-delete {
+    visibility: hidden;
+  }
+
+  .loadout-saved-cell:hover .loadout-saved-delete,
+  :root[data-focus-source="keyboard"] .loadout-saved-cell:focus-within .loadout-saved-delete,
+  .loadout-saved-delete[aria-expanded="true"] {
+    visibility: visible;
+  }
+}
+
+:root[data-focus-source="keyboard"] .loadout-saved-delete:focus-visible {
+  outline: 1px solid var(--color-primary);
+  outline-offset: -1px;
+}
+
+/* In flow, outside the sprite grid: no overlay or transparent composited wrapper above
+   accelerated canvases. The named confirmation never obscures the selected preview. */
+.loadout-saved-confirm {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 12px;
+  padding: 8px;
+  background: var(--color-surface-inset);
+  border: 1px solid color-mix(in srgb, var(--color-error) 55%, var(--color-border));
+  border-radius: 2px;
+}
+
+/* The full name is important before deletion. Wrap even an unbroken 48-character name. */
+.loadout-saved-confirm-name {
+  flex: 1 1 180px;
+  min-width: 0;
+  color: var(--color-text-body);
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 16px;
+  line-height: 20px;
+  overflow-wrap: anywhere;
+}
+
+.loadout-saved-confirm-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+/* The picker's own small-control voice, the one `.loadout-io-btn` and `.loadout-bar-save` speak.
+   Not `.osrs-btn`: that carries a `text-shadow`, which fuzzes a pixel face at this size. */
+.loadout-saved-confirm-btn {
+  padding: 3px 8px;
+  /* Shares the section's touch floor with the bar's answers, so a confirm on a thumb is the
+     same size as the Save it sits under. */
+  min-height: var(--loadout-action-height);
+  min-width: 44px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 2px;
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 16px;
+  line-height: 20px;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+
+:root[data-focus-source="keyboard"] .loadout-saved-confirm-btn:focus-visible {
+  outline: 1px solid var(--color-primary);
+  outline-offset: 1px;
+}
+
+.loadout-saved-confirm-btn--delete {
+  color: var(--color-error);
+  border-color: color-mix(in srgb, var(--color-error) 45%, transparent);
+}
+
+.loadout-saved-confirm-btn--delete:hover {
+  background: color-mix(in srgb, var(--color-error) 14%, var(--color-surface));
+  border-color: var(--color-error);
+}
+
+.loadout-saved-confirm-btn--keep {
+  color: var(--color-secondary);
+}
+
+.loadout-saved-confirm-btn--keep:hover {
+  background: var(--color-surface-hover);
+  border-color: var(--color-primary-structure);
+  color: var(--color-text-body);
+}
+
+.loadout-tile:hover {
+  border-color: var(--color-primary-structure);
+  background: var(--color-surface-hover);
+}
+
+:root[data-focus-source="keyboard"] .loadout-tile:focus-visible {
+  border-color: var(--color-primary);
+  box-shadow: inset 0 0 0 1px var(--color-primary);
+  outline: none;
+}
+
+.loadout-tile-icons {
+  display: flex;
+  gap: 4px;
+}
+
+.loadout-tile-icon {
+  /* 38x34 outer = 1px border around the native 36x32 RuneLite icon canvas, so
+     sprites render 1:1 like the equipment/inventory cells below - no soft scaling. */
+  width: 38px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.loadout-tile-icon canvas {
+  max-width: 36px;
+  max-height: 32px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  transition:
+    filter 0.15s ease,
+    opacity 0.15s ease;
+}
+
+.loadout-tile-name {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-width: 0;
+  /* A saved set can be named anything; a long one breaks rather than escaping its tile. */
+  overflow-wrap: anywhere;
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 16px;
+  line-height: 20px;
+  text-align: center;
+  color: var(--color-secondary);
+}
+
+.loadout-tile:hover .loadout-tile-name {
+  color: var(--color-text-body);
+}
+
+/* The one gold commitment signal in the section. Survives hover. */
+
+.loadout-tile--selected,
+.loadout-tile--selected:hover {
+  border-color: var(--color-primary);
+  background: var(--primary-dim, color-mix(in srgb, var(--color-primary) 6%, transparent));
+  /* The commitment surface carries the pack-hue glow, matching active invocations. It is
+     painted from ::before because an outer shadow on the element painting the background
+     behind the tile name vetoes subpixel text AA for it. */
+  position: relative;
+}
+
+.loadout-tile--selected::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 2px;
+  box-shadow: var(--shadow-glow);
+  pointer-events: none;
+}
+
+.loadout-tile--selected .loadout-tile-icon {
+  border-color: var(--color-primary-structure);
+}
+
+.loadout-tile--selected .loadout-tile-name,
+.loadout-tile--selected:hover .loadout-tile-name {
+  color: var(--color-accent-text);
+}
+
+/* Locked: the info matters, so locked sets stay visible — but as slim
+   full-width rows beneath the selectable tiles (strip + lock/name left, exact
+   levels right). The tile/row split itself reads as "usable" vs "not yet",
+   and rows keep multi-skill requirements to a single line instead of a chip wall. ---- */
+
+.loadout-tile--blocked,
+.loadout-tile--blocked:hover {
+  flex-direction: row;
+  justify-content: flex-start;
+  gap: 10px;
+  padding: 6px 10px;
+  cursor: not-allowed;
+  border-color: var(--color-border);
+  /* Washed into the panel: locked sets sit back while selectable sets stay crisp. Mixed
+     against the panel's own fill rather than `transparent` so the row stays provably
+     opaque — identical color, and the locked names keep subpixel AA. */
+  background: color-mix(in srgb, var(--color-surface-inset) 45%, var(--color-bg-solid));
+}
+
+.loadout-tile--blocked .loadout-req-chips {
+  margin-left: auto;
+  justify-content: flex-end;
+}
+
+.loadout-tile--blocked .loadout-tile-icon {
+  background: color-mix(in srgb, var(--color-surface) 55%, transparent);
+}
+
+.loadout-tile--blocked .loadout-tile-icon canvas {
+  filter: grayscale(0.85);
+  opacity: 0.4;
+}
+
+.loadout-tile--blocked .loadout-tile-name,
+.loadout-tile--blocked:hover .loadout-tile-name {
+  color: var(--color-text-muted);
+  text-align: left;
+}
+
+.loadout-tile-lock {
+  flex-shrink: 0;
+  color: var(--color-text-muted);
+}
+
+.loadout-req-chips {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.loadout-req-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 6px 2px 4px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 2px;
+}
+
+.loadout-req-chip-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.loadout-req-chip-level {
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 13px;
+  color: var(--color-warning);
+  /* No shadow under 14px: the chip already sits on its own surface inside its own border,
+     so the stroke bought nothing and cost the digits their pixel edges. */
+  font-variant-numeric: tabular-nums;
+}
+
+.loadout-note .loadout-req-chips {
+  justify-content: flex-start;
+  margin-left: 2px;
+  vertical-align: middle;
+}
+
+/* The section raises --loadout-action-height to 44px for touch. Saved management and
+   confirmation share it; the input also needs that minimum on its outer box. */
+@media (pointer: coarse) {
+  .loadout-draft-name {
+    box-sizing: border-box;
+    min-height: var(--loadout-action-height);
+  }
+  .loadout-saved-delete {
+    width: 44px;
+    height: 44px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loadout-tile,
+  .loadout-saved-delete,
+  .loadout-draft-name,
+  .loadout-io-btn,
+  .loadout-io-btn--confirmed .loadout-io-icon path,
+  .loadout-io-btn--failed .loadout-io-icon path,
+  .loadout-bar-action,
+  .loadout-status {
+    animation: none;
+    transition: none;
+  }
+
+  /* Without this the mark keeps the dash it was going to animate and shows as a fragment. */
+  .loadout-io-btn--confirmed .loadout-io-icon path,
+  .loadout-io-btn--failed .loadout-io-icon path {
+    stroke-dasharray: none;
+  }
+}
+
+/* Spellbook — a secondary, two-option property of the kit, so it sits on a single
+   inline row instead of borrowing the preset tiles' grid. The panel body is height-
+   capped and scrolls, and the tile treatment cost ~112px for a binary choice.
+
+   Its selected state deliberately stops short of the preset tile's: accent border +
+   text on the inset surface, but no tinted fill and no --shadow-glow. The glow is
+   the loadout's commitment signal and must stay unique in this column. */
+
+.spellbook-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.spellbook-options {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px;
+  min-width: 0;
+  min-height: calc(var(--loadout-slot-size, 36px) + 2px);
+  align-items: center;
+}
+
+.spellbook-option {
+  display: inline-flex;
+  align-items: center;
+  box-sizing: border-box;
+  min-height: var(--loadout-action-height);
+  padding: 4px 8px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 2px;
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 13px;
+  line-height: 1.2;
+  color: var(--color-secondary);
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease,
+    color 0.15s ease;
+}
+
+.spellbook-option:hover {
+  border-color: var(--color-primary-structure);
+  background: var(--color-surface-hover);
+  color: var(--color-text-body);
+}
+
+/* The radio itself is visually hidden; the label is the control surface. Keyboard
+   focus is mirrored onto that surface, but only for :focus-visible so clicking a
+   segment does not leave a focus ring behind. */
+.spellbook-option input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  clip-path: inset(50%);
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+:root[data-focus-source="keyboard"] .spellbook-option:has(input:focus-visible) {
+  border-color: var(--color-primary);
+  box-shadow: inset 0 0 0 1px var(--color-primary);
+  outline: none;
+}
+
+/* Selected survives hover — hover may only brighten the surface, never reclaim the
+   accent border or text. */
+.spellbook-option--selected,
+.spellbook-option--selected:hover {
+  background: var(--color-surface-inset);
+  border-color: var(--color-primary);
+  color: var(--color-accent-text);
+}

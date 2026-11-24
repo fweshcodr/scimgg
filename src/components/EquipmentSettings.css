@@ -1,0 +1,59 @@
+/* EquipmentSettings — the equipment diagram. Its shared cell geometry lives in
+   EncounterPanel.css; every rule below is the live-cell layer on top of it.
+
+   Selectors are two-class (0,3,0 with the state) so they win over
+   EncounterPanel.css regardless of stylesheet order. */
+
+.equip-slot.equip-slot--editable {
+  /* Reset the button UA box back onto the shared cell: .equip-slot sizes 44x44 of
+     content, and a button would otherwise measure that border-box. */
+  box-sizing: content-box;
+  margin: 0;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  text-align: center;
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+  /* Live cells step up from the resting hairline to the panel's real border: the
+     diagram reads as touchable without anything moving. */
+  border-color: var(--color-border);
+}
+
+.equip-slot.equip-slot--editable .equip-slot-label {
+  color: var(--color-secondary);
+}
+
+:root[data-focus-source="keyboard"] .equip-slot.equip-slot--editable:focus-visible {
+  border-color: var(--color-primary);
+  box-shadow: inset 0 0 0 1px var(--color-primary);
+  outline: none;
+}
+
+/* Selected survives hover: hover may brighten the surface, never reclaim the accent. */
+.equip-slot.equip-slot--selected,
+.equip-slot.equip-slot--selected:hover {
+  background: var(--primary-dim);
+  border-color: var(--color-primary);
+  /* Glow painted from ::before: an outer shadow on the element painting the background
+     behind the slot label vetoes subpixel text AA for it. .equip-slot is already
+     position: relative. */
+}
+
+.equip-slot.equip-slot--selected::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  box-shadow: var(--shadow-glow);
+  pointer-events: none;
+}
+
+.equip-slot.equip-slot--selected .equip-slot-label,
+.equip-slot.equip-slot--selected:hover .equip-slot-label {
+  color: var(--color-accent-text);
+}
+
+.equip-slot-unlimited {
+  color: var(--color-text-muted);
+}

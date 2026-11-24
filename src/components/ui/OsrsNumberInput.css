@@ -1,0 +1,114 @@
+.num-input {
+  display: inline-flex;
+  align-items: stretch;
+  background: var(--color-surface-inset);
+  border: 1px solid var(--color-border);
+  border-radius: 2px;
+  transition: border-color 0.15s ease;
+  overflow: hidden;
+}
+
+.num-input:hover:not(.num-input--disabled) {
+  border-color: var(--color-primary-structure);
+}
+
+.num-input:focus-within {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 1px var(--color-primary);
+}
+
+.num-input--disabled {
+  opacity: 0.5;
+}
+
+.num-input__field {
+  width: 30px;
+  background: transparent;
+  border: none;
+  color: var(--color-secondary);
+  font-family: "RuneScape Bold 12", sans-serif;
+  padding: 3px 4px;
+  text-align: right;
+  -moz-appearance: textfield;
+  outline: none;
+}
+
+.num-input__field::-webkit-inner-spin-button,
+.num-input__field::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* The bound the value is read against, so it is read, not glanced at: native 16px on a whole-pixel
+   line box. Bold 12 is hinted at its 16px em and nowhere else, and at a 13px step every glyph edge
+   lands mid-pixel — enough that the 9 in "/ 69" and "/ 99" rasterizes as a 4. The inherited 1.5
+   line box (19.5px) would put the baseline on a half pixel on top of that. */
+.num-input__suffix {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  padding-right: 6px;
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 16px;
+  line-height: 16px;
+  color: var(--color-text-muted);
+  user-select: none;
+}
+
+.num-input__arrows {
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid var(--color-border);
+  width: 14px;
+  flex-shrink: 0;
+}
+
+.num-input__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: var(--color-text-muted);
+  transition:
+    color 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.num-input__btn:hover:not(:disabled) {
+  color: var(--color-secondary);
+  background: var(--color-surface-hover);
+}
+
+.num-input__btn:active:not(:disabled) {
+  color: var(--color-text-body);
+  background: var(--color-surface-inset);
+}
+
+.num-input__btn:disabled {
+  cursor: not-allowed;
+  color: var(--color-text-dim);
+}
+
+.num-input__btn + .num-input__btn {
+  border-top: 1px solid var(--color-border);
+}
+
+@media (max-width: 720px), (pointer: coarse) {
+  .num-input {
+    min-height: 44px;
+  }
+
+  .num-input__field {
+    min-height: 42px;
+    padding-block: 8px;
+    text-align: center;
+  }
+
+  .num-input__arrows {
+    display: none;
+  }
+}

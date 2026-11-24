@@ -1,0 +1,35 @@
+/* The shared close X (CloseButton.tsx). A 28px box around the 16px glyph cell, the launcher icon
+   button's size. Hover recolors the glyph only: a fill would read as a pressed tile beside a
+   title, and the glyph sits over art in some modals. Touch sizing comes from the mobile sheet's
+   `[data-msheet="close"]` rule; placement belongs to each surface's own class. */
+.close-button {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  border: none;
+  background: transparent;
+  color: var(--color-secondary);
+  line-height: 0;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.close-button:hover {
+  color: var(--color-text-body);
+}
+
+/* Whole-pixel rects, kept crisp; the 1px shadow may spill past the cell. */
+.close-button .launcher-icon {
+  display: block;
+  flex: none;
+  overflow: visible;
+  shape-rendering: crispEdges;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .close-button {
+    transition: none;
+  }
+}

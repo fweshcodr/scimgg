@@ -1,0 +1,78 @@
+.cfield {
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg-solid);
+  border-bottom: 1px solid var(--color-primary-structure);
+}
+
+.cfield-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.15s ease;
+}
+.cfield-header:hover {
+  background: var(--color-surface-hover);
+}
+
+.cfield-chevron {
+  width: 10px;
+  height: 10px;
+  flex-shrink: 0;
+  color: var(--color-text-muted);
+  transition:
+    transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1),
+    color 0.2s ease;
+}
+.cfield-header[aria-expanded="true"] .cfield-chevron {
+  transform: rotate(90deg);
+  color: var(--color-primary);
+}
+.cfield-header:hover .cfield-chevron {
+  color: var(--color-secondary);
+}
+.cfield-header[aria-expanded="true"]:hover .cfield-chevron {
+  color: var(--color-primary);
+}
+
+.cfield-label {
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+}
+
+/* Fixed line-height keeps the header height constant regardless of the summary
+   content, so toggling state never shifts the bar. */
+.cfield-summary {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 16px;
+}
+.cfield-header[aria-expanded="true"] .cfield-summary--hide-open {
+  display: none;
+}
+
+/* Animates regardless of reduced motion: this is essential state feedback, not
+   decoration. */
+.cfield-body {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.cfield-body--open {
+  grid-template-rows: 1fr;
+}
+.cfield-body-inner {
+  overflow: hidden;
+  min-height: 0;
+}

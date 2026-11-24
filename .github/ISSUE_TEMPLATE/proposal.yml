@@ -1,0 +1,50 @@
+name: Proposal
+description: Suggest an encounter, mechanic or feature. New mechanics and copied third-party code need a go-ahead here before a pull request.
+labels: [enhancement]
+body:
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Kind of change
+      options:
+        - New encounter
+        - New mechanic in an existing encounter
+        - Feature or interface change
+        - Copying third-party code
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposal
+      description: What should change, and how it helps practice.
+    validations:
+      required: true
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: >-
+        For an encounter or mechanic: the sources you would build it from, as the
+        [evidence standard](https://github.com/scimgg/scimgg/blob/main/CONTRIBUTING.md#the-evidence-standard)
+        describes.
+
+  - type: textarea
+    id: third-party-code
+    attributes:
+      label: Third-party code
+      description: >-
+        For copied code: the repository and revision, its license at that revision, and why an
+        independent implementation is not enough.
+
+  - type: dropdown
+    id: implementer
+    attributes:
+      label: Will you implement it?
+      options:
+        - Yes, after a go-ahead
+        - No, I am suggesting it
+    validations:
+      required: true

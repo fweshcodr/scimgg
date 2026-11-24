@@ -1,0 +1,172 @@
+.infobox-strip {
+  /* --infobox-scale (default 1) dampens infobox growth relative to the global
+     UI scale so the strip stays in the size family of the chrome beside it (the chatbox, the
+     launcher row). Set inline by
+     InfoBoxOverlay. */
+  --infobox-scale: 1;
+  display: flex;
+  /* wrap-reverse makes overflow rows stack ABOVE the first row, matching
+     OSRS infobox behavior so they never run off-screen. */
+  flex-wrap: wrap-reverse;
+  /* Pack lines toward cross-START, which wrap-reverse puts at the BOTTOM edge —
+     the edge that sits flush against the chatbox / inventory. The strip fills its
+     DraggablePanel rect (height: 100%) rather than sizing to content, so if the
+     CSS line count ever disagrees with the row count the panel geometry predicted
+     (sub-pixel widths at fractional UI scales), the slack shows up at the TOP and
+     the bottom row stays welded to its anchor instead of the whole strip floating.
+     Removing a row then reads as that row simply disappearing. */
+  align-content: flex-start;
+  justify-content: flex-start;
+  gap: calc(2px * var(--infobox-scale));
+  width: 100%;
+  height: 100%;
+}
+
+.infobox-strip--reading-order {
+  flex-wrap: wrap;
+  align-content: flex-end;
+}
+
+.infobox-item {
+  /* `border-box` is critical: every other panel rect in the app reports
+     its outer box including the 1px chrome border, and the snap registry,
+     wrap math, and panelHeight calc all assume the same. With the default
+     content-box, a 32×32 + 1px-border tile actually paints at 34×34, so
+     the strip would overflow its DraggablePanel rect by 2px (one full
+     border) on the bottom edge. */
+  box-sizing: border-box;
+  /* Keep TILE_SIZE in InfoBoxPanel.tsx in sync: six tiles with 2px gaps occupy
+     202px, just under the 204px GamePanel width. */
+  width: calc(32px * var(--infobox-scale));
+  height: calc(32px * var(--infobox-scale));
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  user-select: none;
+  cursor: default;
+  /* Deliberately NOT `pointer-events: auto`. The tile inherits `none` from the
+     DraggablePanel's pointerPassthrough layer so clicks, camera drags and right-click
+     menus reach the scene beneath the strip; opting back in here re-blocks all of them,
+     and the only thing it buys back is the `:hover` rule replaced below. */
+  /* Overlay glass: translucent fill + frosted blur + angular 2px corners. */
+  background: var(--hud-bg);
+  /* Divided by the panel zoom so both land at a CONSTANT 1px hairline and 2px
+     corner however far the UI is scaled, like the chrome beside it, which never
+     takes the panel zoom.
+
+     DraggablePanel zooms its content layer, and CSS `zoom` multiplies every
+     length, so a plain `1px`/`2px` here is the ONE thing in this tile that grows
+     by the full UI scale: the tile's own size is damped to ~a third of it
+     (INFOBOX_SCALE_DAMP). Measured at 2x without this divisor, the corner paints
+     at 4px and the border at 2px on a tile that has only grown 1.35x — visibly
+     rounder and twice the hairline weight of the chrome beside it. */
+  border: calc(1px / var(--infobox-zoom, 1)) solid var(--hud-border);
+  border-radius: calc(2px / var(--infobox-zoom, 1));
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  /* Quiet hover, so a hovered (tooltip-bearing) tile brightens a little. */
+  transition:
+    border-color 0.2s ease-out,
+    background 0.2s ease-out;
+}
+
+/* Class, not `:hover`: a `pointer-events: none` tile is never hovered as far as CSS is
+   concerned. InfoBoxOverlay's cursor hit test — the same one that raises the tooltip —
+   sets this, so the two cues stay on the same tile. */
+.infobox-item.is-hovered {
+  border-color: var(--color-border-translucent);
+  background: var(--color-surface-translucent);
+}
+
+.infobox-sprite {
+  grid-area: 1 / 1;
+  width: calc(24px * var(--infobox-scale));
+  height: calc(24px * var(--infobox-scale));
+  pointer-events: none;
+  image-rendering: pixelated;
+}
+
+.infobox-text {
+  /* Share the icon's full-tile cell, with the value resting at its bottom edge. */
+  grid-area: 1 / 1;
+  align-self: end;
+  justify-self: center;
+  text-align: center;
+  /* Stay in front of sprites that create stacking contexts through opacity or filters. */
+  z-index: 1;
+  /* The pack's data-text ivory, for every countdown: part of the palette instead
+     of the pure white that outshone the chrome around it. Values whose color
+     means something (a boosted or drained stat, the tick counter's phase)
+     override it inline. */
+  color: var(--color-text-body);
+  /* One face and size for every value, without switching for longer text. Plain 12
+     over Plain 11: its digits are a pixel taller and wider, which is what keeps a
+     value readable on top of busy icon art. */
+  font-family: "RuneScape Plain 12", sans-serif;
+  /* 16px is the NATIVE size of the RuneScape TTFs (unitsPerEm=16 — one font
+     unit per pixel): glyph edges land exactly on the pixel grid, so the text
+     stays bilevel-crisp even inside this composited, backdrop-filtered tile
+     where the browser is forced into grayscale AA. */
+  font-size: calc(16px * var(--infobox-scale));
+  line-height: calc(16px * var(--infobox-scale));
+  /* One whole pixel off each advance, so it stays on the grid: without it "10:00"
+     and up (31px of ink) overflow the 30px tile, with it "59:59" sets in 28px. */
+  letter-spacing: calc(-1px * var(--infobox-scale));
+  /* One font pixel: the width of a glyph stroke at the scale this text is painted.
+     Shadow and outline offsets MUST use it rather than a plain 1px. DraggablePanel's
+     `zoom` multiplies a plain 1px by the full UI scale while the glyphs only grow by
+     the damped infobox scale, so at 2x the copies would sit 2px out from 1.35px
+     strokes: a gap opens between each stroke and its shadow, and the eight-way
+     outline breaks into a dotted grid. Tied to the glyph size, every copy abuts its stroke exactly
+     at any scale or zoom, and stays a hard 1px at 1.0. */
+  --infobox-font-px: calc(1px * var(--infobox-scale));
+  /* Hard one-pixel offset shadow — the authentic OSRS text treatment. */
+  text-shadow: var(--infobox-font-px) var(--infobox-font-px) 0 #000;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+/* Values that carry a meaning. Each is the palette's status color lifted halfway
+   to the value ivory: the raw status colors are darker than the timers beside them
+   and went thin over icon art, while these sit at the ivory's brightness, so the
+   whole strip reads as one family and the hue alone says boosted or drained. Mixed
+   from the tokens. */
+.infobox-text--boost {
+  color: color-mix(in srgb, var(--color-success) 55%, var(--color-text-body));
+}
+
+.infobox-text--drain {
+  color: color-mix(in srgb, var(--color-error) 60%, var(--color-text-body));
+}
+
+/* A tile with no icon (the tick counter) has nothing to caption: its value is
+   centered in the same full-tile cell. */
+.infobox-text--solo {
+  align-self: center;
+}
+
+/* Infobox text outline (toggled + colored via the Infobox plugin). All eight
+   neighbors: the four diagonals alone leave the 1px strokes unoutlined straight
+   above, below and beside them, where icon art shows through and breaks up the
+   digits. Offsets are one font pixel, not 1px — see `--infobox-font-px`. */
+.infobox-strip--outlined .infobox-text {
+  --infobox-font-px-neg: calc(-1 * var(--infobox-font-px));
+  text-shadow:
+    var(--infobox-font-px) 0 0 var(--infobox-outline-color, #000),
+    var(--infobox-font-px-neg) 0 0 var(--infobox-outline-color, #000),
+    0 var(--infobox-font-px) 0 var(--infobox-outline-color, #000),
+    0 var(--infobox-font-px-neg) 0 var(--infobox-outline-color, #000),
+    var(--infobox-font-px) var(--infobox-font-px) 0 var(--infobox-outline-color, #000),
+    var(--infobox-font-px-neg) var(--infobox-font-px-neg) 0 var(--infobox-outline-color, #000),
+    var(--infobox-font-px) var(--infobox-font-px-neg) 0 var(--infobox-outline-color, #000),
+    var(--infobox-font-px-neg) var(--infobox-font-px) 0 var(--infobox-outline-color, #000);
+}
+
+/* Doom invocation counter: reuse the encounter picker's doom icon rendered in its
+   INACTIVE state (grayscale + dimmed), so the tile stays legible and non-colorful
+   while the colored stack count carries the emphasis. Matches
+   `.invocation-row:not(.invocation-row--active) .invocation-icon img`. */
+.infobox-item[data-infobox-id="doom-stacks"] .infobox-sprite {
+  filter: grayscale(0.7);
+  opacity: 0.6;
+}

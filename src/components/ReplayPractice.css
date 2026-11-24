@@ -1,0 +1,261 @@
+/* One line while the three controls fit it, otherwise Restart on its own line with Change and
+   Clear sharing the line below. The break follows the measured contents, not a width threshold,
+   so every placement from the 240px pane down to the narrowest column keeps all three words. */
+.practice-retry-bar__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+}
+
+/* The two secondary actions wrap together. Without this wrapper the row would send Clear to the
+   second line on its own and stretch it the bar's full width, ahead of the action it qualifies. */
+.practice-retry-bar__actions {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  gap: 4px;
+}
+
+.practice-retry-bar__actions > button {
+  flex: 1 1 auto;
+}
+
+.practice-retry-bar__restart-label b {
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-weight: normal;
+}
+
+.replay-practice__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 32px;
+  padding: 4px 8px;
+  background: var(--color-surface);
+  border: var(--unscaled-px, 1px) solid var(--color-border);
+  border-radius: calc(2 * var(--unscaled-px, 1px));
+  color: var(--color-secondary);
+  font:
+    16px / 20px "RuneScape Bold 12",
+    sans-serif;
+  cursor: pointer;
+}
+
+.replay-practice__button:hover:not(:disabled) {
+  background: var(--color-surface-hover);
+  border-color: var(--color-primary-structure);
+  color: var(--color-accent-text);
+}
+
+.replay-practice__button:disabled {
+  color: var(--color-text-muted);
+  cursor: default;
+}
+
+/* No min-width override: the destination never shrinks below its own text, so a bar too narrow
+   for one line wraps the secondary actions instead of squeezing the tick out of view. */
+.replay-practice__button--primary {
+  flex: 1 1 auto;
+  background: var(--primary-dim);
+  color: var(--color-accent-text);
+  border-color: var(--color-secondary);
+}
+
+.replay-practice__hint {
+  margin: 4px 0 0;
+  color: var(--color-text-muted);
+  font:
+    16px / 18px "RuneScape Plain 11",
+    sans-serif;
+  overflow-wrap: anywhere;
+}
+
+.practice-retry-bar {
+  box-sizing: border-box;
+  margin: 0;
+  min-inline-size: 0;
+  max-width: calc(100vw - 16px);
+  padding: 8px;
+  background: var(--color-bg-solid);
+  border: var(--unscaled-px, 1px) solid var(--color-border);
+  border-radius: calc(2 * var(--unscaled-px, 1px));
+  pointer-events: auto;
+}
+
+/* Roomy labeled launchers get context without repeating the destination or
+   growing into a tall session card. Compact and mobile toolbars stay one row. */
+.practice-retry-bar--labelled {
+  padding-block: 6px;
+}
+
+.practice-retry-bar__context {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 4px;
+  color: var(--color-secondary);
+  font:
+    16px / 16px "RuneScape Bold 12",
+    sans-serif;
+}
+
+.practice-retry-bar__context kbd {
+  color: var(--color-text-muted);
+  font:
+    16px / 16px "RuneScape Plain 11",
+    sans-serif;
+}
+
+.outcome-practice-actions {
+  box-sizing: border-box;
+  width: 100%;
+  text-align: center;
+}
+
+/* The step forward gets its own line above the restarts, so the eye meets one offer before the
+   row of alternatives rather than picking the lit one out of a line of five. */
+.outcome-practice-actions__main {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+.outcome-practice-actions__secondary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.outcome-practice-actions .osrs-btn {
+  min-height: 44px;
+  max-width: 100%;
+  /* Each control owns its opaque text layer, not an enclosing action card. */
+  contain: paint;
+  /* Square paint bounds keep each independent control layer fully opaque for LCD text. */
+  border-radius: 0;
+  opacity: 1;
+  text-shadow: none;
+  font:
+    16px / 20px "RuneScape Bold 12",
+    sans-serif;
+}
+
+.outcome-practice-actions__primary {
+  gap: 12px;
+}
+
+/* The replay label needs its opaque paint layer outside the button itself. */
+.outcome-practice-actions__replay {
+  display: inline-flex;
+  max-width: 100%;
+  background: var(--color-surface);
+  contain: paint;
+}
+
+.outcome-practice-actions__replay .osrs-btn {
+  contain: none;
+}
+
+.outcome-practice-actions__shortcut {
+  font:
+    16px / 20px "RuneScape Plain 11",
+    sans-serif;
+  color: var(--color-text-muted);
+}
+
+.outcome-practice-actions__secondary .osrs-btn {
+  padding: 8px 12px;
+  border-color: transparent;
+  background: var(--color-surface);
+  color: var(--color-secondary);
+  font-family: "RuneScape Plain 12", sans-serif;
+}
+
+.outcome-practice-actions__secondary .osrs-btn:hover:not(:disabled) {
+  border-color: transparent;
+  background: var(--color-surface-hover);
+  color: var(--color-accent-text);
+}
+
+.outcome-practice-actions .osrs-btn:disabled {
+  color: var(--color-text-muted);
+  background: var(--color-surface);
+  border-color: var(--color-border);
+  box-shadow: none;
+}
+
+.outcome-practice-actions__status {
+  width: fit-content;
+  max-width: 100%;
+  box-sizing: border-box;
+  margin: 8px auto 0;
+  padding: 8px 12px;
+  background: var(--color-surface);
+  contain: paint;
+  color: var(--color-text-muted);
+  font:
+    16px / 20px "RuneScape Plain 11",
+    sans-serif;
+  overflow-wrap: anywhere;
+}
+
+.practice-retry-bar__error,
+.outcome-practice-actions__error {
+  color: var(--color-error);
+}
+
+:root[data-mobile-ui] .outcome-practice-actions__shortcut {
+  display: none;
+}
+
+@media (pointer: coarse) {
+  .practice-retry-bar__context kbd {
+    display: none;
+  }
+
+  .practice-retry-bar__row button {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .outcome-practice-actions__shortcut {
+    display: none;
+  }
+}
+
+:root[data-mobile-ui] .practice-retry-bar__row button {
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.replay-practice__button--primary:hover:not(:disabled) {
+  border-color: var(--color-primary);
+  color: var(--color-primary-hover);
+}
+
+.replay-practice__button--quiet {
+  background: transparent;
+  border-color: transparent;
+  font-family: "RuneScape Plain 12", sans-serif;
+}
+
+.replay-practice__button--quiet:hover:not(:disabled) {
+  border-color: transparent;
+  background: var(--color-surface-hover);
+}
+
+/* Narrow placements give up the context line and the outer padding, not the words: the row
+   above wraps when one line runs out, and the controls read the same in every presentation. */
+.practice-retry-bar--compact {
+  padding: 4px;
+}
+
+.practice-retry-bar--compact .replay-practice__button {
+  padding-inline: 6px;
+}

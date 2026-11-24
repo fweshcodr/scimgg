@@ -1,0 +1,70 @@
+name: Bug
+description: Something is broken or behaves unexpectedly. Inaccurate game mechanics have their own form.
+labels: [bug]
+body:
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: Include what you expected instead. Screenshots help.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Where
+      options:
+        - Yama phase 3
+        - Sol Heredit
+        - Inferno
+        - Practice lobby
+        - Any encounter (interface, loadouts, prayers, plugins, replays, tutorials)
+        - Setup, build or tests
+        - Documentation
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. ...
+        2. ...
+    validations:
+      required: true
+
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: Browser and operating system. For setup, build or test problems, give the Node.js version instead of the browser.
+      placeholder: Firefox 150 on Windows 11
+    validations:
+      required: true
+
+  - type: dropdown
+    id: setup
+    attributes:
+      label: Setup
+      description: Did `npm run setup` complete? Without it, interface art, fonts and models are missing; that alone is not a bug.
+      options:
+        - "Yes"
+        - "No"
+        - Not sure
+    validations:
+      required: true
+
+  - type: input
+    id: commit
+    attributes:
+      label: Commit
+      description: Output of `git rev-parse --short HEAD`.
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Console or terminal output
+      description: Errors from the browser console, or the failing command's output.
+      render: text

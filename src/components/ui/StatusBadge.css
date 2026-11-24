@@ -1,0 +1,45 @@
+/*
+ * Metadata about a surface, not a warning about it.
+ *
+ * Deliberately NOT the accent or the warning color. The accent is reserved for selection, and a
+ * maturity note rendered in alert amber was the loudest thing in the contract list — it out-shouted
+ * the contract names themselves, so the list read as alarming before anything was picked.
+ *
+ * Muted text on a faint wash is the same vocabulary as `.variant-detail-status` ("Not yet
+ * implemented"), which makes the two status markers read as one family rather than two unrelated
+ * chips at different volumes.
+ */
+.status-badge {
+  flex: none;
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 11px;
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  /* Right padding is 1px short of the left on purpose: `letter-spacing` adds a trailing space
+     after the final glyph that belongs to no letter, so symmetric padding renders the run 1px
+     left of center. */
+  padding: 3px 5px 3px 6px;
+  color: var(--color-text-muted);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 2px;
+  white-space: nowrap;
+}
+
+/*
+ * Dense rows: the boss rail and the contract list.
+ *
+ * The frame comes off rather than the type coming down. Both rows draw their own border when
+ * selected, so a bordered chip inside them is a second frame around the first — and both sit
+ * beside 11-12px text, where the framed chip stood taller than the line it annotates and pushed
+ * the row open. Without the box it reads as what it is: a word about the row, in the row's own
+ * quiet register.
+ */
+.status-badge--compact {
+  padding: 0;
+  background: none;
+  border: none;
+  /* Nothing boxes it in now, so the tracking has to do the separating. */
+  letter-spacing: 1.5px;
+}

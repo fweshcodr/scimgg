@@ -1,0 +1,48 @@
+/* The opaque fill, the absent box-shadow and the transform-free centering are
+   each a precondition for subpixel text AA — see docs/agent-reference.md, "LCD text".
+   Centered in the room the open sidebars leave (App's --ui-inset-*), not over one. */
+.viewport-size-strip {
+  position: fixed;
+  bottom: 8px;
+  left: var(--ui-inset-left, 0px);
+  right: var(--ui-inset-right, 0px);
+  width: fit-content;
+  margin: 0 auto;
+  z-index: 9989;
+  box-sizing: border-box;
+  background-color: var(--color-bg-solid);
+  border: 1px solid var(--color-border);
+  border-radius: 2px;
+  padding: 6px 12px;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-family: "RuneScape Plain 12", sans-serif;
+  font-size: 14px;
+  color: var(--color-text-body);
+  /* A status readout, never a target: it sits over the arena and must not eat
+     clicks meant for the scene. */
+  pointer-events: none;
+  white-space: nowrap;
+  animation: viewport-size-enter 0.25s ease-out both;
+}
+
+.viewport-size-strip__lead {
+  font-family: "RuneScape Bold 12", sans-serif;
+  color: var(--color-warning);
+  text-shadow: 1px 1px 0 #000;
+}
+
+.app-container:has(.replay-bar) .viewport-size-strip {
+  top: 8px;
+  bottom: auto;
+}
+
+@keyframes viewport-size-enter {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

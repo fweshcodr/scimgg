@@ -1,0 +1,1045 @@
+/* Scim-owned mobile controls. The native LEFT slot and Tools share one bottom baseline.
+   Every scroller paints its own opaque surface; no shadow/filter/composited wrapper around text. */
+.osm-tools {
+  display: contents;
+  font:
+    16px / 20px "RuneScape Plain 12",
+    sans-serif;
+  color: var(--color-text-body);
+}
+.osm-tools__window,
+.osm-tools__dock {
+  position: absolute;
+  pointer-events: auto;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+.osm-tools__window {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg-solid);
+  border: 1px solid var(--color-border);
+  border-bottom: 0;
+  border-radius: 2px;
+  overflow: hidden;
+}
+.osm-tools [hidden] {
+  display: none;
+}
+.osm-tools__body {
+  min-height: 0;
+  flex: 1;
+  overflow: hidden;
+  background: var(--color-bg-solid);
+}
+.osm-tools__pane {
+  height: 100%;
+  min-height: 0;
+}
+.osm-tools button {
+  -webkit-tap-highlight-color: transparent;
+  transition: none;
+}
+.osm-tools button:active {
+  transform: none;
+}
+.osm-tools__tabs {
+  box-sizing: border-box;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) minmax(0, 0.8fr);
+  flex: 0 0 44px;
+  background: var(--color-bg-elevated);
+}
+.osm-tools__tab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  overflow: hidden;
+  min-width: 0;
+  padding: 0 2px;
+  border: 0;
+  border-block: 1px solid var(--color-border);
+  border-right: 1px solid var(--color-border);
+  background: var(--color-bg-elevated);
+  color: var(--color-text-body);
+  font:
+    16px / 20px "RuneScape Plain 12",
+    sans-serif;
+  cursor: pointer;
+}
+.osm-tools__tab:last-child {
+  border-right: 0;
+}
+.osm-tools__tab:hover {
+  background: var(--color-surface-hover);
+  color: var(--color-heading);
+}
+.osm-tools__tab--on,
+.osm-tools__tab--on:hover {
+  background: var(--color-bg-solid);
+  color: var(--color-heading);
+  box-shadow: inset 0 -2px var(--color-primary);
+}
+.osm-tools__tab:disabled,
+.osm-tools__tab:disabled:hover {
+  background: var(--color-bg-elevated);
+  color: var(--color-text-dim);
+  box-shadow: none;
+  cursor: default;
+}
+.osm-tools__compact-note {
+  box-sizing: border-box;
+  height: 100%;
+  overflow-y: auto;
+  overflow-wrap: anywhere;
+  padding: 2px;
+  background: var(--color-bg-solid);
+  color: var(--color-text-body);
+  font-family: "RuneScape Plain 11", sans-serif;
+  text-align: center;
+}
+.osm-tools__compact-note p {
+  margin: 0;
+}
+.osm-tools__compact-note p + p {
+  margin-top: 8px;
+}
+.osm-tools__dock {
+  background: var(--color-bg-elevated);
+  border-radius: 2px;
+  /* Clip on the text-free wrapper. Clipping the button's own inset selection
+     highlight suppresses LCD text in Blink, even with an opaque background. */
+  overflow: hidden;
+}
+.osm-tools__dock-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 0;
+  border: 1px solid var(--color-primary-structure);
+  border-radius: 2px;
+  background: var(--color-bg-elevated);
+  color: var(--color-text-body);
+  font:
+    16px / 20px "RuneScape Plain 11",
+    sans-serif;
+  cursor: pointer;
+}
+.osm-tools__dock-button:hover {
+  background: var(--color-surface-hover);
+  color: var(--color-heading);
+}
+.osm-tools__dock-button[aria-expanded="true"],
+.osm-tools__dock-button[aria-expanded="true"]:hover {
+  background: var(--color-bg-solid);
+  color: var(--color-heading);
+  box-shadow: inset 0 -2px var(--color-primary);
+}
+.osm-tools__note {
+  margin: 0;
+  padding: 12px 8px;
+  font:
+    16px / 20px "RuneScape Plain 12",
+    sans-serif;
+  color: var(--color-secondary);
+}
+
+/* Practice groups are pages: the full two-line header returns to the overview. */
+.osm-tools__practice {
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+.osm-tools__group-head {
+  display: flex;
+  flex: none;
+  min-height: 40px;
+  background: var(--color-bg-elevated);
+  border-bottom: 1px solid var(--color-border);
+}
+.osm-tools__practice-back {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+  min-height: 40px;
+  flex: 1;
+  padding: 0 8px;
+  border: 0;
+  background: var(--color-bg-elevated);
+  color: var(--color-heading);
+  font:
+    16px / 20px "RuneScape Plain 12",
+    sans-serif;
+  text-align: left;
+  cursor: pointer;
+}
+.osm-tools__practice-back-link {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--color-secondary);
+  background: inherit;
+}
+.osm-tools__practice-back > span {
+  background: inherit;
+}
+.osm-tools__practice-title {
+  display: flex;
+  align-items: center;
+  min-height: 40px;
+  margin: 0;
+  padding: 0 8px;
+  color: var(--color-heading);
+  font:
+    16px / 20px "RuneScape Plain 12",
+    sans-serif;
+}
+.osm-tools__group-head > .info-hint {
+  flex: 0 0 32px;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  border-left: 1px solid var(--color-border);
+  color: var(--color-secondary);
+}
+.osm-tools__practice-back svg {
+  flex: none;
+}
+.osm-tools__window[data-narrow-slot] .osm-tools__practice-back {
+  padding-inline: 4px;
+}
+.osm-tools__practice-back:hover {
+  background: var(--color-surface-hover);
+}
+.osm-tools__practice-content,
+.osm-tools__transport,
+.osm-tools__menu {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: var(--color-bg-solid);
+}
+.osm-tools__practice-content {
+  flex: 1;
+  padding: 4px 8px;
+}
+/* Tiny fitted recordings must scroll the header too, rather than letting its fixed
+   height consume the whole body. The normal phone/tablet back header stays in place. */
+.osm-tools__window[data-tiny-slot] .osm-tools__practice {
+  overflow-y: auto;
+  background: var(--color-bg-solid);
+}
+.osm-tools__window[data-tiny-slot] .osm-tools__practice-content {
+  flex: none;
+  overflow: visible;
+}
+.osm-tools__groups {
+  margin: -4px -8px;
+  display: flex;
+  flex-direction: column;
+}
+.osm-tools__window[data-short-slot] .osm-tools__practice-content {
+  padding: 4px;
+}
+.osm-tools__window[data-short-slot] .osm-tools__practice-content--single-choice {
+  padding: 2px 4px;
+}
+.osm-tools__window[data-short-slot] .osm-tools__groups {
+  margin: -4px;
+}
+.osm-tools__groups button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  min-height: 40px;
+  flex: none;
+  padding: 8px;
+  border: 0;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-bg-solid);
+  color: var(--color-text-body);
+  font:
+    16px / 20px "RuneScape Plain 12",
+    sans-serif;
+  text-align: left;
+  cursor: pointer;
+}
+.osm-tools__groups button svg {
+  flex: none;
+}
+.osm-tools__groups button:hover {
+  background: var(--color-surface-hover);
+}
+.osm-tools__practice-content .boss-health {
+  gap: 0;
+  padding: 0;
+  border: 0;
+  --hud-label: var(--color-secondary);
+  --hud-value: var(--color-text-body);
+  --hud-dim: var(--color-secondary);
+}
+.osm-tools__practice-content .boss-health :is(span, button) {
+  text-shadow: none;
+}
+.osm-tools__practice-content .boss-health-head {
+  flex-wrap: wrap;
+  gap: 4px 8px;
+}
+.osm-tools__practice-content :is(.boss-health-name, .boss-health-value, .boss-health-sep) {
+  font-size: 16px;
+  line-height: 20px;
+}
+.osm-tools__practice-content .boss-health-slider {
+  min-height: 40px;
+  margin: 0;
+}
+.osm-tools .osm-tools__practice-content .boss-health-slider::-webkit-slider-runnable-track {
+  height: 6px;
+}
+.osm-tools .osm-tools__practice-content .boss-health-slider::-moz-range-track {
+  height: 6px;
+}
+.osm-tools .osm-tools__practice-content .boss-health-slider::-webkit-slider-thumb {
+  width: 10px;
+  height: 18px;
+  margin-top: -7px;
+}
+.osm-tools .osm-tools__practice-content .boss-health-slider::-moz-range-thumb {
+  width: 10px;
+  height: 18px;
+}
+.osm-tools__quick-restart {
+  flex: none;
+  padding: 0 4px 4px;
+  background: var(--color-bg-solid);
+}
+.osm-tools__quick-restart .osrs-btn {
+  min-height: 36px;
+  font:
+    16px / 20px "RuneScape Plain 12",
+    sans-serif;
+  text-shadow: none;
+}
+.osm-tools__window[data-short-slot] .osm-tools__quick-restart {
+  display: none;
+}
+.osm-tools__phases > .boss-health > :is(.boss-health-head, .boss-health-slider) {
+  display: none;
+}
+.osm-tools__phases legend {
+  display: none;
+}
+.osm-tools__phases .boss-health-presets {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.osm-tools__phases .boss-health-preset {
+  min-height: 44px;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 4px;
+}
+.osm-tools__phases .boss-health-preset-label {
+  text-align: left;
+  font-family: "RuneScape Plain 12", sans-serif;
+  color: var(--color-text-body);
+}
+.osm-tools__phases .boss-health-preset-hp {
+  margin-top: 0;
+}
+.osm-tools__phases .boss-health-preset-hp::after {
+  content: " HP";
+  color: var(--color-secondary);
+}
+.osm-tools__practice-content .mechanics-toggles {
+  gap: 4px;
+  padding: 0;
+}
+.osm-tools__practice-content .setting-row {
+  padding: 0;
+}
+.osm-tools__practice-content .mechanics-choice {
+  width: 100%;
+  gap: 4px;
+}
+.osm-tools__practice-content .mechanics-choice-label {
+  font:
+    16px / 20px "RuneScape Plain 12",
+    sans-serif;
+  color: var(--color-secondary);
+}
+.osm-tools__practice-content .mechanics-choice-segmented {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 0;
+  border: 0;
+  background: var(--color-bg-solid);
+}
+.osm-tools__practice-content .mechanics-choice-segmented .mechanics-choice-segment {
+  flex: none;
+  flex-direction: row;
+  justify-content: flex-start;
+  gap: 8px;
+  min-width: 0;
+  min-height: 40px;
+  padding: 4px 6px;
+  font:
+    16px / 20px "RuneScape Plain 12",
+    sans-serif;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-solid);
+}
+.osm-tools__practice-content .mechanics-choice-segment svg {
+  display: none;
+}
+.osm-tools__practice-content .mechanics-choice-segment::before {
+  content: "";
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border: 1px solid var(--color-secondary);
+  border-radius: 50%;
+}
+.osm-tools__practice-content .mechanics-choice-segment.is-active::before {
+  background: var(--color-heading);
+  border-color: var(--color-heading);
+}
+.osm-tools__practice-content .mechanics-choice-segment.is-active,
+.osm-tools__practice-content .mechanics-choice-segment.is-active:hover {
+  background: var(--primary-dim);
+  border-color: var(--color-primary-structure);
+  color: var(--color-heading);
+}
+.osm-tools__practice-content .mechanics-choice-segment:not(.is-active):hover:not(:disabled) {
+  background: var(--color-surface-hover);
+}
+.osm-tools__practice-content .mechanics-choice-segment:disabled {
+  color: var(--color-text-muted);
+  cursor: default;
+}
+.osm-tools__practice-content .mechanics-choice-segment:disabled::before {
+  border-color: currentColor;
+}
+.osm-tools__practice-content .mechanics-choice-segment.is-active:disabled::before {
+  background: currentColor;
+}
+/* Opaque label paint follows the button's selected, hover and disabled fill. */
+.osm-tools__practice-content .mechanics-choice-segment > span {
+  background-color: inherit;
+  text-align: left;
+}
+.osm-tools__practice-content .osrs-checkbox {
+  min-height: 40px;
+  width: 100%;
+  color: var(--color-text-body);
+  text-shadow: none;
+}
+.osm-tools__practice-content .osrs-checkbox__label {
+  font:
+    16px / 20px "RuneScape Plain 12",
+    sans-serif;
+  color: var(--color-text-body);
+  text-shadow: none;
+}
+.osm-tools__practice-content .osrs-checkbox[aria-checked="false"] .osrs-checkbox__box {
+  border-color: var(--color-text-muted);
+}
+.osm-tools__practice-content .osrs-checkbox:disabled {
+  opacity: 1;
+}
+.osm-tools__practice-content .osrs-checkbox:disabled .osrs-checkbox__label {
+  color: var(--color-text-muted);
+}
+.osm-tools__practice-content .info-hint {
+  min-width: 44px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+}
+.osm-tools__practice-content .mechanics-choice-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.osm-tools__practice-content.osm-tools__practice-content--single-choice .mechanics-choice-label {
+  display: none;
+}
+.osm-tools__practice-content .mechanics-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.osm-tools__practice-content .mechanics-actions .osrs-btn {
+  justify-content: flex-start;
+  text-align: left;
+  padding-inline: 4px;
+  border: 0;
+  background: var(--color-bg-solid);
+  font-family: "RuneScape Plain 12", sans-serif;
+  text-shadow: none;
+}
+.osm-tools__practice-content .mechanics-actions .osrs-btn:hover:not(:disabled) {
+  background: var(--color-surface-hover);
+}
+.osm-tools__practice-content .osrs-btn {
+  min-height: 44px;
+  padding: 6px;
+  font-size: 16px;
+  line-height: 20px;
+  white-space: normal;
+}
+.osm-tools__restart p {
+  margin: 0 0 8px;
+  color: var(--color-secondary);
+  font-family: "RuneScape Plain 12", sans-serif;
+}
+.osm-tools .osm-tools__session {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: var(--color-bg-solid);
+  max-width: none;
+}
+.osm-tools__session .practice-retry-bar__row {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  align-items: stretch;
+}
+.osm-tools__session .practice-retry-bar__actions {
+  display: flex;
+  gap: 4px;
+}
+/* The encounter's session (Inferno's wave restarts) takes the same page and the same rows. */
+.osm-tools__session .session-bar__row {
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: stretch;
+  gap: 2px;
+}
+.osm-tools__session :is(.replay-practice__button, .session-bar__button) {
+  flex: 1;
+  min-height: 40px;
+  font-size: 16px;
+  line-height: 20px;
+  padding: 4px;
+}
+.osm-tools .osm-tools__window .osm-tools__practice-content--session {
+  padding: 2px;
+}
+.osm-tools__window[data-short-slot] .osm-tools__session .practice-retry-bar__row button {
+  min-height: 40px;
+}
+
+/* The portal keeps the real navigation callbacks. Main destinations are immediate; Browse
+   replaces them with the library/encounter destinations, rather than growing the panel. */
+.osm-tools__menu {
+  height: 100%;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-rows: repeat(2, minmax(56px, 1fr));
+  gap: 4px;
+  padding: 4px;
+}
+.osm-tools__menu-host,
+.osm-tools .sidebar-nav.sidebar-nav--tools {
+  display: contents;
+}
+.osm-tools .osm-tools__menu .controls-toggle-open,
+.osm-tools__browse {
+  position: static;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  box-sizing: border-box;
+  gap: 4px;
+  width: auto;
+  min-width: 0;
+  min-height: 44px;
+  height: auto;
+  margin: 0;
+  padding: 6px;
+  border: 0;
+  border-bottom: 1px solid var(--color-border);
+  border-radius: 0;
+  background: var(--color-bg-solid);
+  box-shadow: none;
+  color: var(--color-text-body);
+  font:
+    16px / 20px "RuneScape Plain 12",
+    sans-serif;
+  text-shadow: none;
+  text-decoration: none;
+  white-space: normal;
+  cursor: pointer;
+}
+.osm-tools .osm-tools__menu .controls-toggle-open:hover,
+.osm-tools__browse:hover {
+  background: var(--color-surface-hover);
+  color: var(--color-heading);
+}
+.osm-tools .osm-tools__menu [data-mobile-menu-page="browse"] {
+  display: none;
+}
+.osm-tools .osm-tools__menu [data-tutorial="plugins-button"] {
+  order: 2;
+}
+.osm-tools__browse {
+  order: 3;
+}
+.osm-tools__browse svg {
+  flex: none;
+  color: var(--color-secondary);
+}
+.osm-tools .osm-tools__menu:not(.osm-tools__menu--browse) :is(.controls-toggle-open, .osm-tools__browse) {
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  padding: 4px 2px;
+  border: 1px solid var(--color-primary-structure);
+  background: var(--color-bg-elevated);
+  color: var(--color-text-body);
+}
+.osm-tools .osm-tools__menu:not(.osm-tools__menu--browse) :is(.controls-toggle-open, .osm-tools__browse):hover {
+  background: var(--color-surface-hover);
+  color: var(--color-heading);
+}
+.osm-tools .osm-tools__menu .launcher-icon {
+  display: block;
+  flex: none;
+  width: 16px;
+  height: 16px;
+  color: var(--color-secondary);
+}
+.osm-tools__menu--browse {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 0 4px 4px;
+}
+.osm-tools__menu--browse .osm-tools__browse {
+  order: -1;
+  flex: none;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  min-height: 40px;
+  background: var(--color-bg-elevated);
+  color: var(--color-heading);
+}
+.osm-tools .osm-tools__menu--browse .sidebar-nav--tools > :not([data-mobile-menu-page="browse"]) {
+  display: none;
+}
+.osm-tools .osm-tools__menu--browse [data-mobile-menu-page="browse"] {
+  display: flex;
+  flex: none;
+}
+.osm-tools .osm-tools__menu--browse .controls-toggle-open {
+  min-height: 40px;
+  border-bottom: 1px solid var(--color-border);
+  padding: 6px 4px;
+  color: var(--color-text-body);
+  justify-content: space-between;
+  text-align: left;
+}
+.osm-tools .osm-tools__menu--browse .controls-toggle-open:not(.controls-toggle-open--split-right)::after {
+  content: "";
+  flex: none;
+  width: 5px;
+  height: 5px;
+  margin-right: 3px;
+  border-top: 1px solid var(--color-secondary);
+  border-right: 1px solid var(--color-secondary);
+  transform: rotate(45deg);
+}
+.osm-tools__menu--browse .tutorials-button-anchor {
+  min-width: 0;
+}
+.osm-tools__menu--browse .tutorials-button-anchor > button:first-child {
+  flex: 1;
+}
+.osm-tools .osm-tools__menu--browse .controls-toggle-open--split-right {
+  width: 44px;
+  padding: 8px;
+  color: var(--color-error);
+}
+/* Override App's narrow-screen 64px launcher minimum inside the smaller native slot. */
+.osm-tools .osm-tools__window .osm-tools__menu .sidebar-nav .controls-toggle-open {
+  min-width: 0;
+  font:
+    16px / 20px "RuneScape Plain 12",
+    sans-serif;
+}
+
+/* Replay is a control page in the same slot. More replaces transport with actions; the clip
+   editor scrolls here too, never widens the window into the play area. Desktop CSS is untouched. */
+.osm-tools__transport {
+  height: 100%;
+  --tool-transport-row: 44px;
+}
+/* Short slots keep compact transport rows and omit the health shortcut, preserving room
+   for the controls after the shared footer has taken its space. */
+.osm-tools__window[data-short-slot] .osm-tools__transport {
+  --tool-transport-row: 40px;
+}
+.osm-tools__window[data-narrow-slot] .replay-tick-of {
+  display: none;
+}
+.osm-tools__transport .replay-bar {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 44px;
+  grid-template-rows: var(--tool-transport-row) minmax(var(--tool-transport-row), 1fr) var(--tool-transport-row);
+  align-items: center;
+  gap: 0;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  max-width: none;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: var(--color-bg-solid);
+  box-shadow: none;
+  animation: none;
+  color: var(--color-text-body);
+  --hud-label: var(--color-secondary);
+  --hud-value: var(--color-heading);
+  --hud-dim: var(--color-text-muted);
+}
+.osm-tools__transport .replay-bar * {
+  text-shadow: none;
+}
+.osm-tools__transport .replay-controls-row {
+  display: contents;
+}
+.osm-tools__transport .replay-bar .replay-tick {
+  grid-column: 1;
+  grid-row: 1;
+  min-height: var(--tool-transport-row);
+  min-width: 0;
+  padding-left: 8px;
+  gap: 4px;
+  flex-wrap: wrap;
+  font-size: 16px;
+  line-height: 20px;
+  background: var(--color-bg-solid);
+}
+.osm-tools__transport .replay-tick-input {
+  box-sizing: border-box;
+  height: var(--tool-transport-row);
+  padding: 0 2px;
+  min-width: 44px;
+  font-size: 16px;
+  line-height: 24px;
+}
+.osm-tools__transport .replay-tick-label {
+  display: block;
+  color: var(--color-secondary);
+}
+.osm-tools__transport .replay-tick-total {
+  color: var(--color-secondary);
+}
+.osm-tools__transport .replay-more-toggle {
+  grid-column: 2;
+  grid-row: 1;
+  min-width: 0;
+  min-height: var(--tool-transport-row);
+  width: 100%;
+  height: var(--tool-transport-row);
+  padding: 0;
+  border: 0;
+  border-left: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+  border-radius: 0;
+  background: var(--color-bg-elevated);
+  color: var(--color-text-body);
+  font:
+    16px / 20px "RuneScape Plain 12",
+    sans-serif;
+}
+.osm-tools__transport .replay-more-toggle:hover {
+  background: var(--color-surface-hover);
+}
+.osm-tools__transport .replay-more-toggle--open,
+.osm-tools__transport .replay-more-toggle--open:hover {
+  background: var(--primary-dim);
+  color: var(--color-heading);
+}
+.osm-tools__transport .replay-seek-row {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  padding: 0 10px;
+}
+.osm-tools__transport .replay-seek-track {
+  --seek-rail: 4px;
+  --seek-thumb: 10px;
+}
+.osm-tools__transport .replay-seek::-webkit-slider-thumb {
+  height: 18px;
+  background: var(--color-text-body);
+  border: 1px solid var(--color-border);
+  transition: none;
+}
+.osm-tools__transport .replay-seek::-moz-range-thumb {
+  height: 18px;
+  background: var(--color-text-body);
+  border: 1px solid var(--color-border);
+  transition: none;
+}
+.osm-tools__transport .replay-seek {
+  min-height: var(--tool-transport-row);
+  padding: calc((var(--tool-transport-row) - 4px) / 2) 0;
+  box-sizing: border-box;
+}
+.osm-tools__transport .replay-transport {
+  grid-column: 1 / -1;
+  grid-row: 3;
+  justify-content: space-evenly;
+  gap: 0;
+  background: var(--color-bg-elevated);
+}
+.osm-tools__transport .replay-btn {
+  flex: 1;
+  min-width: 0;
+  min-height: var(--tool-transport-row);
+  width: auto;
+  height: var(--tool-transport-row);
+}
+.osm-tools__transport .replay-btn svg {
+  width: 18px;
+  height: 18px;
+}
+.osm-tools__transport .replay-btn:not(:disabled) {
+  color: var(--color-text-body);
+}
+.osm-tools__transport .replay-bar--more-open :is(.replay-seek-row, .replay-transport) {
+  display: none;
+}
+.osm-tools__transport .replay-bar--more-open :is(.replay-tick, .replay-more-toggle) {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+}
+.osm-tools__transport .replay-bar--more-open .replay-tick-of {
+  display: none;
+}
+.osm-tools__transport .replay-bar--more-open {
+  grid-template-rows: var(--tool-transport-row) minmax(0, 1fr);
+}
+/* A chaptered recording (Inferno's waves) adds the wave readout: a row of its own above the
+   transport, since the tick's row has no room beside More for a readout and two 44px jumps.
+   `:where` keeps these at the bar's own weight, so More's rows still win. */
+.osm-tools__transport .replay-bar:where(:has(.replay-wave):not(.replay-bar--more-open)) {
+  grid-template-rows:
+    var(--tool-transport-row) minmax(var(--tool-transport-row), 1fr) var(--tool-transport-row)
+    var(--tool-transport-row);
+}
+.osm-tools__transport .replay-bar:where(:has(.replay-wave):not(.replay-bar--more-open)) .replay-transport {
+  grid-row: 4;
+}
+.osm-tools__transport .replay-bar .replay-wave {
+  grid-column: 1 / -1;
+  grid-row: 3;
+  display: flex;
+  gap: 0;
+  min-width: 0;
+  height: var(--tool-transport-row);
+  border-top: 1px solid var(--color-border);
+  background: var(--color-bg-solid);
+}
+.osm-tools__transport .replay-bar--more-open .replay-wave {
+  display: none;
+}
+.osm-tools__transport .replay-wave__step {
+  flex: none;
+  width: 44px;
+}
+.osm-tools__transport .replay-wave__label {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border-radius: 0;
+  font:
+    16px / 20px "RuneScape Plain 12",
+    sans-serif;
+}
+/* The wave list takes the scrubber's and playback's rows, as More takes them for its actions; the
+   tick and the readout that closes the list stay. */
+.osm-tools__transport .replay-bar:where(:has(.replay-waves)) {
+  grid-template-rows: var(--tool-transport-row) minmax(0, 1fr) var(--tool-transport-row);
+}
+.osm-tools__transport .replay-bar:has(.replay-waves) :is(.replay-seek-row, .replay-transport) {
+  display: none;
+}
+.osm-tools__transport .replay-bar .replay-waves {
+  position: static;
+  grid-column: 1 / -1;
+  grid-row: 2;
+  align-self: stretch;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 4px 6px;
+  border: 0;
+  border-radius: 0;
+  background: var(--color-bg-solid);
+}
+/* As many 40px cells as the slot is wide: a thumb's target rather than the floating panel's 24px. */
+.osm-tools__transport .replay-waves__grid {
+  --wave-cell: 40px;
+  grid-template-columns: repeat(auto-fill, minmax(var(--wave-cell), 1fr));
+}
+.osm-tools__transport .replay-actions--more {
+  position: static;
+  grid-column: 1 / -1;
+  grid-row: 2;
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  width: auto;
+  max-width: none;
+  padding: 0 6px 4px;
+  margin: 0;
+  border: 0;
+  background: var(--color-bg-solid);
+  box-shadow: none;
+}
+.osm-tools__transport .replay-actions--more :is(.replay-takeover-wrap, .replay-practice-wrap) {
+  display: block;
+  width: 100%;
+  flex: none;
+}
+.osm-tools__transport .replay-actions--more .replay-action {
+  align-items: flex-start;
+  justify-content: center;
+  text-align: left;
+  padding: 8px 2px;
+  border: 0;
+  border-bottom: 1px solid var(--color-border);
+  border-radius: 0;
+  background: var(--color-bg-solid);
+  color: var(--color-text-body);
+}
+.osm-tools__transport .replay-action__description {
+  color: var(--color-secondary);
+  text-align: left;
+}
+.osm-tools__transport .replay-actions--more .replay-action:hover:not(:disabled) {
+  background: var(--color-surface-hover);
+}
+.osm-tools__transport .replay-actions--more .replay-action:disabled {
+  color: var(--color-text-muted);
+}
+.osm-tools__transport .replay-actions--more .replay-takeover-wrap {
+  order: 0;
+}
+.osm-tools__transport .replay-actions--more .replay-practice-wrap {
+  order: 1;
+}
+.osm-tools__transport .replay-utilities {
+  order: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.osm-tools__transport .replay-actions--more .replay-utilities {
+  align-self: stretch;
+  align-items: stretch;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.osm-tools__transport :is(.replay-action, .replay-cursor-toggle) {
+  min-height: 44px;
+  width: 100%;
+  justify-content: center;
+  padding: 4px;
+  font:
+    16px / 20px "RuneScape Plain 12",
+    sans-serif;
+  white-space: normal;
+}
+.osm-tools__transport .replay-actions--more .replay-utilities :is(.replay-action, .replay-cursor-toggle) {
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 6px 2px;
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text-body);
+}
+.osm-tools__transport .replay-actions--more .replay-utilities svg {
+  display: none;
+}
+.osm-tools__transport .replay-cursor-state {
+  margin-left: auto;
+  color: var(--color-secondary);
+  font-family: "RuneScape Plain 11", sans-serif;
+}
+.osm-tools__transport .replay-more-note {
+  order: 3;
+  white-space: normal;
+  color: var(--color-secondary);
+  font:
+    16px / 20px "RuneScape Plain 11",
+    sans-serif;
+}
+.osm-tools__transport :is(.replay-capture-notice, .replay-takeover-error, .replay-late) {
+  grid-column: 1 / -1;
+  margin: 4px 8px;
+  white-space: normal;
+}
+/* Standard color opts Chromium out of transient overlay scrollbars, so a clipped list has
+   a visible affordance before the first swipe. Match the desktop launcher scroller recipe. */
+.osm-tools :is(.osm-tools__practice-content, .osm-tools__transport, .osm-tools__menu, .replay-actions--more) {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-primary-structure) var(--color-bg-solid);
+}
+/* Practice's last row, Reset to defaults: an action among destinations, so muted ink and the reset
+   glyph where the rows above have a chevron. Pressed, the row reads "Defaults restored" and the
+   whole row is its Undo, a full-width touch target. */
+.osm-tools__groups .osm-tools__reset {
+  color: var(--color-text-muted);
+}
+.osm-tools__groups .osm-tools__reset > canvas {
+  flex: none;
+}
+.osm-tools__groups .osm-tools__reset:hover {
+  color: var(--color-text-body);
+}
+.osm-tools__undo {
+  color: var(--color-secondary);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-decoration-color: var(--color-primary-structure);
+  text-underline-offset: 3px;
+}

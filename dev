@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+# Optional shortcuts for the npm scripts in package.json, which stay the canonical commands.
+set -euo pipefail
+cd "$(dirname "$0")"
+
+usage() {
+  cat <<'EOF'
+Usage: ./dev [command]
+  (none)                       Start the dev server (npm run dev)
+  setup [--check|--offline]    Download and build the generated assets (npm run setup);
+                               --check only verifies them, --offline uses no network
+  harness [query]              Start the dev server and open /ui-harness.html[?query]
+  test [paths...]              Run Vitest (npm test); the whole suite without paths
+  check                        Check types, lint and licenses (not formatting; writes nothing)
+  build                        Production build (npm run build)
+  -h, --help                   Show this help
+EOF
+}
+fail_usage() { usage >&2; exit 2; }
+
+cmd="${1:-}"
+[[ $# -gt 0 ]] && shift
+route=''
+case "$cmd" in
+  -h | --help) usage; exit 0 ;;
+  '') [[ $# -eq 0 ]] || fail_usage; args=(run dev) ;;
+  setup)
+    case "$#:${1:-}" in
+      0:) args=(run setup) ;;
+      1:--check | 1:--offline) args=(run setup -- "$1") ;;
+      *) fail_usage ;;
+    esac ;;
+  harness)
+    [[ $# -le 1 ]] || fail_usage
+    query="${1:-}"; query="${query#\?}"
+    route="/ui-harness.html${query:+?$query}"
+    args=(run dev -- --open "$route") ;;
+  test) args=(test -- "$@") ;;
+  check) [[ $# -eq 0 ]] || fail_usage; args=() ;;
+  build) [[ $# -eq 0 ]] || fail_usage; args=(run build) ;;
+  *) fail_usage ;;
+esac
+
+if [[ ! -d node_modules ]]; then echo "Dependencies are not installed: run npm ci" >&2; exit 1; fi
+
+if [[ "$cmd" == check ]]; then
+  npm run typecheck
+  npm run lint
+  exec npm run check:licenses
+fi
+[[ -n "$route" ]] && echo "Harness route: $route (append it to the Local URL Vite prints)"
+exec npm "${args[@]}"

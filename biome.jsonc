@@ -1,0 +1,102 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.4.8/schema.json",
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
+  },
+  // `biome check .` is expected to exit 0. The scope decisions below are the only
+  // exemptions, and each is a statement about the code rather than a way to duck
+  // the linter. Everything else is fixed at the site, or carries a `biome-ignore`
+  // whose reason explains the code.
+  "files": {
+    // Generated artifacts, none of it hand-written source:
+    //   bzip2-module.js is Emscripten output. Rewriting generated WASM glue to
+    //     satisfy style rules is how you break the decompressor.
+    //   item-icon-manifest.json is written by scripts/fetch-item-icons.ts via
+    //     JSON.stringify(_, null, 2). Reflowing its arrays to the formatter's
+    //     taste only holds until the next regen, and src/data/__tests__/
+    //     itemIconIds.test.ts compares the generator's exact output.
+    //   scripts/assets/sprite-manifest.json keeps one recipe per line, so a diff
+    //   of the 1,700 recipes stays readable; the formatter would spread each over ~20.
+    //   src/data/osrs/{equipment,monsters,itemAliases}.json are written the same
+    //     way by scripts/sync-osrs-data.ts; reformatting them churns on every sync.
+    "includes": [
+      "**",
+      "!!**/dist",
+      "!public/bzip2-module.js",
+      "!scripts/item-icon-manifest.json",
+      "!scripts/assets/sprite-manifest.json",
+      "!src/data/osrs/equipment.json",
+      "!src/data/osrs/monsters.json",
+      "!src/data/osrs/itemAliases.json"
+    ]
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineWidth": 120
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "correctness": {
+        "noUnusedVariables": "warn",
+        "noUnusedImports": "warn"
+      },
+      "style": {
+        "noNonNullAssertion": "off"
+      },
+      "suspicious": {
+        "noExplicitAny": "off"
+      }
+    }
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "single",
+      "trailingCommas": "all"
+    }
+  },
+  "assist": {
+    "enabled": true,
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
+  },
+  "overrides": [
+    {
+      // `engine['worldState']` is the TypeScript idiom for reaching a private member
+      // from a test. useLiteralKeys rewrites it to `engine.worldState`, which does not
+      // compile.
+      "includes": ["**/__tests__/**", "**/*.test.ts", "**/*.test.tsx"],
+      "linter": {
+        "rules": {
+          "complexity": {
+            "useLiteralKeys": "off"
+          }
+        }
+      }
+    },
+    {
+      // src/rs is a port of rs-map-viewer (https://github.com/dennisdev/rs-map-viewer).
+      // Its static utility classes and overload ordering mirror the Java original;
+      // diverging from upstream shape makes future ports harder to diff.
+      "includes": ["src/rs/**"],
+      "linter": {
+        "rules": {
+          "complexity": {
+            "noStaticOnlyClass": "off"
+          },
+          "suspicious": {
+            "useAdjacentOverloadSignatures": "off"
+          }
+        }
+      }
+    }
+  ]
+}

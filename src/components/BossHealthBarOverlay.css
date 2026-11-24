@@ -1,0 +1,152 @@
+/* Boss Health Bar — standalone boss overlay, built on the readouts' HP-bar
+   pattern: a left-aligned name + right-aligned
+   readout in an info row, above a thin, clean, text-free track.
+
+   Colors come entirely from the semantic tokens (--hud-bg,
+   --color-secondary, --color-success, --color-error, text ramp). DraggablePanel owns the Alt-held
+   grab footprint shared by movable panels. */
+
+.boss-hp {
+  /* Text ramp mirrors the practice panel's (PracticePanel.css). On this translucent,
+     blurred glass --color-text-dim / --color-text-muted collapse to
+     near-invisibility once a bright scene bleeds through the blur. */
+  --boss-hp-label: color-mix(in srgb, var(--color-secondary) 85%, var(--color-text-muted));
+  --boss-hp-dim: color-mix(in srgb, var(--color-text-muted) 70%, var(--color-secondary));
+
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  padding: calc(6px + var(--border-give, 0px)) calc(8px + var(--border-give, 0px));
+  /* The `--hud-*` overlay surface: translucent pack background + hairline border
+     + backdrop blur. No bevels, no drop shadow. */
+  background: var(--hud-bg);
+  border: var(--unscaled-px, 1px) solid var(--hud-border);
+  border-radius: calc(2 * var(--unscaled-px, 1px));
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  user-select: none;
+}
+
+.boss-hp__info {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+}
+
+.boss-hp__name {
+  /* Content-sized rather than stretched, so the Beta badge sits beside the name instead of
+     being shoved against the readout; the readout's auto margin owns the right edge. */
+  flex: 0 1 auto;
+  min-width: 0;
+  font-family: "RuneScape Bold 12", sans-serif;
+  /* 16px is the RuneScape TTFs' native grid (unitsPerEm=16), so every glyph
+     edge lands on a pixel; at 14px the caption antialiases into mush. The
+     pinned 14px line-height keeps the info row 14px tall. */
+  font-size: 16px;
+  line-height: 14px;
+  color: var(--color-secondary);
+  text-shadow: 1px 1px 0 #000;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.boss-hp__readout {
+  /* Sits flush right even when the name is hidden. */
+  margin-left: auto;
+  flex-shrink: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  /* Small face at 16px. The TTFs are only pixel-exact on their native 16px grid
+     (unitsPerEm=16), and Small renders at the apparent size of an off-grid 13px
+     Bold 12 — so the readout stays crisp without stealing width from the
+     name beside it. Bold 12 here is 14px wider and pushes long boss names into
+     an ellipsis. */
+  font-family: "RuneScape Small", sans-serif;
+  font-size: 16px;
+  line-height: 12px;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 1px 1px 0 #000;
+}
+
+.boss-hp__values {
+  /* The current HP is what a glance is for: Plain 11 (cap 9) over the readout's Small (cap 8),
+     a step up that costs about a pixel a digit rather than the 14px Bold 12 would. */
+  font-family: "RuneScape Plain 11", sans-serif;
+  color: var(--color-text-body);
+}
+
+.boss-hp__sep {
+  color: var(--boss-hp-dim);
+  margin: 0 3px;
+}
+
+.boss-hp__pct {
+  /* Face, size and line-height inherited from .boss-hp__readout; only the
+     color separates the percentage from the values beside it. */
+  color: var(--boss-hp-label);
+}
+
+/*
+ * The shared Beta marker, on the bar's own text recipe: the Small face at its native 16px stays
+ * pixel-exact where the badge's off-grid 11px Bold 12 would fuzz, and --boss-hp-label survives a
+ * bright scene bleeding through the blur where the badge's --color-text-muted collapses.
+ */
+.boss-hp .status-badge--compact {
+  font-family: "RuneScape Small", sans-serif;
+  font-size: 16px;
+  line-height: 12px;
+  color: var(--boss-hp-label);
+  text-shadow: 1px 1px 0 #000;
+}
+
+/* The compact form, where the default bar cannot sit beside the launcher row (Fixed with the
+   Settings drawer open): the whole name on its own line, the HP under it, the track below. No badge,
+   and no percentage beside the values. */
+.boss-hp--compact .boss-hp__info {
+  /* 56 tall: 6 + name 14 + 2 + HP 12 + 4 + track 10 + 6, and the 1px border each side. */
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+
+.boss-hp--compact .boss-hp__readout {
+  margin-left: 0;
+}
+
+/* border-box so the border is inside the 100% width, giving symmetric gutters. */
+.boss-hp__track {
+  box-sizing: border-box;
+  position: relative;
+  width: 100%;
+  height: 10px;
+  overflow: hidden;
+  border-radius: calc(2 * var(--unscaled-px, 1px));
+  /* Missing-health backing: a muted, pack-derived oxblood (error token blended
+     into the inset surface) — keeps the OSRS red read without the loud crimson. */
+  background: color-mix(in srgb, var(--color-error) 20%, var(--color-surface-inset));
+  border: var(--unscaled-px, 1px) solid rgba(255, 255, 255, 0.04);
+}
+
+.boss-hp__fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  border-radius: var(--unscaled-px, 1px);
+  background-color: var(--color-success);
+  background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, rgba(0, 0, 0, 0.05) 100%);
+  transition: width 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .boss-hp__fill {
+    transition: none;
+  }
+}

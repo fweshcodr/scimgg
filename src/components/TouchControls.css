@@ -1,0 +1,35 @@
+/* Touch settings. The `?` marks follow MechanicsSettings: a footnote two pixels off its word. */
+.touch-controls__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.setting-row > .touch-controls__toggle {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 2px;
+  min-width: 0;
+}
+
+.touch-controls__slot {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.touch-controls__slot-label {
+  flex: none;
+  width: 44px;
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+.touch-controls__slot .select-input {
+  flex: 1;
+  min-width: 0;
+}

@@ -1,0 +1,368 @@
+{
+  "about": "Baseline SpotAnimRenderer digests, with the scoped overrides documented below, per encounter and preloaded effect: the baked parts (render state, positions, colors, alphas, face bias, uvs, texture ids, transparent-sort input) and every frame drawn on the skip-sort and full-sort transparent paths (the same attributes plus the model matrix). Normals are excluded. The regenerate command re-pins the baseline to what the renderer at --renderer-root draws.",
+  "regenerate": "npx tsx src/render/scene/__tests__/encounterSpotAnimDraws.ts --renderer-root .",
+  "overrides": [
+    {
+      "encounter": "sol_heredit",
+      "effects": [2669, 2670, 2671],
+      "fields": ["bake", "fullSort"],
+      "change": "Omits only the wholly exact-zero-alpha, 42-vertex transparent part in frames 0, 1 and 2 of each effect: nine parts total. Every other part and the ten frame lengths of 3 client ticks per effect match the baseline.",
+      "verification": "Filtering only those nine parts from the baseline's in-memory entries reproduces every current Sol bake/draw digest with digestSpotAnimRenderer; every retained part's arrays, render state and sort metadata compare equal through the resident-array helpers. The skipSort digests are the baseline's.",
+      "regenerate": "These six digests are the baseline with only the omission above applied. The top-level regenerate command re-pins every digest from this tree, these included."
+    }
+  ],
+  "cache": {
+    "file": ".test-cache/disk.zip",
+    "sha256": "b18cee41a0324f92c66ed2cf6105e74e1b82da111d2116787acce948a79a24e4"
+  },
+  "encounters": {
+    "sol_heredit": {
+      "9": {
+        "bake": "7081912999ede4b9",
+        "skipSort": "1d3ff5e86bb3257e",
+        "fullSort": "1d3ff5e86bb3257e"
+      },
+      "111": {
+        "bake": "c4f7bf6cf78e6259",
+        "skipSort": "03d2c3ecd1a79f45",
+        "fullSort": "211fe885cc11469f"
+      },
+      "130": {
+        "bake": "7e85fe9cad2ffeca",
+        "skipSort": "c936cd9a357cc5d8",
+        "fullSort": "8ab3a3b6e0ee56da"
+      },
+      "131": {
+        "bake": "f0c9b305a7302d8a",
+        "skipSort": "a4f0574dd35fd536",
+        "fullSort": "a518967a56d8d2d3"
+      },
+      "1852": {
+        "bake": "1a4b9e6c8acb9678",
+        "skipSort": "181dacd8a6752a94",
+        "fullSort": "6dfe420d0aa81abe"
+      },
+      "2287": {
+        "bake": "dda2dd1da2a3e9f6",
+        "skipSort": "bead4fd025d80f1e",
+        "fullSort": "bead4fd025d80f1e"
+      },
+      "2666": {
+        "bake": "e802867c0400baf4",
+        "skipSort": "a3a2234ae4c2dd71",
+        "fullSort": "f02c39bdf7414717"
+      },
+      "2667": {
+        "bake": "b8dc658580b8d1b1",
+        "skipSort": "55b8971c72be0e04",
+        "fullSort": "32caa10b7ef74dcf"
+      },
+      "2668": {
+        "bake": "fd828c083395227b",
+        "skipSort": "21c0951cf28ce653",
+        "fullSort": "3f54f9154890a105"
+      },
+      "2669": {
+        "bake": "1a190799aa5f657e",
+        "skipSort": "89c256d7e51e1600",
+        "fullSort": "4b0c451156600c71"
+      },
+      "2670": {
+        "bake": "3a91ba63ff30021d",
+        "skipSort": "9681586d2efba471",
+        "fullSort": "0cec2fd69d7bf89a"
+      },
+      "2671": {
+        "bake": "86db53b4973aeb4e",
+        "skipSort": "97a8d0eca33d2ff3",
+        "fullSort": "a3816b4b4c65373a"
+      },
+      "2680": {
+        "bake": "0a2c9f9401217326",
+        "skipSort": "b7fe2df75b760a2c",
+        "fullSort": "0877b58da533ca17"
+      },
+      "2687": {
+        "bake": "20e5660aa1acaba1",
+        "skipSort": "fd084e4deb281808",
+        "fullSort": "9fcced35b2d53fc6"
+      },
+      "2688": {
+        "bake": "00836261f0cc17c6",
+        "skipSort": "a9009ddf841a5f09",
+        "fullSort": "86ba89a436277718"
+      },
+      "2689": {
+        "bake": "e501a02a0e328147",
+        "skipSort": "c5465364c7f34480",
+        "fullSort": "0ced92ce5091e9de"
+      },
+      "2690": {
+        "bake": "5e435045a3ad3a64",
+        "skipSort": "a9a98cc4baf56490",
+        "fullSort": "6115168c6d55e8d0"
+      },
+      "2691": {
+        "bake": "0a04170ae9a08670",
+        "skipSort": "59214c34b6635872",
+        "fullSort": "1deb47e93abdd56d"
+      },
+      "2692": {
+        "bake": "4e9ef45cbbff9269",
+        "skipSort": "60f80e31118c9d8a",
+        "fullSort": "b41212a52125fb01"
+      },
+      "2693": {
+        "bake": "58e1bba1be2938ea",
+        "skipSort": "bc1fe216d7587a72",
+        "fullSort": "51c67e26241b5aec"
+      },
+      "2694": {
+        "bake": "958982293f3a86dd",
+        "skipSort": "a1e5ba7ce4b361a3",
+        "fullSort": "455596ca984d3583"
+      },
+      "2695": {
+        "bake": "e90389f6fc5d7862",
+        "skipSort": "bd4098ea21942d9e",
+        "fullSort": "e8c6f605c56229f4"
+      },
+      "2696": {
+        "bake": "81959a68084da252",
+        "skipSort": "e9dd43afb927e372",
+        "fullSort": "b12a0d239aa3dd81"
+      },
+      "2697": {
+        "bake": "5a8d56a96a640033",
+        "skipSort": "7d2ff14b2d467368",
+        "fullSort": "f09ea750dc516ee1"
+      },
+      "2698": {
+        "bake": "75e3201beb16ac85",
+        "skipSort": "04ceca09c8e8d2c4",
+        "fullSort": "328b225bd4a47ad8"
+      },
+      "2724": {
+        "bake": "c6693882ff6922fa",
+        "skipSort": "3fb9442f61c5f378",
+        "fullSort": "27e3ed702dff21e5"
+      }
+    },
+    "inferno": {
+      "111": {
+        "bake": "c4f7bf6cf78e6259",
+        "skipSort": "03d2c3ecd1a79f45",
+        "fullSort": "211fe885cc11469f"
+      },
+      "131": {
+        "bake": "f0c9b305a7302d8a",
+        "skipSort": "a4f0574dd35fd536",
+        "fullSort": "a518967a56d8d2d3"
+      },
+      "444": {
+        "bake": "ee50a8d0a6be8762",
+        "skipSort": "c8fefa96ede31438",
+        "fullSort": "c567db5c346b455f"
+      },
+      "448": {
+        "bake": "6f37bdf86f1f96ea",
+        "skipSort": "aa3d22c24e0bef85",
+        "fullSort": "e9033ff7b7337089"
+      },
+      "449": {
+        "bake": "ac4c216dc977144b",
+        "skipSort": "9297bbf8b2e58274",
+        "fullSort": "e6bb17c22708d43a"
+      },
+      "450": {
+        "bake": "b1c5e5d688e30069",
+        "skipSort": "d87b7fa96a4a16c2",
+        "fullSort": "bf3cf93d32d7cb7d"
+      },
+      "451": {
+        "bake": "95d67140a444da21",
+        "skipSort": "c5864433a87a33a9",
+        "fullSort": "b582398158e278ba"
+      },
+      "659": {
+        "bake": "f081ca1a078a6553",
+        "skipSort": "db2f0ab3de4fec4f",
+        "fullSort": "97b75ef4ca240573"
+      },
+      "660": {
+        "bake": "c3505a8b8559201f",
+        "skipSort": "f3b71ac09effc7d5",
+        "fullSort": "d815841b5dcdccc5"
+      },
+      "1375": {
+        "bake": "010f5d35ddd07681",
+        "skipSort": "a9dcb19269d51eb9",
+        "fullSort": "75703dfc19476c00"
+      },
+      "1376": {
+        "bake": "f76fb7fb40811f43",
+        "skipSort": "5b48396d944a733f",
+        "fullSort": "12da6635f263904d"
+      },
+      "1377": {
+        "bake": "e9b9f4726a897aa0",
+        "skipSort": "076dd5ad197c7928",
+        "fullSort": "b74b3c39b842bbc4"
+      },
+      "1378": {
+        "bake": "6348b902dfacb7ca",
+        "skipSort": "fca888730906db1b",
+        "fullSort": "9d56f149cd414cd3"
+      },
+      "1379": {
+        "bake": "e37926ccf0db73a3",
+        "skipSort": "4e8275c7ef8f7b9e",
+        "fullSort": "cacf78b06e079930"
+      },
+      "1380": {
+        "bake": "2d0e6b2795aeadce",
+        "skipSort": "41e709bc4448a420",
+        "fullSort": "22598064ce56d206"
+      },
+      "1381": {
+        "bake": "3313330886588ab2",
+        "skipSort": "16a9984ff4888c09",
+        "fullSort": "e093a8c92050989f"
+      },
+      "1382": {
+        "bake": "e10376bab7bbcada",
+        "skipSort": "877283538bef6b21",
+        "fullSort": "94b6692a3755745e"
+      },
+      "1852": {
+        "bake": "1a4b9e6c8acb9678",
+        "skipSort": "181dacd8a6752a94",
+        "fullSort": "6dfe420d0aa81abe"
+      },
+      "2287": {
+        "bake": "dda2dd1da2a3e9f6",
+        "skipSort": "bead4fd025d80f1e",
+        "fullSort": "bead4fd025d80f1e"
+      }
+    },
+    "yama_p3": {
+      "111": {
+        "bake": "c4f7bf6cf78e6259",
+        "skipSort": "03d2c3ecd1a79f45",
+        "fullSort": "211fe885cc11469f"
+      },
+      "1852": {
+        "bake": "1a4b9e6c8acb9678",
+        "skipSort": "181dacd8a6752a94",
+        "fullSort": "6dfe420d0aa81abe"
+      },
+      "2287": {
+        "bake": "dda2dd1da2a3e9f6",
+        "skipSort": "bead4fd025d80f1e",
+        "fullSort": "bead4fd025d80f1e"
+      },
+      "3238": {
+        "bake": "3180ea78c272e3d5",
+        "skipSort": "03bd2401cbbae3f0",
+        "fullSort": "3ffca93b9041c85c"
+      },
+      "3242": {
+        "bake": "b200c1e5834ac32b",
+        "skipSort": "88bac6581f9c47eb",
+        "fullSort": "5b4a07569ce278aa"
+      },
+      "3243": {
+        "bake": "81bf3145f351b36c",
+        "skipSort": "a320b1ce4dd96611",
+        "fullSort": "5916cc87875dc184"
+      },
+      "3244": {
+        "bake": "001ff3b1c0ac6e7f",
+        "skipSort": "ca25663ebd636bf5",
+        "fullSort": "1048dc576b545322"
+      },
+      "3246": {
+        "bake": "e252defc78fd1f9d",
+        "skipSort": "4d096f1d8e1adb12",
+        "fullSort": "d9113c92db6f4ab1"
+      },
+      "3247": {
+        "bake": "4850f029f093a370",
+        "skipSort": "d6276413972fe880",
+        "fullSort": "a93ad3ffc2155848"
+      },
+      "3249": {
+        "bake": "0b756d3e0dd3208c",
+        "skipSort": "64d3c496095e0e4f",
+        "fullSort": "6be7be52f3e1fdb6"
+      },
+      "3252": {
+        "bake": "d2dadee92b323c40",
+        "skipSort": "b86469fb14e735de",
+        "fullSort": "9aa4197330bb771e"
+      },
+      "3262": {
+        "bake": "1aa3ab86a53ad631",
+        "skipSort": "97b927d94c70828a",
+        "fullSort": "81774cffa3472795"
+      },
+      "3263": {
+        "bake": "9e7833e606871caa",
+        "skipSort": "25549322d0d682ad",
+        "fullSort": "a70781ca23823f64"
+      },
+      "3264": {
+        "bake": "712d749381541a70",
+        "skipSort": "c442227202df9c10",
+        "fullSort": "21b530a9c15a9477"
+      },
+      "3265": {
+        "bake": "0e8a3ce17b1bdbde",
+        "skipSort": "c2092567fc88132a",
+        "fullSort": "947da6d0077ef74d"
+      },
+      "3266": {
+        "bake": "607625d52182a2ff",
+        "skipSort": "0e448f585179ebfb",
+        "fullSort": "06e6e721fc2783ce"
+      },
+      "3267": {
+        "bake": "a18b645560518e6c",
+        "skipSort": "6dae3448b9e88f62",
+        "fullSort": "d99501bb61637511"
+      },
+      "3268": {
+        "bake": "59068f16898ae142",
+        "skipSort": "e663d327aaa78f97",
+        "fullSort": "41c477c192446d9b"
+      },
+      "3269": {
+        "bake": "39643cc3289da4ad",
+        "skipSort": "156e5cd941a01820",
+        "fullSort": "d28f9312d9a96db7"
+      },
+      "3284": {
+        "bake": "75f93e5e4526e05b",
+        "skipSort": "9247d8bfe39f60a7",
+        "fullSort": "9247d8bfe39f60a7"
+      }
+    },
+    "lobby": {
+      "111": {
+        "bake": "c4f7bf6cf78e6259",
+        "skipSort": "03d2c3ecd1a79f45",
+        "fullSort": "211fe885cc11469f"
+      },
+      "1852": {
+        "bake": "1a4b9e6c8acb9678",
+        "skipSort": "181dacd8a6752a94",
+        "fullSort": "6dfe420d0aa81abe"
+      },
+      "2287": {
+        "bake": "dda2dd1da2a3e9f6",
+        "skipSort": "bead4fd025d80f1e",
+        "fullSort": "bead4fd025d80f1e"
+      }
+    }
+  }
+}

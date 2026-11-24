@@ -1,0 +1,39 @@
+/* The edit-layout bar's two pills: opaque stone, since they take taps (DESIGN.md, Opacity). */
+.layout-edit-pill {
+  pointer-events: auto;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 28px;
+  background: var(--color-bg-solid);
+  border: var(--unscaled-px, 1px) solid var(--color-border);
+  border-radius: calc(2 * var(--unscaled-px, 1px));
+  padding: var(--border-give, 0px) calc(12px + var(--border-give, 0px));
+  cursor: pointer;
+  font-family: "RuneScape Bold 12", sans-serif;
+  transition:
+    border-color 0.2s ease-out,
+    background 0.2s ease-out;
+}
+
+.layout-edit-pill:hover {
+  border-color: var(--color-primary-structure);
+  background: var(--color-surface-hover);
+}
+
+.layout-edit-pill:active {
+  transform: scale(0.97);
+}
+
+.layout-edit-pill__label {
+  color: var(--color-secondary);
+  font-size: 16px;
+  line-height: 1;
+  text-shadow: 1px 1px 0 #000;
+  transition: color 0.15s ease;
+}
+
+.layout-edit-pill:hover .layout-edit-pill__label {
+  color: var(--color-text-body);
+}

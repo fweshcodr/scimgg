@@ -1,0 +1,52 @@
+/* The FPS counter rides over the game chrome at the top right. */
+.fps-overlay {
+  z-index: 1000;
+}
+
+/* On mobile the drawers and modal sheets take the whole screen, and their 44px close sits in the
+   same top-right corner the counter does. It goes under them, as the full-screen stone does: below
+   the drawers' shadow (69) and so below every sheet, still over the game chrome. */
+:root[data-mobile-ui] .fps-overlay {
+  z-index: 68;
+}
+
+/* The value over an invisible sizer in one grid cell (FpsOverlay `fpsSizer`): the box is as wide as
+   the sizer, which changes only with the number of digits. The value starts at the cell's left and
+   FpsOverlay centers it with a whole-pixel margin (`fpsValueOffset`), never `justify-self: center`,
+   which would put an odd gap's half pixel on the pixel face. */
+.fps-overlay__box {
+  display: inline-grid;
+  vertical-align: top;
+}
+
+.fps-overlay__sizer,
+.fps-overlay__value {
+  grid-area: 1 / 1;
+  justify-self: start;
+  white-space: nowrap;
+}
+
+/* Under Plugins while it slides with its drawer: the same curve as the drawer (TopChrome.css). */
+.fps-overlay--sliding {
+  transition: right 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fps-overlay--sliding {
+    transition: none;
+  }
+}
+
+.fps-overlay__sizer {
+  visibility: hidden;
+}
+
+/* The desktop readout's backing: opaque, so its text keeps LCD antialiasing and stays legible over
+   the minimap art (24 x 20 for two digits). Still click-through (FpsOverlay). */
+.fps-overlay--backed .fps-overlay__box {
+  box-sizing: border-box;
+  padding: 1px 3px;
+  background: var(--color-bg-solid);
+  border: 1px solid var(--color-border);
+  border-radius: 2px;
+}

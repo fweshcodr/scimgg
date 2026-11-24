@@ -1,0 +1,82 @@
+.setting-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding-left: 6px;
+}
+
+.setting-row > *:first-child {
+  flex: 1;
+  min-width: 0;
+}
+
+.setting-row > .osrs-checkbox,
+.setting-row > .osrs-toggle {
+  flex: none;
+}
+
+.setting-row__content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* Keep explained checkbox lines as tall as Reset and any inline color swatch.
+   The intrinsic-width checkbox remains the click target, not its whole column. */
+.setting-row__content > .osrs-checkbox {
+  align-self: flex-start;
+}
+
+.setting-row__content > .osrs-checkbox,
+.setting-row__content > .settings-inline-row {
+  min-height: var(--setting-reset-size);
+}
+
+.setting-row__content > .setting-row__hint {
+  margin: 0;
+}
+
+/* Start checkbox explanations under the label; the content column reserves Reset's gutter. */
+.setting-row:has(.osrs-checkbox) .setting-row__hint {
+  padding-left: calc(24px + 2 * var(--unscaled-px, 1px));
+}
+
+/* A color swatch is an inline accessory, not a form-field heading. An inherited
+   label margin otherwise changes the checkbox row's height when the swatch appears. */
+.setting-row:has(.osrs-checkbox) .ti-swatch {
+  margin-bottom: 0;
+}
+
+.setting-row::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--color-primary);
+  border-radius: 1px;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  pointer-events: none;
+}
+
+.setting-row--modified::before {
+  opacity: 1;
+}
+
+.setting-row--modified:hover {
+  background: var(--color-surface-hover);
+  border-radius: 2px;
+}
+
+.setting-row__reset,
+.setting-row__reset-inline {
+  align-self: center;
+  margin-left: var(--setting-reset-gap);
+}
+
+.setting-row-aside {
+  margin-left: 6px;
+  margin-right: calc(var(--setting-reset-size) + var(--setting-reset-gap));
+}

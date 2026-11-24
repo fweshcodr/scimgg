@@ -1,0 +1,205 @@
+.hover-card {
+  --hover-card-stroke: var(--color-border);
+
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 99999;
+  /* Shrink-wrapped: a label ("Search", "Close Settings") is one line exactly as wide as its words,
+     and only copy longer than the measure wraps. Wrapped copy is then narrowed to its longest line
+     by hugWrappedLines (HoverCard.tsx), so this is a ceiling, not the width a hint gets.
+     176px is about 27 characters of this face: one-clause hints ("Shows where his next attack will
+     land.") break into two short lines instead of one wide one, two-sentence hints hold two lines
+     rather than three, and the longest (Zuk's shield) is six. The viewport term keeps a card on
+     screen on the narrowest window, which the placement clamps against. A caller whose copy wants
+     a different measure overrides max-width. */
+  width: max-content;
+  max-width: min(176px, calc(100vw - 16px));
+  padding: 5px 7px;
+  /* Opaque, and load-bearing: a translucent fill behind text is an LCD text-AA veto and would
+     drop this card to gray (docs/agent-reference.md, "LCD text"). The value is --color-surface
+     rather than the panel's own --color-bg-solid so the card reads as a layer above the tray
+     instead of a piece of it. */
+  background: var(--color-surface);
+  border: 1px solid var(--hover-card-stroke);
+  border-radius: 2px;
+  color: var(--color-text-body);
+  /* A pixel face, so the card belongs to the panels it opens over rather than reading as browser
+     chrome, and 16px because that is the only em these faces rasterize bilevel. A system sans is
+     not the cheaper option it looks: measured, the longest hint runs 233px here against 273px at
+     the sans's 12px, so this is the narrower of the two as well as the sharper. */
+  font-family: "RuneScape Plain 11", sans-serif;
+  font-size: 16px;
+  /* Integer, like every other line box on a pixel face here: a fractional multiplier puts the
+     second line's glyph origin on a half pixel and resamples the whole row. */
+  line-height: 16px;
+  /* Balanced, so a wrapped card's lines come out near-equal and no last word sits on a row of its
+     own. Balancing alone never narrows the box, which would leave a hole beside the shortened
+     lines; hugWrappedLines closes it. */
+  text-wrap: balance;
+  pointer-events: none;
+  transition:
+    opacity 0.16s cubic-bezier(0.2, 0.8, 0.2, 1),
+    transform 0.16s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* The elevation. Neither the shadow's place on a pseudo-element, nor `z-index: -1`, nor this
+   card's `overflow: visible` is tidiness: each is load-bearing for the text staying crisp, and
+   .slot-picker::before carries the full argument for all three.
+
+   --shadow-sm, not the --shadow-md that popover uses: a small card under a 16px blur is the
+   ghost-card look, all halo and no object. */
+.hover-card::before {
+  content: "";
+  position: absolute;
+  /* -1px, not 0. This is positioned against the card's PADDING box, so `inset: 0` sits a border
+     width inside the card on every edge and swallows most of the shadow's 2px drop, leaving it
+     reading as an even halo rather than elevation. There is no border-box reset in this repo. */
+  inset: -1px;
+  z-index: -1;
+  border-radius: 2px;
+  box-shadow: var(--shadow-sm);
+  pointer-events: none;
+}
+
+@starting-style {
+  .hover-card {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hover-card {
+    transition: none;
+  }
+
+  @starting-style {
+    .hover-card {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+
+/* An outcome rather than a hint: this copy is a sentence naming a refusal and the way out of it,
+   where a hint is a clause, so it gets a wider ceiling than the hints' 176px. */
+.hover-card--outcome {
+  max-width: 208px;
+}
+
+/* The refusal itself is already stated by the word in the control; this only has to read as
+   belonging to it, so the tone rides the stroke alone. The fill stays the opaque `--color-surface`
+   every card uses: a tinted translucent wash behind text is an LCD text-AA veto. */
+.hover-card--outcome-failed {
+  --hover-card-stroke: color-mix(in srgb, var(--color-error) 55%, var(--color-border));
+}
+
+.hover-card-caret {
+  position: absolute;
+  width: 6px;
+  height: 12px;
+}
+
+.hover-card-caret::before,
+.hover-card-caret::after {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+
+/* Two triangles per side, the back one in the border color and the front one inset by the card's
+   border width, so the caret carries the card's own 1px stroke around a filled point. */
+.hover-card-caret[data-side="right"],
+.hover-card-caret[data-side="left"] {
+  width: 6px;
+  height: 12px;
+}
+
+.hover-card-caret[data-side="right"]::before,
+.hover-card-caret[data-side="right"]::after,
+.hover-card-caret[data-side="left"]::before,
+.hover-card-caret[data-side="left"]::after {
+  top: 0;
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+}
+
+.hover-card-caret[data-side="right"] {
+  left: -6px;
+}
+
+.hover-card-caret[data-side="right"]::before {
+  left: 0;
+  border-right: 6px solid var(--hover-card-stroke);
+}
+
+.hover-card-caret[data-side="right"]::after {
+  left: 1px;
+  border-right: 6px solid var(--color-surface);
+}
+
+.hover-card-caret[data-side="left"] {
+  right: -6px;
+}
+
+.hover-card-caret[data-side="left"]::before {
+  right: 0;
+  border-left: 6px solid var(--hover-card-stroke);
+}
+
+.hover-card-caret[data-side="left"]::after {
+  right: 1px;
+  border-left: 6px solid var(--color-surface);
+}
+
+.hover-card-caret[data-side="bottom"],
+.hover-card-caret[data-side="top"] {
+  width: 12px;
+  height: 6px;
+}
+
+.hover-card-caret[data-side="bottom"]::before,
+.hover-card-caret[data-side="bottom"]::after,
+.hover-card-caret[data-side="top"]::before,
+.hover-card-caret[data-side="top"]::after {
+  left: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+}
+
+.hover-card-caret[data-side="bottom"] {
+  top: -6px;
+}
+
+.hover-card-caret[data-side="bottom"]::before {
+  top: 0;
+  border-bottom: 6px solid var(--hover-card-stroke);
+}
+
+.hover-card-caret[data-side="bottom"]::after {
+  top: 1px;
+  border-bottom: 6px solid var(--color-surface);
+}
+
+.hover-card-caret[data-side="top"] {
+  bottom: -6px;
+}
+
+.hover-card-caret[data-side="top"]::before {
+  bottom: 0;
+  border-top: 6px solid var(--hover-card-stroke);
+}
+
+.hover-card-caret[data-side="top"]::after {
+  bottom: 1px;
+  border-top: 6px solid var(--color-surface);
+}
+
+/* Launcher, header and pane-tab cards name the control they sit on: they appear with no fade (the
+   delay read as lag), and as a label rather than a note, so they sit tighter around their words. */
+.hover-card--instant {
+  padding: 3px 6px 4px;
+  transition: none;
+}

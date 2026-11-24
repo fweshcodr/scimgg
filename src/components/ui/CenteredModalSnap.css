@@ -1,0 +1,5 @@
+/* Layout offsets only: transforms can change text's LCD eligibility. The card owns position: relative. */
+.centered-modal-snap {
+  left: var(--centered-modal-snap-x, 0px);
+  top: var(--centered-modal-snap-y, 0px);
+}

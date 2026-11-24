@@ -1,0 +1,222 @@
+.combat-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--color-border);
+  background: var(--color-bg-solid);
+}
+
+.combat-stats__header h3 {
+  margin: 0;
+  color: var(--color-secondary);
+  font:
+    16px / 20px "RuneScape Bold 12",
+    sans-serif;
+}
+
+.combat-stats__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+}
+
+.combat-stats__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.combat-stats__action {
+  min-height: var(--loadout-action-height, 32px);
+  padding: 0 8px;
+  border: 1px solid var(--color-border);
+  border-radius: 2px;
+  background: var(--color-surface);
+  color: var(--color-secondary);
+  font:
+    16px / 20px "RuneScape Plain 12",
+    sans-serif;
+  cursor: pointer;
+}
+
+.combat-stats__action:hover {
+  background: var(--color-surface-hover);
+  border-color: var(--color-primary-structure);
+  color: var(--color-accent-text);
+}
+
+.combat-stats__unlocks {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.combat-stats__unlocks legend {
+  padding: 0 0 4px;
+  color: var(--color-text-muted);
+  font:
+    16px / 18px "RuneScape Plain 11",
+    sans-serif;
+}
+
+.combat-stats__unlocks .mechanics-toggles {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+}
+
+.combat-stats__unlocks .setting-row {
+  min-height: 28px;
+  padding-left: 0;
+}
+
+.combat-stats__unlocks .osrs-checkbox__label {
+  line-height: 20px;
+  text-shadow: none;
+}
+
+.combat-stats__grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0;
+  border: 1px solid var(--color-border);
+  border-radius: 2px;
+  background: var(--color-bg-elevated);
+}
+
+.combat-stats__tile {
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr) 40px;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  padding: 4px 6px;
+  background: var(--color-bg-elevated);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.combat-stats__tile:nth-last-child(-n + 4) {
+  border-bottom: 0;
+}
+
+.combat-stats__tile-name {
+  /* Paint labels before the accelerated canvases in DOM order to retain LCD text.
+     Explicit cells preserve the icon, label, field layout independently of that order. */
+  grid-column: 2;
+  grid-row: 1;
+  font-family: "RuneScape Plain 11", sans-serif;
+  font-size: 16px;
+  line-height: 18px;
+  color: var(--color-text-body);
+  white-space: nowrap;
+}
+
+.combat-stats__icon {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+/* This native skill sprite is monochrome black. Invert its existing ink, not its
+   transparent background; no replacement drawing or contrasting badge is needed. */
+.combat-stats__icon--silhouette {
+  filter: invert(1);
+}
+
+/* Only the number is boxed, not the whole skill. The shared stepper stays hidden;
+   typing and arrow keys still edit the level. */
+.num-input.combat-stats__input {
+  grid-column: 3;
+  grid-row: 1;
+  min-width: 0;
+  min-height: 32px;
+  background: var(--color-surface-inset);
+}
+
+/* A text field keeps its focus border without an outer shadow vetoing LCD text. */
+.num-input.combat-stats__input:focus-within {
+  box-shadow: none;
+}
+
+.combat-stats__input .num-input__arrows {
+  display: none;
+}
+
+.combat-stats__input .num-input__field {
+  width: auto;
+  flex: 1;
+  min-width: 0;
+  text-align: center;
+  font-size: 16px;
+  line-height: 20px;
+  padding: 4px 0;
+  font-variant-numeric: tabular-nums;
+}
+
+/* The limiting-stat marker must read distinctly from the gold focus ring. */
+
+.combat-stats__tile--unmet .num-input.combat-stats__input {
+  border-color: var(--color-warning);
+}
+
+.combat-stats__requirements {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  font-family: "RuneScape Plain 11", sans-serif;
+  font-size: 16px;
+  line-height: 18px;
+}
+
+.combat-stats__requirements-label {
+  color: var(--color-text-body);
+}
+
+.combat-stats__req {
+  color: var(--color-warning);
+}
+
+/* Four balanced columns on desktop; two on phones leave room for actual
+   44px-high numeric fields rather than counting the non-interactive tile. */
+@media (max-width: 720px), (pointer: coarse) {
+  .combat-stats__tile {
+    grid-template-columns: 20px minmax(0, 1fr) 48px;
+    padding-block: 2px;
+  }
+
+  .num-input.combat-stats__input {
+    min-height: 44px;
+  }
+
+  .combat-stats__input .num-input__field {
+    min-height: 42px;
+    padding-block: 0;
+    font-size: 16px;
+  }
+
+  .combat-stats__unlocks .setting-row {
+    min-height: 44px;
+  }
+
+  .combat-stats__unlocks .osrs-checkbox {
+    min-height: 44px;
+  }
+}
+
+@media (max-width: 600px) {
+  .combat-stats__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .combat-stats__tile:nth-last-child(-n + 4) {
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .combat-stats__tile:nth-last-child(-n + 2) {
+    border-bottom: 0;
+  }
+}

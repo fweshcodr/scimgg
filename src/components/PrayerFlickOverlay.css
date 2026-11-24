@@ -1,0 +1,270 @@
+/* Same surface family as the boss health bar (BossHealthBarOverlay.css).
+
+   Type sizes: both RuneScape faces carry unitsPerEm = 16, so glyph edges only
+   land on whole pixels at 16px and its integer multiples. The name tag and the
+   resting key are glanced at, not read, so they take the 11px sub-label step
+   and the tracking that keeps its glyphs apart. */
+
+.prayer-flick {
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: calc(4px + var(--border-give, 0px)) calc(8px + var(--border-give, 0px)) calc(6px + var(--border-give, 0px))
+    calc(8px + var(--border-give, 0px));
+  background: var(--hud-bg);
+  border: var(--unscaled-px, 1px) solid var(--hud-border);
+  border-radius: calc(2 * var(--unscaled-px, 1px));
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  user-select: none;
+}
+
+/* Holds a name and nothing else. A count of clicks that registered a tick late
+   is structurally incapable of leaving zero at the default lag, so it lives in
+   the accessible label instead, where it appears only once it can move. */
+
+.prayer-flick__caption {
+  display: flex;
+  align-items: baseline;
+  min-width: 0;
+  height: 16px;
+}
+
+.prayer-flick__title {
+  /* Small at its native 16px renders at the apparent size the off-grid 11px Bold 12 did,
+     but pixel-exact; the label color keeps it readable over a bright scene. */
+  font-family: "RuneScape Small", sans-serif;
+  font-size: 16px;
+  line-height: 16px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--color-secondary) 70%, var(--color-text-muted));
+  text-shadow: 1px 1px 0 #000;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.prayer-flick__bars {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* 34px, fixed, and square: it is a ruler, not a card. Rows 4–15 are the on
+   lane, 16–17 the centerline, 18–29 the off lane, with 4px of padding top and
+   bottom.
+
+   Two ramps, because the two layers are not the same kind of thing. The trough
+   retires hard with age, which is what makes the stack order readable across
+   the room, but it floors out rather than reaching nothing: run all the way
+   down and the oldest row's marks end up floating on an absent surface, which
+   reads as detached rather than old. The centerline barely retires at all — it
+   is the reference the on/off lanes are measured against, and a lane system
+   with no visible line is just jitter. Both ride the color's alpha rather than
+   the element's opacity, so neither can touch the marks drawn over them. */
+.prayer-flick__bar {
+  --prayer-flick-fade: max(0.3, 1 - var(--prayer-flick-age, 0) * 0.35);
+  --prayer-flick-line-fade: max(0.6, 1 - var(--prayer-flick-age, 0) * 0.13);
+  position: relative;
+  flex: 0 0 34px;
+  height: 34px;
+  overflow: hidden;
+  background-color: color-mix(in srgb, var(--color-surface-inset) calc(var(--prayer-flick-fade) * 100%), transparent);
+  background-image: linear-gradient(
+    to bottom,
+    transparent 0 16px,
+    color-mix(in srgb, var(--color-primary-structure) calc(var(--prayer-flick-line-fade) * 100%), transparent) 16px 18px,
+    transparent 18px
+  );
+}
+
+/* Frame and scale, retiring with the trough they belong to. Quarter-tick rules
+   are the smallest division worth aiming at by eye, and the one that makes
+   "just before the boundary" legible without a scale. */
+.prayer-flick__bar::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(90deg, var(--color-border) 0 1px, transparent 1px 25%);
+  box-shadow: inset 0 0 0 1px var(--color-border-translucent);
+  opacity: var(--prayer-flick-fade);
+}
+
+/* The tick being served right now. A brighter frame is the whole cue: it is
+   already the top row, the only bar at full chrome strength, and the only one
+   carrying the sweep. */
+.prayer-flick__bar.is-current::before {
+  box-shadow: inset 0 0 0 1px var(--color-border);
+}
+
+/* Elapsed fill for the running tick: scaleX from the left edge over exactly one
+   tick, so the leading edge is a playhead — and, on an empty stack, the one
+   thing that demonstrates left-to-right is time. transform-only, so it
+   composites on the GPU and never reflows the stack. */
+.prayer-flick__elapsed {
+  position: absolute;
+  inset: 0;
+  background: var(--color-surface-highlight);
+  transform: scaleX(0);
+  transform-origin: left center;
+  animation-name: prayer-flick-sweep;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+  pointer-events: none;
+}
+
+@keyframes prayer-flick-sweep {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .prayer-flick__elapsed {
+    animation: none;
+  }
+}
+
+.prayer-flick__event {
+  position: absolute;
+  box-sizing: border-box;
+  height: 12px;
+  min-width: 6px;
+  /* Centers the 2px post on the exact click time. */
+  margin-left: -1px;
+  border-left: calc(2 * var(--unscaled-px, 1px)) solid currentColor;
+  pointer-events: none;
+}
+
+/* Lanes. On stands above the centerline, off hangs below it, and the blade
+   fills its lane from the line to the trough's padding — so which side of the
+   line the mark's mass sits on is the direction the prayer went, with or
+   without color. */
+.prayer-flick__event--on {
+  top: 4px;
+  color: var(--color-warning);
+}
+
+.prayer-flick__event--off {
+  bottom: 4px;
+  color: var(--color-info);
+}
+
+/* The blade: where the input reached the engine, and the whole mark at the
+   default lag. Pulled 2px right so it centers on the arrival time. */
+.prayer-flick__event::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: -2px;
+  width: 4px;
+  background: currentColor;
+}
+
+/* The tail, drawn only when lag put real distance between the click and the
+   arrival. It hugs the centerline so the blade reads as standing on it. */
+.prayer-flick__event::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: currentColor;
+  opacity: 0.55;
+}
+
+.prayer-flick__event--on::before {
+  bottom: 0;
+}
+
+.prayer-flick__event--off::before {
+  top: 0;
+}
+
+/* Click and arrival are the same instant, or near enough that a tail would be a
+   claim rather than a measurement. Blade alone: no post, no tail, no minimum
+   span pushing it off the moment it belongs to. */
+.prayer-flick__event.is-instant {
+  min-width: 0;
+  margin-left: 0;
+  border-left: 0;
+}
+
+.prayer-flick__event.is-instant::before {
+  content: none;
+}
+
+/* The lag crossed the tick boundary. The tail opens out to fill its whole lane
+   and runs past the bar edge to be cut by it, so the half that continues is a
+   slab with a severed end rather than a scatter of ticks. Each half keeps one
+   open end: the half on the tick it was clicked in has no blade, the half on
+   the tick it registered in has no post. */
+.prayer-flick__event.is-carried::before {
+  top: 0;
+  height: 100%;
+  opacity: 0.26;
+}
+
+.prayer-flick__event.is-outbound::before {
+  right: -3px;
+}
+
+.prayer-flick__event.is-outbound::after {
+  content: none;
+}
+
+.prayer-flick__event.is-inbound {
+  margin-left: 0;
+  border-left: 0;
+}
+
+.prayer-flick__event.is-inbound::before {
+  left: -3px;
+}
+
+/* Two example blades in their real lanes and real colors, held back to two
+   thirds strength and named beside themselves, plus the sweep already running
+   overhead to show which way time goes. Gone the moment a real click arrives. */
+
+.prayer-flick__event.is-example {
+  opacity: 0.65;
+}
+
+.prayer-flick__legend {
+  position: absolute;
+  margin-left: 8px;
+  height: 12px;
+  font-family: "RuneScape Small", sans-serif;
+  font-size: 16px;
+  line-height: 12px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--color-secondary) 70%, var(--color-text-muted));
+  text-shadow: 1px 1px 0 #000;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.prayer-flick__legend--on {
+  top: 4px;
+}
+
+.prayer-flick__legend--off {
+  bottom: 4px;
+}
+
+/* Sits in the on lane rather than the middle of the bar: centered, the sentence
+   lands exactly on the centerline and the rule strikes through it. */
+.prayer-flick__legend--axis {
+  left: 4px;
+  top: 4px;
+  margin-left: 0;
+}

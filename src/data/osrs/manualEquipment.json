@@ -1,0 +1,38 @@
+[
+  {
+    "_why": "The wiki lists 5 stat rows against 4 item rows for this page, so sync-osrs-data.ts cannot pair versions safely and drops it. Bonuses come from the game cache regardless; only this metadata is needed. Cache confirms all four non-broken variants are identical (ranged attack 18, ranged strength 3), which is the ambiguity the wiki rows could not settle.",
+    "ids": [28951],
+    "name": "Dizana's quiver",
+    "version": "Charged",
+    "slot": "cape"
+  },
+  {
+    "ids": [28953],
+    "name": "Dizana's quiver (l)",
+    "version": "Locked + Charged",
+    "slot": "cape"
+  },
+  {
+    "ids": [28947],
+    "name": "Dizana's quiver (uncharged)",
+    "version": "Uncharged",
+    "slot": "cape"
+  },
+  {
+    "ids": [28949],
+    "name": "Dizana's quiver (l) (uncharged)",
+    "version": "Locked + Uncharged",
+    "slot": "cape"
+  },
+  {
+    "_why": "Same unpairable-page problem. Trimmed and untrimmed differ only in prayer bonus (0 vs 4), which the cache carries.",
+    "ids": [9771, 13340],
+    "name": "Agility cape",
+    "slot": "cape"
+  },
+  {
+    "ids": [9772, 13341],
+    "name": "Agility cape (t)",
+    "slot": "cape"
+  }
+]

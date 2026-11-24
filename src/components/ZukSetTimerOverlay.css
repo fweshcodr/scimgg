@@ -1,0 +1,246 @@
+/* No bevels, no drop shadow — depth stays quiet so the overlay never competes
+   with the fight behind it.
+
+   TYPE SIZES ARE NOT FREE HERE. Both RuneScape faces carry unitsPerEm = 16, so
+   one font unit maps to exactly one pixel ONLY at 16px and its integer
+   multiples. Off-grid sizes (13px, 12px, 11px, 20px...) scale the outline by a
+   fraction, land every edge mid-pixel, and antialiasing smears the glyph — the
+   blurred, translucent `--hud-bg` surface makes that worse because Blink then forces
+   grayscale AA on top. So every string on this surface is 16px, and the
+   countdown is 32px. */
+
+.zuk-set-timer {
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  padding: calc(10px + var(--border-give, 0px)) calc(12px + var(--border-give, 0px));
+  background: var(--hud-bg);
+  border: var(--unscaled-px, 1px) solid var(--hud-border);
+  border-radius: calc(2 * var(--unscaled-px, 1px));
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  user-select: none;
+}
+
+.zuk-set-timer__title {
+  color: var(--color-secondary);
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 16px;
+  line-height: 16px;
+  font-weight: 400;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  text-shadow: 1px 1px 0 #000;
+}
+
+.zuk-set-timer__readout {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.zuk-set-timer__clock {
+  font-family: "RuneScape Bold 12", sans-serif;
+  /* 32px = 2x the face's native 16px, so every glyph edge still lands on a
+     whole pixel. */
+  font-size: 32px;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  /* Digits must not reflow as the value counts down past a narrower glyph. */
+  font-feature-settings: "tnum";
+  color: var(--color-text-muted);
+  text-shadow: 1px 1px 0 #000;
+  transition: color 0.2s ease;
+}
+
+/* Only a running clock earns color; a stopped one stays muted so a frozen
+   timer can never be mistaken for a live one. */
+.zuk-set-timer--normal .zuk-set-timer__clock {
+  color: var(--color-text-body);
+}
+
+.zuk-set-timer--warning .zuk-set-timer__clock {
+  color: var(--color-warning);
+}
+
+.zuk-set-timer--danger .zuk-set-timer__clock {
+  color: var(--color-error);
+}
+
+/* Final ~10 seconds: the clock pulses so the last set window registers from
+   peripheral vision while the player is watching Zuk.
+
+   Deliberately a COLOR animation, not a transform. A running transform
+   animation is one of Blink's vetoes on crisp text AA (kTransformAnimation),
+   so scaling the clock degraded its rasterization during the exact seconds it
+   exists for, and resampled the glyphs on top. Color is paint-only: same
+   alarm, no cost to the digits. */
+.zuk-set-timer--danger.zuk-set-timer--running .zuk-set-timer__clock {
+  animation: zuk-set-timer-alarm 0.6s ease-in-out infinite alternate;
+}
+
+@keyframes zuk-set-timer-alarm {
+  from {
+    color: var(--color-error);
+  }
+  to {
+    color: var(--color-warning);
+  }
+}
+
+/* The blinking colon is the live-vs-frozen cue: a clock that ticks. Bounded to
+   one glyph, so nothing moves and nothing reflows. */
+.zuk-set-timer__colon {
+  margin: 0 1px;
+}
+
+.zuk-set-timer--running .zuk-set-timer__colon {
+  animation: zuk-set-timer-tick 1s steps(1, end) infinite;
+}
+
+@keyframes zuk-set-timer-tick {
+  0%,
+  55% {
+    opacity: 1;
+  }
+  56%,
+  100% {
+    opacity: 0.25;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .zuk-set-timer--running .zuk-set-timer__colon {
+    animation: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .zuk-set-timer--danger.zuk-set-timer--running .zuk-set-timer__clock {
+    animation: none;
+  }
+}
+
+/* --- Revealed encounter countdown ---
+
+   The answer key, so it is deliberately quieter than the player's own clock:
+   half the size (16px against the countdown's 32px, both on-grid) and pushed
+   to the far edge. It is there to be checked against, never read instead. */
+.zuk-set-timer__actual {
+  margin-left: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  flex-shrink: 0;
+}
+
+.zuk-set-timer__actual-label {
+  color: var(--color-text-muted);
+  font-family: "RuneScape Plain 12", sans-serif;
+  font-size: 16px;
+  line-height: 1;
+}
+
+.zuk-set-timer__actual-value {
+  color: var(--color-text-body);
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 16px;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+/* The encounter's own clock stops between 600 and 480 HP. Showing that is the
+   whole point of the reveal: it is what the player's routine has to mirror. */
+.zuk-set-timer__actual.is-frozen .zuk-set-timer__actual-value {
+  color: var(--color-text-muted);
+}
+
+/* Rows 2 and 3 use the same grammar (cap, then label) and share a left edge, so
+   the key caps stack into one column and the two read as a single control set
+   rather than an instruction plus a mystery. */
+
+.zuk-set-timer__cue {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+  /* Body, not the gold label color: the cue has to be read once and then sit
+     quietly under the clock, never compete with it for the glance. */
+  color: var(--color-text-body);
+  font-family: "RuneScape Plain 12", sans-serif;
+  font-size: 16px;
+  /* 20px, not 1.2: 16 x 1.2 = 19.2 would put the baseline on a half-pixel and
+     re-blur the very glyphs the 16px grid just sharpened. Every line box on
+     this surface is a whole number of pixels. */
+  line-height: 20px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* The terminal state has no key on this row, so its text keeps the caps' left
+   edge instead of sliding into the gap the missing cap leaves behind. */
+.zuk-set-timer__cue-text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.zuk-set-timer__controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  row-gap: 4px;
+  min-width: 0;
+}
+
+/* Raised cap: a key you press reads differently from a field you type into
+   (those are inset elsewhere in the app). */
+.zuk-set-timer__key {
+  padding: var(--border-give, 0px) calc(5px + var(--border-give, 0px));
+  border: var(--unscaled-px, 1px) solid var(--color-border);
+  border-radius: calc(2 * var(--unscaled-px, 1px));
+  background: var(--color-bg-elevated);
+  color: var(--color-text-body);
+  font-family: "RuneScape Plain 12", sans-serif;
+  font-size: 16px;
+  line-height: 1.25;
+  white-space: nowrap;
+}
+
+.zuk-set-timer__action {
+  margin-left: 2px;
+  color: var(--color-text-body);
+  font-family: "RuneScape Plain 12", sans-serif;
+  font-size: 16px;
+  line-height: 1.25;
+  white-space: normal;
+}
+
+/* Recessive, not absent. Same size and grid as everything else -- muted at 16px
+   still clears 4.5:1 on this surface -- so reset stays readable while giving the
+   countdown and the cue the glance. */
+.zuk-set-timer__controls .zuk-set-timer__action,
+.zuk-set-timer__controls .zuk-set-timer__key {
+  color: var(--color-text-muted);
+}
+
+.zuk-set-timer__controls .zuk-set-timer__key {
+  border-color: var(--color-border-translucent);
+}
+
+.zuk-set-timer__hint {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 3px;
+  min-width: 0;
+}

@@ -1,0 +1,576 @@
+/* The picker stays above the scrolling editor; opaque surfaces preserve pixel-font text AA. */
+
+.slot-picker {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 100100;
+  width: min(336px, calc(100vw - 24px));
+  box-sizing: border-box;
+  max-height: calc(100vh - 16px);
+  /* biome-ignore lint/suspicious/noDuplicateProperties: dvh progressively enhances the vh fallback. */
+  max-height: calc(100dvh - 16px);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
+  /* Opaque, and every part of that is load-bearing for subpixel text AA. This surface used
+     to paint a translucent fill under a `backdrop-filter: blur(8px)`, which cost it LCD text
+     entirely: 0 of 11 text elements rendered subpixel, measured. Blur and crisp text are
+     mutually exclusive in Blink, and a translucent fill behind text is a veto on its own, so
+     the frosted-glass look had to go for the pixel fonts to be honored. The color is the
+     exact base the translucent fill was already mixing toward (rgba of --color-surface at
+     0.92), so over the dark arena this reads all but identically. */
+  background: var(--color-surface);
+  /* Opaque too: a half-alpha border leaves the layer's own edge unprovable. */
+  border: 1px solid var(--color-border);
+  border-radius: 2px;
+  /* Shadow lives on ::before, and overflow stays visible. An outer box-shadow on the element
+     painting the background behind text is a veto, because the shadow paints outside the
+     border box and Blink can no longer prove the layer opaque. */
+  overflow: visible;
+  transition:
+    opacity 0.16s cubic-bezier(0.2, 0.8, 0.2, 1),
+    transform 0.16s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* The surface's elevation, cast by a pseudo-element. Safe only because this
+   popover is `overflow: visible`; inside a clipped surface the same rule re-vetoes and the
+   shadow has to move to a genuine sibling. Matches the geometry exactly.
+
+   `z-index: -1` is not tidiness. An absolutely positioned pseudo-element paints ABOVE the
+   popover's in-flow content, and text sitting under that overlay cannot be proven to be on
+   an opaque background: with it omitted, the footer and the notes stayed grayscale while the
+   list, which carries a background of its own, went subpixel. Negative z-index puts the
+   shadow above the surface's own fill and below its text, which is where elevation belongs
+   anyway. The popover already establishes a stacking context, so this cannot escape it. */
+.slot-picker::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: 2px;
+  box-shadow: var(--shadow-md);
+  pointer-events: none;
+}
+
+/* Mounted fresh per slot, so this also plays when the slot in hand changes. The origin
+   is set on the element as it is positioned — the edge nearest the cell — so the
+   surface grows out of the slot instead of arriving over it. */
+@starting-style {
+  .slot-picker {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slot-picker {
+    transition: none;
+  }
+}
+
+.slot-picker__heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  color: var(--color-text-body);
+  font:
+    16px / 20px "RuneScape Bold 12",
+    sans-serif;
+}
+
+.slot-picker__close,
+.slot-picker__clear,
+.slot-picker__filters button {
+  box-sizing: border-box;
+  min-height: 28px;
+  padding: 4px 8px;
+  border: 1px solid var(--color-border);
+  border-radius: 2px;
+  background: var(--color-surface-inset);
+  color: var(--color-secondary);
+  font:
+    16px / 20px "RuneScape Bold 12",
+    sans-serif;
+  cursor: pointer;
+}
+
+.slot-picker__close {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  padding: 0;
+  border-color: transparent;
+  background: transparent;
+}
+
+.slot-picker__close:hover,
+.slot-picker__clear:hover:not(:disabled),
+.slot-picker__filters button:hover {
+  background: var(--color-surface-hover);
+  color: var(--color-text-body);
+}
+
+.slot-picker__clear:disabled {
+  color: var(--color-text-muted);
+  cursor: default;
+}
+
+.slot-picker__current {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  margin: 0;
+  padding: 0 0 8px;
+  border: 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.slot-picker__current-icon {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 32px;
+  flex-shrink: 0;
+}
+
+.slot-picker__current-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--color-text-body);
+  font:
+    16px / 20px "RuneScape Bold 12",
+    sans-serif;
+}
+
+.slot-picker__current-label {
+  display: block;
+  color: var(--color-text-body);
+  font:
+    16px / 18px "RuneScape Plain 11",
+    sans-serif;
+}
+
+.slot-picker__filters {
+  display: flex;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+.slot-picker__filters button {
+  flex: 1;
+  padding-inline: 4px;
+  background: transparent;
+  border-color: transparent;
+}
+
+.slot-picker__filters button[aria-pressed="true"],
+.slot-picker__filters button[aria-pressed="true"]:hover {
+  border-color: var(--color-primary-structure);
+  background: var(--color-surface-inset);
+  color: var(--color-accent-text);
+}
+
+.slot-picker__scope,
+.slot-picker__support {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.slot-picker__support {
+  color: var(--color-text-body);
+  font:
+    16px / 18px "RuneScape Plain 11",
+    sans-serif;
+}
+
+/* This body portal must paint above its owning slot picker, not the setup panel. */
+.hover-card.slot-picker-support-card {
+  z-index: 100101;
+  max-width: 220px;
+  line-height: 18px;
+}
+
+@media (pointer: coarse), (max-width: 720px), (max-height: 540px) {
+  .slot-picker__close,
+  .slot-picker__clear,
+  .slot-picker__filters button {
+    min-height: 44px;
+  }
+
+  .slot-picker__close {
+    width: 44px;
+  }
+
+  .slot-picker__option {
+    min-height: 44px;
+  }
+
+  .slot-picker .slot-picker__search,
+  .slot-picker .osrs-checkbox,
+  .slot-picker .info-hint {
+    min-height: 44px;
+  }
+
+  .slot-picker .info-hint {
+    min-width: 44px;
+    align-items: center;
+    justify-content: flex-start;
+    margin-bottom: 0;
+  }
+
+  .slot-picker button.info-hint::before {
+    inset: 0;
+  }
+
+  :root[data-mobile-ui] .slot-picker[data-msheet] .osrs-checkbox {
+    min-height: 44px;
+  }
+}
+
+.slot-picker__search {
+  min-width: 0;
+  padding: 4px 8px;
+  color: var(--color-text-body);
+  background: var(--color-surface-inset);
+  border: 1px solid var(--color-border);
+  border-radius: 2px;
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 16px;
+  line-height: 20px;
+  box-sizing: border-box;
+  height: 32px;
+  text-overflow: ellipsis;
+  transition: border-color 0.15s ease;
+}
+
+/* The hint sits a step under typed text rather than in the muted voice, which is too
+   dim against the inset field to read in the cooler packs. */
+.slot-picker__search::placeholder {
+  color: var(--color-secondary);
+  opacity: 1;
+}
+
+.slot-picker__search:hover {
+  border-color: var(--color-primary-structure);
+}
+
+:root[data-focus-source="keyboard"] .slot-picker__search:focus-visible {
+  border-color: var(--color-primary);
+  box-shadow: inset 0 0 0 1px var(--color-primary);
+  outline: none;
+}
+
+/* Capped mid-row so the fifth is visibly cut and the list reads as scrollable, but cut
+   above the name so no line of text is sliced in half. The pull-out is optical, not
+   spacing — it is the row's own border plus padding, so the sprites line up with the
+   search field above while the hover surface still reads as a full-width row. */
+.slot-picker__results {
+  position: relative;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 1;
+}
+
+.slot-picker__sprites {
+  position: absolute;
+  top: 0;
+  width: 40px;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.slot-picker__list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-height: 224px;
+  min-height: 0;
+  margin: 0;
+  overflow-y: auto;
+  /* Reserved always, so narrowing a query down to three rows does not widen them all. */
+  scrollbar-gutter: stable;
+  overscroll-behavior: contain;
+  /* Repaints the color the popover already paints, which is a visual no-op and load-bearing
+     anyway: `overflow-y: auto` gives this box its own compositing layer, and an ancestor's
+     background does not count toward that layer's opacity. Without it every item name in the
+     list falls back to grayscale while the text outside the list stays crisp. */
+  background: var(--color-surface);
+}
+
+.slot-picker__option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  padding: 2px 4px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  cursor: pointer;
+  text-align: left;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.slot-picker__icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  /* 38x34 around the native 36x32 RuneLite icon canvas, so items render 1:1 here
+     exactly as they do in the preset tiles and the diagram. */
+  width: 38px;
+  height: 34px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.slot-picker__icon canvas {
+  max-width: 36px;
+  max-height: 32px;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.slot-picker__silhouette {
+  width: 32px;
+  height: 32px;
+  opacity: 0.8;
+}
+
+.slot-picker__name {
+  min-width: 0;
+  color: var(--color-secondary);
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 16px;
+  line-height: 20px;
+  /* Item names run long (Ancient ceremonial robe top); the row keeps its height and
+     the name wraps rather than pushing the sprite off the row. */
+  overflow-wrap: anywhere;
+}
+
+/* The mark on a row the simulator does not run correctly. It sits under the name inside the
+   row's own 34px sprite tile, so marking a row costs no height, and it deliberately carries no
+   status color: with the switch on, all but a handful of the 1,582 weapons are unverified, and
+   an amber tag repeated forty times would read as the accent this surface reserves for the one
+   row that is equipped. The caption register does the work instead, and the unmarked rows are
+   the ones that stand out. */
+.slot-picker__unverified {
+  display: block;
+  color: var(--color-text-body);
+  font:
+    16px / 18px "RuneScape Plain 11",
+    sans-serif;
+}
+
+/* A verified row with a note: the same caption register, in the gray the loadout slot's `i`
+   disc uses, with that disc beside it so the two are recognizably the same note. Gray and never
+   amber, because the row is offered as working. */
+.slot-picker__item-note {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--color-limited-notice);
+  font:
+    16px / 18px "RuneScape Plain 11",
+    sans-serif;
+}
+
+/* Under the held item's name, the note wraps rather than ellipsizing: cut short, it would drop the
+   words that make it worth reading. */
+.slot-picker__current-name > .slot-picker__item-note {
+  white-space: normal;
+}
+
+.slot-picker__item-note > .loadout-slot-note {
+  position: static;
+  flex-shrink: 0;
+}
+
+.slot-picker__option:hover {
+  background: var(--color-surface-hover);
+}
+
+.slot-picker__option:hover .slot-picker__name {
+  color: var(--color-text-body);
+}
+
+:root[data-focus-source="keyboard"] .slot-picker__option:focus-visible {
+  border-color: var(--color-primary);
+  box-shadow: inset 0 0 0 1px var(--color-primary);
+  outline: none;
+}
+
+/* The keyboard cursor. Focus never leaves the search field, so the row under the cursor has
+   to carry the mark focus would: the same inset ring, on the row rather than in it. */
+.slot-picker__option--active {
+  border-color: var(--color-primary);
+  box-shadow: inset 0 0 0 1px var(--color-primary);
+}
+
+/* What the slot holds: the section's gold, and the only row that carries it. The cell
+   this opened from carries the same accent plus its glow, so the diagram stays the
+   louder of the two. Survives hover. */
+.slot-picker__option.slot-picker__option--selected,
+.slot-picker__option.slot-picker__option--selected:hover {
+  background: var(--primary-dim);
+  border-color: var(--color-primary);
+}
+
+.slot-picker__option.slot-picker__option--selected .slot-picker__name,
+.slot-picker__option.slot-picker__option--selected:hover .slot-picker__name {
+  color: var(--color-accent-text);
+}
+
+.slot-picker__option.slot-picker__option--selected .slot-picker__icon {
+  border-color: var(--color-primary-structure);
+}
+
+/* An item the catalog cannot name still has to read as held, but there is nothing here
+   to pick: the row states the loadout, it does not offer it. */
+.slot-picker__option[aria-disabled="true"] {
+  cursor: default;
+}
+
+/* Empty results and the "there are more" count share one quiet line under the list. The fill is
+   the popover's own color repainted, which looks like nothing and is load-bearing: a text run
+   that carries no opaque paint of its own falls back to grayscale on this surface. */
+.slot-picker__note {
+  margin: 0;
+  background: var(--color-surface);
+  color: var(--color-text-body);
+  font-family: "RuneScape Plain 12", sans-serif;
+  font-size: 16px;
+  line-height: 20px;
+}
+.slot-picker__notes {
+  display: contents;
+}
+
+/* Under the list and its notes rather than over them, and present on every slot even when there
+   is no switch to show, because the terms hold whether or not anything is being filtered. Hiding
+   gear the simulator cannot run is the right answer for almost every player, so the surface still
+   opens straight into type-and-scan and the switch waits at the foot for the few who need past it.
+   The one divider on this surface, because it marks a real change of subject: above it is what
+   matched, below it is what the picker was prepared to match at all. */
+.slot-picker__footer {
+  background: var(--color-surface);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding-top: 6px;
+  border-top: 1px solid var(--color-border-translucent);
+}
+
+/* The shared checkbox carries the 16px control label the settings panels use, which would make
+   it the largest text on a surface whose own item names are 13px. Pulled onto this file's scale,
+   and its pixel shadow dropped with it: nothing here casts one. The fill is for text AA, as
+   above; `.osrs-checkbox` itself paints nothing. */
+.slot-picker__footer .osrs-checkbox__label {
+  background: var(--color-surface);
+  font-size: 16px;
+  text-shadow: none;
+}
+
+/* The standing scope of the whole surface, last in the reading order and the only text here with
+   no color of its own beyond the body tone. It reads quiet through position, size and the plain
+   face rather than through dimming: an earlier muted version was measurably harder to read at
+   12px, and this is copy that only matters at the moment someone goes looking for it, so it has
+   to survive being read. No amber either: this states the terms, it does not warn, and spending
+   the accent here would flatten the difference between it and the warning above it.
+
+   Two lines, and deliberately NOT a scroll container. `overflow: auto` here made the box
+   scrollable by the 0.4px its wrapped content exceeds its own rounded height, which re-composited
+   it and cost it subpixel AA while every neighbor kept it. Opaque fill, no overflow. */
+.slot-picker__terms {
+  margin: 0;
+  background: var(--color-surface);
+  color: var(--color-text-body);
+  font-family: "RuneScape Plain 12", sans-serif;
+  font-size: 16px;
+  line-height: 20px;
+}
+
+/* Short landscape needs a results column, not a stack whose fixed tools consume
+   the entire viewport. Keep the same DOM, inputs and keyboard owner. */
+@media (orientation: landscape) and (max-height: 540px) {
+  .slot-picker {
+    display: grid;
+    grid-template-columns: min(240px, 36vw) minmax(0, 1fr);
+    grid-template-rows: auto auto minmax(44px, 1fr) auto;
+    gap: 8px 16px;
+    width: min(680px, calc(100vw - 24px));
+    height: min(420px, calc(100vh - 24px));
+    /* biome-ignore lint/suspicious/noDuplicateProperties: dvh progressively enhances the vh fallback. */
+    height: min(420px, calc(100dvh - 24px));
+  }
+  .slot-picker__heading {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .slot-picker__current {
+    grid-column: 1;
+    grid-row: 2;
+    align-self: start;
+  }
+  .slot-picker__search {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .slot-picker__filters {
+    grid-column: 2;
+    grid-row: 2;
+    align-self: start;
+  }
+  .slot-picker__results {
+    grid-column: 2;
+    grid-row: 3;
+  }
+  .slot-picker:not(:has(.slot-picker__filters)) .slot-picker__results {
+    grid-row: 2 / 4;
+  }
+  .slot-picker__list {
+    max-height: none;
+    height: 100%;
+  }
+  .slot-picker__notes {
+    display: block;
+    grid-column: 2;
+    grid-row: 4;
+  }
+  .slot-picker:not(:has(.slot-picker__option)) .slot-picker__notes {
+    grid-row: 3 / 5;
+    align-self: start;
+  }
+  .slot-picker:not(:has(.slot-picker__option)) .slot-picker__results {
+    display: none;
+  }
+  .slot-picker__footer {
+    /* A positioned grid item preserves LCD painting alongside the canvas-backed
+       results. The two-browser differential otherwise loses the results/support text. */
+    position: relative;
+    grid-column: 1;
+    grid-row: 3 / 5;
+    align-self: start;
+    align-items: flex-start;
+    justify-content: flex-start;
+  }
+}

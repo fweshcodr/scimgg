@@ -1,0 +1,512 @@
+.controls-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+
+.control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  padding-bottom: 16px;
+}
+
+.control-group:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.control-group label,
+.group-title {
+  font-size: 11px;
+  font-family: "RuneScape Bold 12", sans-serif;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* A group title carrying an InfoHint `?`: centered, as every mark container is (InfoHint.css), and
+   kept to its text so the title's space-between does not push the mark to the far edge. */
+.group-title__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.control-button {
+  padding: 8px 16px;
+  font-size: 14px;
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-weight: normal;
+  background: var(--color-surface);
+  color: var(--color-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: 2px;
+  cursor: pointer;
+  /* Explicit property list — avoids animating unintended changes. */
+  transition:
+    color 0.15s ease,
+    background 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-shadow: 1px 1px 0 #000;
+}
+
+.control-button:hover:not(:disabled) {
+  color: var(--color-text-body);
+  background: var(--color-surface-hover);
+  border-color: var(--color-primary-structure);
+}
+
+.control-button:active:not(:disabled) {
+  background: var(--color-surface-inset);
+  border-color: var(--color-border);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.25);
+}
+
+.control-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  background: rgba(0, 0, 0, 0.2);
+  border-color: transparent;
+  color: var(--color-text-dim);
+}
+
+.control-button.active {
+  background: var(--color-surface-inset);
+  color: var(--color-accent-text);
+  border-color: var(--color-primary-structure);
+}
+
+.control-button.active:hover {
+  color: var(--color-accent-text);
+}
+
+.restart-button {
+  background: var(--color-surface);
+  border-color: var(--color-border);
+  color: var(--color-secondary);
+  width: 100%;
+  justify-content: space-between;
+}
+
+.restart-button:hover:not(:disabled) {
+  background: var(--color-surface-hover);
+  border-color: var(--color-primary-structure);
+  color: var(--color-text-body);
+}
+
+.restart-keybind {
+  font-family: "RuneScape Plain 11", sans-serif;
+  /* Plain 11 face at the TTF's native 16px — visually compact, but on the
+     pixel grid (at 12px the keybind antialiases into mush). */
+  font-size: 16px;
+  color: var(--color-text-muted);
+  transition: color 0.2s ease;
+}
+
+.restart-button:hover:not(:disabled) .restart-keybind {
+  color: var(--color-text-muted);
+}
+
+.speed-buttons {
+  display: flex;
+  gap: 0;
+  width: 100%;
+  background: transparent;
+  padding: 0;
+  border-radius: 2px;
+  border: none;
+}
+
+.speed-buttons .control-button {
+  flex: 1;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  padding: 6px 0;
+  border-radius: 0;
+  color: var(--color-text-muted);
+  margin-left: -1px; /* Overlap borders */
+}
+
+.speed-buttons .control-button:first-child {
+  border-radius: 2px 0 0 2px;
+  margin-left: 0;
+}
+
+.speed-buttons .control-button:last-child {
+  border-radius: 0 2px 2px 0;
+}
+
+.speed-buttons .control-button:hover:not(:disabled) {
+  background: var(--color-surface-hover);
+  color: var(--color-text-body);
+  border-color: var(--color-primary-structure);
+  z-index: 1;
+}
+
+.speed-buttons .control-button.active {
+  background: var(--color-surface-inset);
+  color: var(--color-accent-text);
+  border-color: var(--color-primary);
+  z-index: 2;
+  position: relative;
+}
+
+.speed-buttons .control-button.active:hover {
+  color: var(--color-accent-text);
+  border-color: var(--color-primary);
+}
+
+.speed-buttons .control-button.active::after {
+  content: "";
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--color-primary);
+}
+
+.select-input {
+  width: 100%;
+  background: var(--color-surface-inset);
+  color: var(--color-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: 2px;
+  padding: 8px 12px;
+  font-size: 14px;
+  font-family: "RuneScape Bold 12", sans-serif;
+  text-shadow: 1px 1px 0 #000;
+  outline: none;
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    background 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.select-input:hover {
+  border-color: var(--color-primary-structure);
+  background: var(--color-surface);
+  color: var(--color-secondary);
+}
+
+.select-input:focus {
+  color: var(--color-secondary);
+}
+
+:root[data-focus-source="keyboard"] .select-input:focus-visible {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-primary) 25%, transparent);
+}
+
+/* Locked: it shows a value it will not change. Ink,
+   not opacity, so the label keeps its LCD antialiasing. */
+.select-input:disabled,
+.select-input:disabled:hover {
+  background: var(--color-surface-inset);
+  border-color: var(--color-border);
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+}
+
+.select-input option {
+  background: var(--color-surface);
+  color: var(--color-secondary);
+  font-family: "RuneScape Bold 12", sans-serif;
+  padding: 8px;
+}
+
+.slider-control {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px 0;
+}
+
+.slider-label {
+  font-size: 13px;
+  font-family: "RuneScape Bold 12", sans-serif;
+  display: flex;
+  justify-content: space-between;
+}
+
+.slider-label-text {
+  color: var(--color-text-muted);
+}
+
+.slider-label-value {
+  color: var(--color-secondary);
+}
+
+.slider-input {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  background: var(--color-surface-inset);
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+  border: 1px solid var(--color-border);
+}
+
+.slider-input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  background: var(--color-primary-structure);
+  border: 1px solid var(--color-bg-solid);
+  border-radius: 2px;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.slider-input::-webkit-slider-thumb:hover {
+  background: var(--color-primary);
+  border-color: var(--color-primary-structure);
+}
+
+.slider-input::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  background: var(--color-primary-structure);
+  border: 1px solid var(--color-bg-solid);
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.slider-input::-moz-range-thumb:hover {
+  background: var(--color-primary);
+  border-color: var(--color-primary-structure);
+}
+
+.slider-input--modified::-webkit-slider-thumb {
+  background: var(--color-primary);
+}
+
+.slider-input--modified::-moz-range-thumb {
+  background: var(--color-primary);
+}
+
+/* Touch (the Mobile layout's Settings): a thumb takes a 32px row, the tool window's row, while
+   the bar still paints as the same 8px rail, now on the track itself, and the thumb becomes a
+   12x24 handle that can be found under a finger. A vertical swipe that starts on the row still
+   scrolls the sheet. Desktop keeps the slim input above. */
+:root[data-mobile-ui] .slider-input {
+  height: 32px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  touch-action: pan-y;
+}
+
+:root[data-mobile-ui] .slider-input::-webkit-slider-runnable-track {
+  box-sizing: border-box;
+  height: 8px;
+  border: 1px solid var(--color-border);
+  border-radius: 2px;
+  background: var(--color-surface-inset);
+}
+
+:root[data-mobile-ui] .slider-input::-moz-range-track {
+  box-sizing: border-box;
+  height: 8px;
+  border: 1px solid var(--color-border);
+  border-radius: 2px;
+  background: var(--color-surface-inset);
+}
+
+/* WebKit tops the thumb on the track's 6px content box: -9px centers a 24px one on it. */
+:root[data-mobile-ui] .slider-input::-webkit-slider-thumb {
+  box-sizing: border-box;
+  width: 12px;
+  height: 24px;
+  margin-top: -9px;
+}
+
+:root[data-mobile-ui] .slider-input::-moz-range-thumb {
+  box-sizing: border-box;
+  width: 12px;
+  height: 24px;
+}
+
+.lobby-effects-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.viewport-dimensions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding-left: 14px;
+}
+
+.viewport-dimensions__input {
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: 88px;
+  background: var(--color-surface-inset);
+  color: var(--color-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: 2px;
+  padding: 5px 8px;
+  font-size: 13px;
+  font-family: "RuneScape Bold 12", sans-serif;
+  text-align: right;
+  outline: none;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease,
+    box-shadow 0.15s ease;
+  -moz-appearance: textfield;
+  -webkit-appearance: textfield;
+  appearance: textfield;
+}
+
+.viewport-dimensions__input::-webkit-inner-spin-button,
+.viewport-dimensions__input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.viewport-dimensions__input:hover {
+  border-color: var(--color-primary-structure);
+  background: var(--color-surface);
+}
+
+.viewport-dimensions__input:focus {
+  border-color: var(--color-primary);
+  color: var(--color-text-body);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-primary) 25%, transparent);
+}
+
+.viewport-dimensions__sep {
+  flex: none;
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 13px;
+  color: var(--color-text-muted);
+  user-select: none;
+  padding: 0 1px;
+}
+
+.viewport-dimensions__suffix {
+  flex: none;
+  font-family: "RuneScape Plain 12", sans-serif;
+  font-size: 11px;
+  color: var(--color-text-muted);
+  text-transform: lowercase;
+  user-select: none;
+  letter-spacing: 0.5px;
+}
+
+/* Deliberately not a container: every other item in this group (checkboxes, sliders)
+   is unboxed, and a filled, bordered block here reproduced .select-input's exact recipe
+   one row below the real select, so it read as a second, disabled control. It is also
+   not amber — the row already draws .setting-row--modified's bar because canvas2d is
+   not the default, and a second accent restates that same fact. */
+.view-mode-note {
+  /* Pulled up out of .control-group's 8px item gap: this annotates the select
+     above it, so it belongs to that control rather than reading as the next
+     item in the group. */
+  margin-top: -3px;
+  margin-bottom: 0;
+  /* DESIGN.md's caption role. A step up from the Plain 11 .viewport-popout__hint
+     below: that is an optional aside about a button, this is a caveat about the
+     mode the viewport is currently running in. */
+  font-family: "RuneScape Plain 12", sans-serif;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--color-text-muted);
+}
+
+/* Viewport warning — an annotation on the controls above it, not a callout box:
+   no fill, border or radius, so it inherits the section's rhythm and the
+   sidebar's opaque fill (which is what keeps its text on subpixel AA). Severity
+   is carried by --color-warning on the label alone. */
+.viewport-warning {
+  margin-top: 4px;
+}
+
+.viewport-warning__title {
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 14px;
+  line-height: 1;
+  color: var(--color-warning);
+  text-shadow: 1px 1px 0 #000;
+}
+
+.viewport-warning__detail {
+  margin: 6px 0 0;
+  font-family: "RuneScape Plain 12", sans-serif;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--color-text-body);
+  text-wrap: pretty;
+}
+
+.viewport-popout {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.viewport-popout__button {
+  width: 100%;
+  /* Center label + icon as one group instead of pushing them to the
+     edges (the icon is decorative, not a kbd shortcut, so it belongs
+     next to the label, not floated right). */
+  justify-content: center;
+  gap: 8px;
+}
+
+.viewport-popout__button svg {
+  opacity: 0.75;
+  transition:
+    opacity 0.15s ease,
+    transform 0.15s ease;
+}
+
+.viewport-popout__button:hover:not(:disabled) svg {
+  opacity: 1;
+  transform: translate(1px, -1px);
+}
+
+/* Same caption treatment as .settings-hint: Plain 11 at its native 16px em. */
+.viewport-popout__hint {
+  margin: 0;
+  font-family: "RuneScape Plain 11", sans-serif;
+  font-size: 16px;
+  line-height: 18px;
+  color: var(--color-text-muted);
+}
+
+/* A caption inside the slider block: the block's own 6px gap already spaces it. */
+.render-scale-hint,
+.game-window-fixed-note {
+  margin-top: 0;
+}
+
+/* Inside the Game window group the button lines up with the resolution select above it, which
+   SettingRow insets by its modified-bar gutter and its reset gutter. */
+.control-group > .viewport-popout .viewport-popout__button {
+  margin-left: 6px;
+  width: calc(100% - 6px - var(--setting-reset-size) - var(--setting-reset-gap));
+}

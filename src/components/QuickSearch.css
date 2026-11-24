@@ -1,0 +1,257 @@
+/* The quick search (QuickSearch.tsx): Ctrl+K's one field over encounters, settings, plugins and
+   keybinds. Its field and result rows are the sidebars' search (SidebarSearch.css, loaded with the
+   shared result helpers in searchResults.tsx); this file only adds the card around them, the
+   selected row and the type tag.
+
+   LCD text: the card paints opaque --color-bg-solid and carries its drop shadow on a text-free
+   ::before (the non-clipping card pattern, as .credits-modal-card), and the results scroller paints
+   its own fill (Veto 2 in the subpixel-aa skill). Type stays on the RuneScape faces' native 16px. */
+
+.quick-search-overlay {
+  position: fixed;
+  inset: 0;
+  /* Over the drawers (70), the picker (80) and the top chrome a tour raises (1201). */
+  z-index: 1300;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  /* Near the top, Spotlight-style, so the list grows down into the room below it. Rounded to a
+     whole pixel: 12vh is fractional at most heights, which puts the card's borders and key caps
+     between device pixels. Engines without round() keep the 12px before it. */
+  padding: 12px 16px 16px;
+  padding-top: clamp(12px, round(down, 12vh, 1px), 112px);
+  background: var(--modal-backdrop);
+}
+
+.quick-search-overlay,
+.quick-search-overlay * {
+  box-sizing: border-box;
+}
+
+.quick-search {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: min(600px, 100%);
+  max-height: 100%;
+  background: var(--color-bg-solid);
+  border: 1px solid var(--modal-card-border);
+  border-radius: var(--modal-radius);
+  font-family: "RuneScape Bold 12", sans-serif;
+  color: var(--color-text-body);
+  animation: quick-search-in 0.14s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* The elevation, off the text's layer: the outer shadow and the inset ring want different boxes,
+   which the -1px inset and the transparent border give them (measured on .credits-modal-card). */
+.quick-search::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border: 1px solid transparent;
+  border-radius: var(--modal-radius);
+  box-shadow: var(--modal-card-shadow);
+  pointer-events: none;
+}
+
+@keyframes quick-search-in {
+  from {
+    transform: translateY(-6px);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .quick-search {
+    animation: none;
+  }
+}
+
+.quick-search__field {
+  flex: none;
+  padding: 12px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+/* The sidebars' field, one step roomier as this surface's whole purpose, with no clear button. */
+.quick-search__field .drawer-search__input {
+  padding: 9px 12px 9px 34px;
+}
+
+.quick-search__field .drawer-search__glyph {
+  left: 12px;
+}
+
+.quick-search__results {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 10px 8px 8px;
+  background: var(--color-bg-solid); /* load-bearing: LCD text in a scroller */
+  overscroll-behavior: contain;
+}
+
+.quick-search__results::-webkit-scrollbar {
+  width: 8px;
+}
+
+.quick-search__results::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.quick-search__results::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 4px;
+  border: 2px solid var(--color-bg-solid);
+}
+
+@supports not selector(::-webkit-scrollbar) {
+  .quick-search__results {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-border) transparent;
+  }
+}
+
+.quick-search-row + .quick-search-row {
+  margin-top: 2px;
+}
+
+/* The row Enter chooses: the sidebars' hover, held by the arrow keys or the pointer. */
+.quick-search-row.is-selected {
+  background: var(--color-surface-hover);
+  border-color: var(--color-primary-structure);
+}
+
+.quick-search-row.is-selected .drawer-search-result__title {
+  color: var(--color-accent-text);
+}
+
+.quick-search-row.is-selected .drawer-search-result__chevron {
+  color: var(--color-secondary);
+}
+
+.quick-search-row.is-unavailable.is-selected {
+  border-color: var(--color-border);
+}
+
+/* "Show remaining" when the arrow keys reach it: its hover, as a row's selection is a row's hover. */
+.quick-search .drawer-search-results__more.is-selected {
+  background: var(--color-surface-hover);
+  border-color: var(--color-primary-structure);
+  color: var(--color-accent-text);
+}
+
+.quick-search-row__head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 100%;
+}
+
+/* One line in a list built for scanning; the sidebar row carries the whole sentence. */
+.quick-search-row__description {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* What the row is, where the eye lands after the title: a key-cap chip like .kbd, quieter. */
+.quick-search-row__type {
+  flex: none;
+  align-self: flex-start;
+  padding: 0 5px;
+  border: 1px solid var(--color-border);
+  border-radius: 2px;
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  font-family: "RuneScape Plain 11", sans-serif;
+  font-size: 16px;
+  line-height: 18px;
+}
+
+.quick-search__foot {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 6px 12px 6px 6px;
+  border-top: 1px solid var(--color-border);
+  background: var(--color-surface);
+  border-radius: 0 0 var(--modal-radius) var(--modal-radius);
+}
+
+.quick-search__browse {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 6px;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  background: transparent;
+  color: var(--color-secondary);
+  font-family: "RuneScape Plain 12", sans-serif;
+  font-size: 16px;
+  line-height: 20px;
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    background-color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.quick-search__browse:hover {
+  background: var(--color-surface-hover);
+  border-color: var(--color-primary-structure);
+  color: var(--color-accent-text);
+}
+
+.quick-search__browse .drawer-search-result__chevron {
+  color: currentColor;
+}
+
+.quick-search__keys {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 4px 12px;
+  color: var(--color-text-muted);
+  font-family: "RuneScape Plain 11", sans-serif;
+  font-size: 16px;
+  line-height: 20px;
+}
+
+.quick-search__keys .kbd {
+  margin: 0 3px 0 0;
+}
+
+/* A drawn arrow (ArrowKey in QuickSearch.tsx), lifted 1px off the baseline to the capitals' band. */
+.quick-search__arrow-key svg {
+  display: inline-block;
+  vertical-align: 1px;
+}
+
+/* A narrow window keeps the list and the way to the full picker; the key hints go. */
+@media (max-width: 640px) {
+  .quick-search__keys {
+    display: none;
+  }
+}
+
+@media (max-height: 520px) {
+  .quick-search-overlay {
+    padding-top: 8px;
+  }
+}
+
+/* Finger-sized, as the sidebars' search on a touch layout. */
+:root[data-mobile-ui] .quick-search__browse {
+  min-height: 44px;
+  touch-action: manipulation;
+}

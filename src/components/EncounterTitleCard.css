@@ -1,0 +1,539 @@
+.encounter-arrival {
+  position: absolute;
+  inset: 0;
+  container-type: size;
+  container-name: encounter-arrival;
+  pointer-events: none;
+  z-index: 40;
+}
+
+.encounter-title-card-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  /* The enclosing rectangle is Grid's actual scene, never the app or window. */
+  padding-top: clamp(40px, 8cqh, 80px);
+  pointer-events: none;
+  z-index: 40;
+  box-sizing: border-box;
+}
+
+.encounter-arrival-content {
+  position: relative;
+  width: min(84%, 760px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.encounter-title-card--reserved {
+  visibility: hidden;
+}
+
+/* Entry has one release-owned exit for every title role, the countdown and its
+   row. Disable the child's standalone exit so opacity is not multiplied. */
+.encounter-title-card-overlay--exiting {
+  animation: fight-start-countdown-exit 400ms ease-in-out 200ms both;
+}
+
+.encounter-title-card-overlay--exiting .fight-start-countdown-content--exiting {
+  animation: none;
+}
+
+@keyframes encounter-arrival-eyebrow {
+  0%,
+  6% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  14%,
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes encounter-arrival-name {
+  0%,
+  10% {
+    opacity: 0;
+    transform: translateY(18px) scale(0.97);
+  }
+  22%,
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes encounter-arrival-emblem {
+  0%,
+  18% {
+    opacity: 0;
+  }
+  30%,
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes encounter-arrival-sub {
+  0%,
+  26% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  38%,
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes encounter-arrival-vignette {
+  0% {
+    opacity: 0;
+  }
+  18%,
+  100% {
+    opacity: 1;
+  }
+}
+
+.encounter-title-card-vignette {
+  position: absolute;
+  inset: 0;
+  /* Warm near-black (never pure #000), denser at the edges so the center
+     of the arena and the title read brighter by contrast. */
+  background: radial-gradient(
+    ellipse 60% 54% at 50% 38%,
+    rgba(10, 7, 4, 0) 26%,
+    rgba(10, 7, 4, 0.28) 62%,
+    rgba(7, 5, 3, 0.5) 100%
+  );
+  opacity: 0;
+  /* Decoupled from the text: its own longer, gentler timeline so the dimming
+     breathes in slowly and releases slowly (the text exits on its own 2.8s).
+     Duration must stay <= the App-side unmount timer so the fade-out never
+     hard-cuts. */
+  animation: encounter-title-vignette 3.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* --- Floating title column: the arena stays visible; the vignette is the only
+   dimming. Legibility comes from the 1px outline on every text role, not from
+   a backing surface — adding a band/plate back is what "blocked the screen". --- */
+.encounter-title-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  max-width: 100%;
+  text-align: center;
+}
+
+.encounter-title-card-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 16px;
+  line-height: 20px;
+  letter-spacing: 5px;
+  /* Center the tracked run: letter-spacing trails the last glyph. */
+  padding-left: 5px;
+  text-transform: uppercase;
+  color: var(--color-heading);
+  text-shadow: var(--crest-rim), var(--crest-shadow-sm);
+  opacity: 0;
+  animation: encounter-title-eyebrow 2.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.encounter-title-card-eyebrow::before,
+.encounter-title-card-eyebrow::after {
+  content: "";
+  width: 34px;
+  height: 1px;
+  opacity: 0.6;
+}
+
+.encounter-title-card-eyebrow::before {
+  background: linear-gradient(90deg, transparent, var(--color-secondary));
+}
+
+.encounter-title-card-eyebrow::after {
+  background: linear-gradient(90deg, var(--color-secondary), transparent);
+}
+
+/* --- Hero name: the brand's dimensional display lettering, at 3x the face's
+   native 16px em so every glyph edge lands on a whole pixel. --- */
+.encounter-title-card-text {
+  display: grid;
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 48px;
+  line-height: 1;
+  letter-spacing: 3px;
+  padding-left: 3px;
+  text-transform: uppercase;
+  opacity: 0;
+  animation: encounter-title-name 2.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.encounter-title-card-text-shadow,
+.encounter-title-card-text-fill {
+  grid-area: 1 / 1;
+}
+
+/* Rim + hard offset at the glyph's own 3x scale. This lives on a separate
+   underlayer, at the SAME position as the fill, because (a) the fill's
+   transparent text would let a same-element text-shadow show through the glyph
+   interiors, and (b) offsetting the layer itself would strip the rim from the
+   fill's top edge. */
+.encounter-title-card-text-shadow {
+  color: var(--crest-ink);
+  text-shadow: var(--crest-rim), var(--crest-shadow-lg);
+}
+
+.encounter-title-card-text-fill {
+  /* Keep this lift: if the underlayer ever gains a transform (a stacking
+     context), the dark copy paints above the fill and the name renders hollow. */
+  position: relative;
+  z-index: 1;
+  color: var(--color-accent-text);
+}
+
+/* Lit-from-above metal, mixed from the pack's primary so it stays
+   pack-reactive. Do not flatten this to solid --color-primary "for
+   consistency": the flat version is what made the title read as enlarged UI
+   text instead of the brand's display lettering (see the og-image logo). */
+@supports (background-clip: text) and (color: color-mix(in srgb, red 50%, blue)) {
+  .encounter-title-card-text-fill {
+    background: linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--color-primary) 40%, #fdf3d0) 0%,
+      color-mix(in srgb, var(--color-primary) 72%, #ffe9b0) 40%,
+      var(--color-primary) 70%,
+      color-mix(in srgb, var(--color-primary) 76%, #3c260c) 100%
+    );
+    background-clip: text;
+    color: transparent;
+  }
+}
+
+.encounter-title-card-emblem {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  opacity: 0;
+  animation: encounter-title-emblem 2.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.encounter-title-card-emblem-line {
+  width: clamp(64px, 11vw, 104px);
+  height: 1px;
+  transform: scaleX(0);
+  animation: encounter-title-line 2.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.encounter-title-card-emblem-line--l {
+  background: linear-gradient(90deg, transparent, var(--color-primary));
+  transform-origin: right center;
+}
+
+.encounter-title-card-emblem-line--r {
+  background: linear-gradient(90deg, var(--color-primary), transparent);
+  transform-origin: left center;
+}
+
+/* A rotated square, not a glyph: geometrically centered on the 1px lines
+   (the font diamond sat off its baseline). */
+.encounter-title-card-emblem-diamond {
+  width: 6px;
+  height: 6px;
+  flex: 0 0 auto;
+  background: var(--color-primary);
+  transform: rotate(45deg) scale(0);
+  animation: encounter-title-diamond 2.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.encounter-title-card-sub {
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 16px;
+  line-height: 20px;
+  letter-spacing: 3px;
+  padding-left: 3px;
+  text-transform: uppercase;
+  color: var(--color-text-body);
+  text-shadow: var(--crest-rim), var(--crest-shadow-sm);
+  opacity: 0;
+  animation: encounter-title-sub 2.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Reuse the established staggered entrance, but stop its title/vignette
+   timelines at their settled pose. Only actual GO may start their fade. */
+.encounter-title-card-overlay--countdown .encounter-title-card-eyebrow {
+  animation-name: encounter-arrival-eyebrow;
+}
+
+.encounter-title-card-overlay--countdown .encounter-title-card-text {
+  animation-name: encounter-arrival-name;
+}
+
+.encounter-title-card-overlay--countdown .encounter-title-card-emblem {
+  animation-name: encounter-arrival-emblem;
+}
+
+.encounter-title-card-overlay--countdown .encounter-title-card-sub {
+  animation-name: encounter-arrival-sub;
+}
+
+.encounter-title-card-overlay--countdown .encounter-title-card-vignette {
+  animation-name: encounter-arrival-vignette;
+}
+
+/* Staggered reveal: the vignette dims in first, then announce → name → emblem
+   → metadata settle at later percentages of the shared 2.8s timeline (so the
+   App-side unmount timer stays in sync), then all fade out together. */
+@keyframes encounter-title-vignette {
+  0% {
+    opacity: 0;
+  }
+  18% {
+    opacity: 1;
+  }
+  64% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes encounter-title-eyebrow {
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  6% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  14% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  84% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes encounter-title-name {
+  0% {
+    opacity: 0;
+    transform: translateY(18px) scale(0.97);
+  }
+  10% {
+    opacity: 0;
+    transform: translateY(18px) scale(0.97);
+  }
+  22% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  84% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-8px) scale(1.01);
+  }
+}
+
+@keyframes encounter-title-emblem {
+  0% {
+    opacity: 0;
+  }
+  18% {
+    opacity: 0;
+  }
+  30% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes encounter-title-line {
+  0% {
+    transform: scaleX(0);
+  }
+  20% {
+    transform: scaleX(0);
+  }
+  34% {
+    transform: scaleX(1);
+  }
+  100% {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes encounter-title-diamond {
+  0% {
+    transform: rotate(45deg) scale(0);
+  }
+  22% {
+    transform: rotate(45deg) scale(0);
+  }
+  36% {
+    transform: rotate(45deg) scale(1);
+  }
+  100% {
+    transform: rotate(45deg) scale(1);
+  }
+}
+
+@keyframes encounter-title-sub {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  26% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  38% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  84% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .encounter-title-card-overlay--countdown .encounter-title-card-eyebrow,
+  .encounter-title-card-overlay--countdown .encounter-title-card-text,
+  .encounter-title-card-overlay--countdown .encounter-title-card-emblem,
+  .encounter-title-card-overlay--countdown .encounter-title-card-sub {
+    transform: none;
+    animation: encounter-arrival-vignette 400ms ease-in-out forwards;
+  }
+  /* Vignette keeps its own opacity-only animation (already reduced-motion-safe
+     and fluid); only the moving elements collapse to a plain fade. */
+  .encounter-title-card-eyebrow,
+  .encounter-title-card-text,
+  .encounter-title-card-emblem,
+  .encounter-title-card-sub {
+    transform: none;
+    animation: encounter-title-fade 2.6s ease-in-out forwards;
+  }
+
+  .encounter-title-card-emblem-line {
+    transform: scaleX(1);
+    animation: none;
+  }
+
+  .encounter-title-card-emblem-diamond {
+    transform: rotate(45deg) scale(1);
+    animation: none;
+  }
+
+  @keyframes encounter-title-fade {
+    0% {
+      opacity: 0;
+    }
+    12% {
+      opacity: 1;
+    }
+    85% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+}
+
+/* Narrow scenes step the hero DOWN A WHOLE MULTIPLE (3x → 2x of the face's
+   16px em), with the hard offset following it. Anything between the two — a
+   clamp, a vw size — lands the face off the pixel grid and the glyph stems go
+   uneven. */
+@container encounter-arrival (max-width: 720px) {
+  .encounter-title-card-text {
+    font-size: 32px;
+    letter-spacing: 2px;
+    padding-left: 2px;
+  }
+
+  .encounter-title-card-text-shadow {
+    text-shadow: var(--crest-rim), var(--crest-shadow-md);
+  }
+
+  .encounter-title-card-eyebrow {
+    letter-spacing: 4px;
+    padding-left: 4px;
+  }
+}
+
+/* Fixed's 334px scene and landscape phones keep the complete entry group
+   compact. Integer display steps preserve the RuneScape font's native grid. */
+@container encounter-arrival (max-height: 540px) {
+  .encounter-title-card-overlay {
+    padding-top: 48px;
+  }
+
+  .encounter-arrival-content {
+    gap: 12px;
+  }
+
+  .encounter-title-card {
+    gap: 4px;
+  }
+
+  .encounter-title-card-text {
+    font-size: 32px;
+    letter-spacing: 2px;
+    padding-left: 2px;
+  }
+
+  .encounter-title-card-text-shadow {
+    text-shadow: var(--crest-rim), var(--crest-shadow-md);
+  }
+
+  .encounter-title-card-eyebrow,
+  .encounter-title-card-sub {
+    line-height: 16px;
+  }
+
+  .encounter-arrival .fight-start-countdown-numeral {
+    font-size: 32px;
+    line-height: 32px;
+    letter-spacing: 2px;
+    padding-left: 2px;
+    text-shadow: var(--crest-rim), var(--crest-shadow-md);
+  }
+
+  .encounter-arrival .fight-start-countdown-beats {
+    margin-top: 8px;
+  }
+}

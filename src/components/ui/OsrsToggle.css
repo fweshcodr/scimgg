@@ -1,0 +1,121 @@
+/* A low share of the pack accent tints the ON body so enabled rows stay quiet; the pale thumb
+   carries the state. Higher shares turned a column of enabled switches into a color statement. */
+.osrs-toggle {
+  --toggle-on-fill: color-mix(in srgb, var(--color-primary) 24%, var(--color-surface-inset));
+  --toggle-on-fill-hover: color-mix(in srgb, var(--color-primary) 30%, var(--color-surface-inset));
+  background: transparent;
+  border: none;
+  padding: 2px 0;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  transition: opacity 0.15s ease;
+}
+
+.osrs-toggle:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.osrs-toggle__track {
+  position: relative;
+  display: block;
+  background-color: var(--color-surface-inset);
+  border: 1px solid var(--color-border);
+  border-radius: 7px;
+  transition:
+    border-color 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.osrs-toggle--default .osrs-toggle__track {
+  width: 28px;
+  height: 14px;
+}
+
+.osrs-toggle--small .osrs-toggle__track {
+  width: 24px;
+  height: 12px;
+}
+
+.osrs-toggle__knob {
+  position: absolute;
+  border-radius: 50%;
+  background-color: color-mix(in srgb, var(--color-text-muted) 72%, var(--color-text-dim));
+  transition:
+    transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1),
+    background-color 0.15s ease;
+}
+
+/* Tracks are content-box: OFF has a 3px inset, ON a 2px inset and a larger thumb.
+   Both states stay centered within the same track; travel remains 14px / 12px. */
+.osrs-toggle--default .osrs-toggle__knob {
+  width: 8px;
+  height: 8px;
+  top: 3px;
+  left: 3px;
+}
+
+.osrs-toggle--small .osrs-toggle__knob {
+  width: 6px;
+  height: 6px;
+  top: 3px;
+  left: 3px;
+}
+
+.osrs-toggle[aria-checked="true"] .osrs-toggle__track {
+  background-color: var(--toggle-on-fill);
+  border-color: color-mix(in srgb, var(--color-primary-structure) 65%, var(--toggle-on-fill));
+}
+
+.osrs-toggle[aria-checked="true"] .osrs-toggle__knob {
+  background-color: var(--color-heading);
+  top: 2px;
+  left: 2px;
+}
+
+.osrs-toggle--default[aria-checked="true"] .osrs-toggle__knob {
+  width: 10px;
+  height: 10px;
+  transform: translateX(14px);
+}
+
+.osrs-toggle--small[aria-checked="true"] .osrs-toggle__knob {
+  width: 8px;
+  height: 8px;
+  transform: translateX(12px);
+}
+
+.osrs-toggle:hover:not(:disabled) .osrs-toggle__track {
+  border-color: var(--color-primary-structure);
+}
+
+.osrs-toggle:hover:not(:disabled) .osrs-toggle__knob {
+  background-color: var(--color-text-muted);
+}
+
+/* Hover lifts the same neutral tint, never introducing a bright accent perimeter. */
+.osrs-toggle[aria-checked="true"]:hover:not(:disabled) .osrs-toggle__track {
+  background-color: var(--toggle-on-fill-hover);
+  border-color: color-mix(in srgb, var(--color-primary-structure) 65%, var(--toggle-on-fill-hover));
+}
+
+.osrs-toggle[aria-checked="true"]:hover:not(:disabled) .osrs-toggle__knob {
+  background-color: var(--color-heading);
+}
+
+/* Grow the hit target, not the artwork, including the small inline variant. */
+:root[data-mobile-ui] .osrs-toggle {
+  min-width: 40px;
+  min-height: 40px;
+  justify-content: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .osrs-toggle,
+  .osrs-toggle__track,
+  .osrs-toggle__knob {
+    transition: none;
+  }
+}

@@ -1,0 +1,45 @@
+/* No box: these panels are dense with bordered controls, so one here reads as a third button
+   rather than as the way out to the wiki. The mark and the words carry it instead. */
+.wiki-link {
+  display: inline-flex;
+  align-items: baseline;
+  align-self: baseline;
+  gap: 7px;
+  flex-shrink: 0;
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 12px;
+  color: var(--color-secondary);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 0.15s ease;
+}
+
+/* The book's own pixel grid: scaled at all, its one-pixel page lines blur or close up. */
+.wiki-link-mark {
+  width: 18px;
+  height: auto;
+  flex-shrink: 0;
+  /* An inline SVG sits on the text baseline by its bottom edge, which drops it a little low
+     against a cap-height mark like this one. */
+  transform: translateY(1px);
+}
+
+/* The rule is a real underline rather than a border, so it sits at a set offset under the glyphs
+   instead of at the bottom of the box — at 12px that is the difference between a deliberate rule
+   and a stray artifact. It stays on the label so it never runs under the mark. */
+.wiki-link-label {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-decoration-color: var(--color-primary-structure);
+  text-underline-offset: 3px;
+  transition: text-decoration-color 0.15s ease;
+}
+
+.wiki-link:hover {
+  outline: none;
+  color: var(--color-accent-text);
+}
+
+.wiki-link:hover .wiki-link-label {
+  text-decoration-color: var(--color-primary);
+}

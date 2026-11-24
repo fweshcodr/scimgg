@@ -1,0 +1,283 @@
+import { profiler } from '../../util/Profiler';
+import type { CacheIndex } from '../cache/CacheIndex';
+import type { ByteBuffer } from '../io/ByteBuffer';
+import type { IndexedSprite } from '../sprite/IndexedSprite';
+import { SpriteLoader } from '../sprite/SpriteLoader';
+import { brightenRgb } from '../util/ColorUtil';
+import type { TextureLoader, TextureMaterial } from './TextureLoader';
+
+class TextureDefinition {
+  constructor(
+    readonly id: number,
+    readonly averageHsl: number,
+    readonly opaque: boolean,
+    readonly spriteCount: number,
+    readonly spriteIds: number[],
+    readonly transforms: number[],
+    readonly animationDirection: number,
+    readonly animationSpeed: number,
+    readonly spriteTypes?: number[],
+    readonly unused?: number[],
+  ) {}
+
+  static decode(id: number, buffer: ByteBuffer): TextureDefinition {
+    const averageHsl = buffer.readUnsignedShort();
+    const opaque = buffer.readUnsignedByte() === 1;
+    const spriteCount = buffer.readUnsignedByte();
+    if (spriteCount < 1 || spriteCount > 4) {
+      throw new Error(`Invalid sprite count for texture: ${spriteCount}`);
+    }
+
+    const spriteIds = new Array<number>(spriteCount);
+    for (let i = 0; i < spriteCount; i++) {
+      spriteIds[i] = buffer.readUnsignedShort();
+    }
+
+    let spriteTypes: number[] | undefined;
+    if (spriteCount > 1) {
+      spriteTypes = new Array(spriteCount - 1);
+      for (let i = 0; i < spriteCount - 1; i++) {
+        spriteTypes[i] = buffer.readUnsignedByte();
+      }
+    }
+    let unused: number[] | undefined;
+    if (spriteCount > 1) {
+      unused = new Array(spriteCount - 1);
+      for (let i = 0; i < spriteCount - 1; i++) {
+        unused[i] = buffer.readUnsignedByte();
+      }
+    }
+
+    const transforms = new Array<number>(spriteCount);
+    for (let i = 0; i < spriteCount; i++) {
+      transforms[i] = buffer.readInt();
+    }
+
+    const animationDirection = buffer.readUnsignedByte();
+    const animationSpeed = buffer.readUnsignedByte();
+
+    return new TextureDefinition(
+      id,
+      averageHsl,
+      opaque,
+      spriteCount,
+      spriteIds,
+      transforms,
+      animationDirection,
+      animationSpeed,
+      spriteTypes,
+      unused,
+    );
+  }
+
+  static decodeSimplified(id: number, buffer: ByteBuffer): TextureDefinition {
+    const spriteId = buffer.readUnsignedShort();
+    const averageHsl = buffer.readUnsignedShort();
+    const opaque = buffer.readUnsignedByte() === 1;
+    const animationDirection = buffer.readUnsignedByte();
+    const animationSpeed = buffer.readUnsignedByte();
+
+    return new TextureDefinition(id, averageHsl, opaque, 1, [spriteId], [0], animationDirection, animationSpeed);
+  }
+}
+
+export class SpriteTextureLoader implements TextureLoader {
+  static ANIM_DIRECTION_UV: [number, number][] = [
+    [0.0, 0.0],
+    [0.0, -1.0],
+    [-1.0, 0.0],
+    [0.0, 1.0],
+    [1.0, 0.0],
+  ];
+
+  idIndexMap: Map<number, number> = new Map();
+
+  static load(textureIndex: CacheIndex, spriteIndex: CacheIndex, isSimplified: boolean = true): SpriteTextureLoader {
+    profiler.start('SpriteTextureLoader.load');
+    const definitions = new Map<number, TextureDefinition>();
+
+    const textureArchive = textureIndex.getArchive(0);
+    const textureIds = Array.from(textureArchive.fileIds);
+
+    for (let i = 0; i < textureIds.length; i++) {
+      const textureId = textureIds[i];
+      const file = textureArchive.getFile(textureId);
+      if (file) {
+        const buffer = file.getDataAsBuffer();
+        const definition = isSimplified
+          ? TextureDefinition.decodeSimplified(textureId, buffer)
+          : TextureDefinition.decode(textureId, buffer);
+        definitions.set(textureId, definition);
+      }
+    }
+
+    profiler.end('SpriteTextureLoader.load');
+    return new SpriteTextureLoader(spriteIndex, textureIds, definitions);
+  }
+
+  constructor(
+    readonly spriteIndex: CacheIndex,
+    readonly textureIds: number[],
+    readonly definitions: Map<number, TextureDefinition>,
+  ) {
+    for (let i = 0; i < textureIds.length; i++) {
+      this.idIndexMap.set(textureIds[i], i);
+    }
+  }
+
+  getTextureIds(): number[] {
+    return this.textureIds;
+  }
+
+  getTextureIndex(id: number): number {
+    return this.idIndexMap.get(id) ?? -1;
+  }
+
+  isSd(_id: number): boolean {
+    return true;
+  }
+
+  isSmall(id: number): boolean {
+    try {
+      return this.loadTextureSprite(id).subWidth === 64;
+    } catch {
+      return false;
+    }
+  }
+
+  getAverageHsl(id: number): number {
+    return this.definitions.get(id)?.averageHsl ?? 0;
+  }
+
+  getAnimationUv(id: number): [number, number] {
+    const def = this.definitions.get(id);
+    if (!def) return [0, 0];
+
+    const direction = def.animationDirection;
+    const speed = def.animationSpeed;
+    const uv = SpriteTextureLoader.ANIM_DIRECTION_UV[direction] ?? [0, 0];
+
+    return [uv[0] * speed, uv[1] * speed];
+  }
+
+  isTransparent(id: number): boolean {
+    const def = this.definitions.get(id);
+    return def ? !def.opaque : false;
+  }
+
+  getMaterial(id: number): TextureMaterial {
+    const [animU, animV] = this.getAnimationUv(id);
+
+    return {
+      id,
+      isSmall: this.isSmall(id),
+      isSd: true,
+      isTransparent: this.isTransparent(id),
+      averageHsl: this.getAverageHsl(id),
+      animationU: animU,
+      animationV: animV,
+    };
+  }
+
+  loadTextureSprite(id: number): IndexedSprite {
+    const def = this.definitions.get(id);
+    if (!def) {
+      throw new Error(`Texture definition not found: ${id}`);
+    }
+
+    const firstSpriteId = def.spriteIds[0];
+    if (firstSpriteId === undefined) {
+      throw new Error('Texture has no sprites');
+    }
+    const sprite = SpriteLoader.loadIntoIndexedSprite(this.spriteIndex, firstSpriteId);
+    if (!sprite) {
+      throw new Error('Texture references invalid sprite');
+    }
+    sprite.normalize();
+    return sprite;
+  }
+
+  getPixelsRgb(id: number, size: number, _flipH: boolean, brightness: number): Int32Array {
+    const def = this.definitions.get(id);
+    if (!def) {
+      throw new Error(`Texture definition not found: ${id}`);
+    }
+
+    const pixelCount = size * size;
+    const pixels = new Int32Array(pixelCount);
+
+    for (let i = 0; i < def.spriteIds.length; i++) {
+      const sprite = SpriteLoader.loadIntoIndexedSprite(this.spriteIndex, def.spriteIds[i]);
+      if (!sprite) {
+        throw new Error('Texture references invalid sprite');
+      }
+      sprite.normalize();
+
+      const palettePixels = sprite.pixels;
+      const palette = sprite.palette;
+      const transform = def.transforms[i];
+
+      if ((transform & -0x1000000) === 0x3000000) {
+        const r_b = transform & 0xff00ff;
+        const green = (transform >> 8) & 0xff;
+
+        for (let pi = 0; pi < palette.length; pi++) {
+          const color = palette[pi];
+          const rg = color >> 8;
+          const gb = color & 0xffff;
+          if (rg === gb) {
+            const blue = color & 0xff;
+            palette[pi] = (((r_b * blue) >> 8) & 0xff00ff) | ((green * blue) & 0xff00);
+          }
+        }
+      }
+
+      for (let pi = 0; pi < palette.length; pi++) {
+        let alpha = 0xff;
+        if (palette[pi] === 0) {
+          alpha = 0;
+        }
+        palette[pi] = (alpha << 24) | brightenRgb(palette[pi], brightness);
+      }
+
+      let index = 0;
+      if (i > 0 && def.spriteTypes) {
+        index = def.spriteTypes[i - 1];
+      }
+
+      if (index === 0) {
+        if (size === sprite.subWidth) {
+          for (let pixelIndex = 0; pixelIndex < pixelCount; pixelIndex++) {
+            const paletteIndex = palettePixels[pixelIndex];
+            pixels[pixelIndex] = palette[paletteIndex];
+          }
+        } else if (sprite.subWidth === 64 && size === 128) {
+          let pixelIndex = 0;
+          for (let x = 0; x < size; x++) {
+            for (let y = 0; y < size; y++) {
+              const paletteIndex = palettePixels[((x >> 1) << 6) + (y >> 1)];
+              pixels[pixelIndex++] = palette[paletteIndex];
+            }
+          }
+        } else {
+          if (sprite.subWidth !== 128 || size !== 64) {
+            throw new Error('Texture sprite has unexpected size');
+          }
+          let pixelIndex = 0;
+          for (let x = 0; x < size; x++) {
+            for (let y = 0; y < size; y++) {
+              const paletteIndex = palettePixels[(y << 1) + ((x << 1) << 7)];
+              pixels[pixelIndex++] = palette[paletteIndex];
+            }
+          }
+        }
+      }
+    }
+
+    return pixels;
+  }
+
+  getPixelsArgb(id: number, size: number, flipH: boolean, brightness: number): Int32Array {
+    return this.getPixelsRgb(id, size, flipH, brightness);
+  }
+}

@@ -1,0 +1,74 @@
+.osrs-checkbox {
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: inline-flex;
+  /* The checkmark changes the inline-flex baseline. Keep following hints stationary
+     without changing the checkbox's intrinsic-width hit target. */
+  vertical-align: top;
+  align-items: center;
+  gap: 8px;
+  text-align: left;
+  transition: opacity 0.15s ease;
+}
+
+.osrs-checkbox:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.osrs-checkbox__box {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  background-color: var(--color-surface-inset);
+  border: var(--unscaled-px, 1px) solid var(--color-border);
+  border-radius: calc(2 * var(--unscaled-px, 1px));
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+}
+
+.osrs-checkbox:hover:not(:disabled) .osrs-checkbox__box {
+  border-color: var(--color-primary-structure);
+  background-color: var(--color-surface-highlight);
+}
+
+.osrs-checkbox[aria-checked="true"] .osrs-checkbox__box {
+  border-color: var(--color-primary);
+}
+
+/* Checked state must survive hover (DESIGN.md interaction contract). The
+   plain :hover rule above outranks the checked rule by specificity, so the
+   checked border needs an explicit hover companion. */
+.osrs-checkbox[aria-checked="true"]:hover:not(:disabled) .osrs-checkbox__box {
+  border-color: var(--color-primary);
+}
+
+.osrs-checkbox__mark {
+  display: block;
+  width: 4px;
+  height: 9px;
+  border: solid var(--color-primary);
+  border-width: 0 calc(2 * var(--unscaled-px, 1px)) calc(2 * var(--unscaled-px, 1px)) 0;
+  transform: rotate(45deg);
+  margin-top: -2px;
+}
+
+/* Control label: Bold 12 at the face's native 16px em on a whole-pixel line box, so its 10px
+   capitals render crisp and sit a clear step above the 8px Plain 11 captions under controls. */
+.osrs-checkbox__label {
+  font-family: "RuneScape Bold 12", sans-serif;
+  color: var(--color-secondary);
+  font-size: 16px;
+  line-height: 16px;
+  text-shadow: 1px 1px 0 #000;
+  transition: color 0.15s ease;
+}
+
+.osrs-checkbox:hover:not(:disabled) .osrs-checkbox__label {
+  color: var(--color-text-body);
+}

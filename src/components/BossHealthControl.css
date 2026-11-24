@@ -1,0 +1,208 @@
+/* Boss health control — a Practice section, not a card. Echoes the read-only
+   HP-bar language (label/value row + slim track) so it blends into the panel.
+
+   Every text run here follows the same rules as the rest of Practice (see PracticePanel.css):
+   legibility comes from the pixel font's native grid — font-size 16px, apparent size picked by
+   FACE, line-height pinned to a whole pixel — plus a hard 1px black drop shadow. */
+.boss-health {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-bottom: calc(8px + var(--border-give, 0px));
+  border-bottom: var(--unscaled-px, 1px) solid var(--hud-border);
+}
+
+.boss-health-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.boss-health-name {
+  min-width: 0;
+  overflow: hidden;
+  /* Plain 11, cap 9px: the label face of the practice panel's text ramp. */
+  font-family: "RuneScape Plain 11", sans-serif;
+  font-size: 16px;
+  line-height: 16px;
+  color: var(--hud-label);
+  text-shadow: 1px 1px 0 #000;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.boss-health-value {
+  flex-shrink: 0;
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 16px;
+  line-height: 16px;
+  font-variant-numeric: tabular-nums;
+  color: var(--hud-value);
+  text-shadow: 1px 1px 0 #000;
+}
+
+.boss-health-sep {
+  margin: 0 1px;
+  color: var(--hud-dim);
+}
+
+/* Slim, draggable HP track. Fill is a gradient bound to the current HP %
+   (--boss-health-fill, set inline); the empty portion matches the HP-bar track color. */
+.boss-health-slider {
+  width: 100%;
+  height: 6px;
+  margin: 1px 0;
+  padding: var(--border-give, 0px);
+  border: var(--unscaled-px, 1px) solid rgba(255, 255, 255, 0.04);
+  border-radius: var(--unscaled-px, 1px);
+  background: var(--boss-health-fill, transparent);
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.boss-health-slider::-webkit-slider-thumb {
+  width: 4px;
+  height: 12px;
+  border: var(--unscaled-px, 1px) solid rgba(0, 0, 0, 0.5);
+  border-radius: var(--unscaled-px, 1px);
+  background: var(--color-text-body, #f0e6d2);
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.boss-health-slider::-moz-range-thumb {
+  width: 4px;
+  height: 12px;
+  border: var(--unscaled-px, 1px) solid rgba(0, 0, 0, 0.5);
+  border-radius: var(--unscaled-px, 1px);
+  background: var(--color-text-body, #f0e6d2);
+  cursor: pointer;
+}
+
+/* Touch (the Mobile layout's Practice tab): a thumb takes the whole 32px row, the tool window's
+   row, while the bar still paints as the same slim track, now on the track itself, and the
+   thumb grows to 12x24 so it can be found under a finger. A vertical swipe that starts on the
+   row still scrolls the pane. */
+:root[data-mobile-ui] .boss-health-slider {
+  height: 32px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  touch-action: pan-y;
+}
+
+:root[data-mobile-ui] .boss-health-slider::-webkit-slider-runnable-track {
+  box-sizing: border-box;
+  height: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 1px;
+  background: var(--boss-health-fill, transparent);
+}
+
+:root[data-mobile-ui] .boss-health-slider::-moz-range-track {
+  box-sizing: border-box;
+  height: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 1px;
+  background: var(--boss-health-fill, transparent);
+}
+
+/* WebKit tops the thumb on the track's 6px content box: -9px centers a 24px one on it. */
+:root[data-mobile-ui] .boss-health-slider::-webkit-slider-thumb {
+  box-sizing: border-box;
+  width: 12px;
+  height: 24px;
+  margin-top: -9px;
+}
+
+:root[data-mobile-ui] .boss-health-slider::-moz-range-thumb {
+  box-sizing: border-box;
+  width: 12px;
+  height: 24px;
+}
+
+.boss-health-phases {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.boss-health-phases legend {
+  margin-bottom: 3px;
+  padding: 0;
+}
+
+.boss-health-presets {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 3px;
+}
+
+.boss-health-preset {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  padding: calc(var(--preset-pad-y, 4px) + var(--border-give, 0px))
+    calc(var(--preset-pad-x, 2px) + var(--border-give, 0px));
+  border: var(--unscaled-px, 1px) solid transparent;
+  border-radius: calc(2 * var(--unscaled-px, 1px));
+  background: transparent;
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease,
+    background-color 0.15s ease;
+}
+
+/* Chips are three-across, which leaves each one a 48px content box (54px column,
+   less 2px padding a side and a 1px border), so face choice here is width-bound in
+   a way the rest of the panel is not. Plain 11 and Small carry identical advance
+   widths in these TTFs — the longest label today, "Enrage", is 34px in both — so
+   Plain 11 is free: same fit, a taller 9px cap. Bold 12 would put that same label
+   at 45px, clearing the box by 3px, which is not enough room for any phase label
+   longer than the ones shipped today. */
+.boss-health-preset-label {
+  text-align: center;
+  font-family: "RuneScape Plain 11", sans-serif;
+  font-size: 16px;
+  line-height: 16px;
+  color: var(--hud-label);
+  text-shadow: 1px 1px 0 #000;
+}
+
+.boss-health-preset-hp {
+  margin-top: auto;
+  font-family: "RuneScape Plain 11", sans-serif;
+  font-size: 16px;
+  line-height: 16px;
+  font-variant-numeric: tabular-nums;
+  color: var(--hud-value);
+  text-shadow: 1px 1px 0 #000;
+}
+
+.boss-health-preset:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.boss-health-preset:hover .boss-health-preset-label,
+.boss-health-preset:hover .boss-health-preset-hp {
+  color: var(--hud-value);
+}
+
+.boss-health-preset:active {
+  transform: translateY(1px);
+}
+
+/* The phase hints are a sentence or two, so they get a wider ceiling than a hint's default 176px
+   (HoverCard.css). */
+.hover-card.boss-health-preset-card {
+  max-width: 200px;
+}

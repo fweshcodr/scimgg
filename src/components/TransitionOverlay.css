@@ -1,0 +1,22 @@
+.transition-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: #000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 300ms ease-out;
+  will-change: opacity;
+}
+
+.transition-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+  transition: opacity 300ms ease-in;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .transition-overlay {
+    transition: none;
+  }
+}

@@ -1,0 +1,48 @@
+.xp-drop-panel {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  /* Click-through by default; DraggablePanel's pointerPassthrough keeps the
+     wrapper inert too. */
+  pointer-events: none;
+}
+
+.xp-drop-overlay {
+  position: absolute;
+  left: 50%;
+  width: 0;
+  height: 0;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.xp-drop {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: flex;
+  align-items: center;
+  gap: 2px; /* plugin default icon spacing */
+  white-space: nowrap;
+  will-change: transform, opacity;
+}
+
+.xp-drop__icon {
+  /* Native sprite size (16×20 … 25×25, varies per skill) — 1:1 pixels is
+     the only always-crisp rendering; see spawnDrop in XpDropOverlay.tsx.
+     `pixelated` keeps edges hard if the compositor ever resamples (e.g.
+     fractional devicePixelRatio). */
+  display: block;
+  image-rendering: pixelated;
+}
+
+.xp-drop__text {
+  /* Plugin default: RuneScape Bold, white, SHADOW background. 16px is the
+     native pixel size of the TTF (see index.css) so glyphs stay crisp even
+     though this element animates on its own compositor layer. */
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 16px;
+  line-height: 1;
+  color: #ffffff;
+  text-shadow: 1px 1px 0 #000;
+}

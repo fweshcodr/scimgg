@@ -1,0 +1,224 @@
+/* The bar and its tray are both items of `.loadout-supplies` (EncounterPanel.css). */
+.rune-pouch-row {
+  display: contents;
+}
+
+/* Beside the spellbook row, the bar's slots sit under the inventory grid: the strip ends the line
+   (`.loadout-supplies` is space-between), and its right margin is the distance from the strip's
+   end to the grid's right edge. The label is in flow beside the slots, so its width is reserved:
+   when the spellbook row, the label and the slots no longer fit on one line, the bar wraps to the
+   start of its own line rather than overlapping, no longer pretending to line up with a grid it
+   is not beside. On that line it can shrink, wrapping the label, before the slots would move.
+
+   The label is the ONLY place the pouch names itself: a sprite beside the cells restated what
+   this label and the inventory square above already say. */
+.rune-pouch-bar {
+  /* The inventory grid's width: four cells 2px wider than the slot size, and three 2px gaps. */
+  --rune-pouch-grid-width: calc(4 * var(--loadout-slot-size, 36px) + 14px);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  /* Centered in its column, or, when the grid is wider than the column, pinned to the column's
+     start and overflowing its end, which is where the frame puts it. */
+  margin-right: min(
+    var(--loadout-inventory-centre-inset) -
+    var(--rune-pouch-grid-width) /
+    2,
+    2 *
+    var(--loadout-inventory-centre-inset) -
+    var(--rune-pouch-grid-width)
+  );
+}
+
+/* Right-aligned so that, wrapped onto two lines on the narrowest strips, it still ends at the
+   slots it names. */
+.rune-pouch-bar > .section-label {
+  text-align: right;
+}
+
+/* The pouch's own shape: its runes in packed order, in one row. The 2px gap is the gap both
+   grids above it use, so the runes stay recognizable as cells of the same diagram. Four tracks
+   even when the regular pouch fills three, so switching pouches never moves the row; each track
+   grows to its cell, so a larger touch cell can never lap onto the next. */
+.rune-pouch-slots {
+  flex: none;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(calc(var(--loadout-slot-size, 36px) + 2px), max-content));
+  gap: 2px;
+}
+
+/* Everything a slot looks like comes from .inventory-slot, which each of these also carries:
+   these ARE inventory cells, holding the contents of the inventory cell above them, and a
+   second set of fill/border/hover/selected rules here is how the two drift apart. This class
+   adds only what a cell in a flex row needs that one in a grid does not. */
+.rune-pouch-slot,
+.rune-pouch-choice {
+  flex: none;
+}
+
+.rune-pouch-icon {
+  pointer-events: none;
+}
+
+/* Its own full-width line under both supplies. Shut, that line is zero-height, so the tray gives
+   back the row gap above it; the open panel's own top margin puts the space back. */
+.rune-pouch-reveal {
+  flex: 0 0 100%;
+  margin-top: calc(-1 * var(--supplies-row-gap, 0px));
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.26s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.rune-pouch-reveal[data-expanded="true"] {
+  grid-template-rows: 1fr;
+}
+
+.rune-pouch-clip {
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* Containment is what says these cells belong to the slot above, and it is the only thing that
+   can: twenty-one choices do not line up with three or four slots however they are packed, so
+   the alignment the loose cells implied was never real. The recessed fill carries that on its
+   own; a border here would be a second container line inside `.loadout-editor`'s.
+
+   Opaque fill and no outer shadow: this element paints the background behind the caption, and a
+   shadow there would drop the caption to grayscale AA. The fade is timed to start after the box
+   has begun opening, so the tray reads as filling in rather than as a solid block sliding down. */
+.rune-pouch-tray-panel {
+  margin-top: 8px;
+  padding: 8px;
+  background: var(--color-surface-inset);
+  opacity: 0;
+  transition: opacity 0.14s ease;
+}
+
+.rune-pouch-reveal[data-expanded="true"] .rune-pouch-tray-panel {
+  opacity: 1;
+  transition: opacity 0.2s ease 0.08s;
+}
+
+.rune-pouch-caption {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  margin: 0 0 6px;
+  min-width: 0;
+}
+
+/* The slot being filled, stated at the readout's own rank: a muted 11px caption beside a 16px
+   value left the one fact the tray exists to answer — which slot — the quietest thing in it. */
+.rune-pouch-caption .section-label {
+  flex: none;
+  color: var(--color-text-muted);
+  font-size: 12px;
+  line-height: 16px;
+}
+
+/* The value the caption is for, so it outranks the structural label beside it. 16px is where
+   the 12-series faces are hinted; 11px would sit at the label's own weight and put the row
+   back to two texts with one voice. */
+.rune-pouch-readout {
+  min-width: 0;
+  color: var(--color-text-body);
+  font-family: "RuneScape Plain 12", sans-serif;
+  font-size: 16px;
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* A rune already packed is not an offer, so the line naming it leaves the value voice rather
+   than reading like the answer the cursor is about to give. */
+.rune-pouch-readout--taken {
+  color: var(--color-text-muted);
+}
+
+.rune-pouch-tray {
+  --rune-choice-size: var(--loadout-slot-size, 36px);
+  display: grid;
+  grid-template-columns: repeat(auto-fill, calc(var(--rune-choice-size) + 2px));
+  gap: 2px;
+}
+
+.rune-pouch-tray > .rune-pouch-choice {
+  width: var(--rune-choice-size);
+  height: var(--rune-choice-size);
+}
+
+.rune-pouch-tray:focus-visible {
+  outline: none;
+}
+
+.rune-pouch-none {
+  display: grid;
+  place-items: center;
+  color: var(--color-text-muted);
+  pointer-events: none;
+}
+
+/* Three things in this row can be marked at once — the slot being filled, the rune already in
+   it, and the cell under the cursor — and the accent is a commitment signal, so only one of them
+   may wear it. The slot keeps the full treatment; these two are graded below it.
+
+   Where you are, and where you would land. The ring is the loudest of the two because it moves
+   with the player, and it is inset for the reason the loadout cells' is: an outer ring on the
+   element painting the background behind a cell vetoes its subpixel text AA. */
+.rune-pouch-choice--cursor {
+  border-color: var(--color-primary);
+  box-shadow: inset 0 0 0 1px var(--color-primary);
+}
+
+/* What the slot already holds: a place-marker in the set, not a second answer to "which slot am
+   I editing". Border alone, no fill and no glow — the open slot above is wearing both, and the
+   sprite it shows is this same rune, so this only has to say where in the set that rune sits. */
+.rune-pouch-choice--held:not(.rune-pouch-choice--cursor) {
+  border-color: var(--color-primary-structure);
+}
+
+/* Packed in another slot, and refused. Hover is reset with it: brightening a cell that will not
+   act is the interface offering something it then declines to do. */
+.rune-pouch-choice--taken,
+.rune-pouch-choice--taken:hover {
+  cursor: not-allowed;
+  border-color: var(--color-border);
+  background: var(--color-surface);
+}
+
+/* Dimming the sprite, never the cell: `opacity` on the element painting the background behind
+   the slot numeral would veto that numeral's subpixel AA. */
+.rune-pouch-choice--taken .rune-pouch-icon {
+  opacity: 0.3;
+}
+
+/* The cursor still has to be findable on a cell that refuses, but not in the accent: worn here
+   it reads as "press Enter to take this", and Enter does nothing. */
+.rune-pouch-choice--taken.rune-pouch-choice--cursor {
+  border-color: var(--color-primary-structure);
+  box-shadow: inset 0 0 0 1px var(--color-primary-structure);
+}
+
+@media (pointer: coarse) {
+  .rune-pouch-tray {
+    --rune-choice-size: 42px;
+  }
+
+  /* The shared 44px touch floor, on the cell's content box: the 1px border brings the outer
+     box to exactly 44. */
+  .rune-pouch-slot {
+    width: 42px;
+    height: 42px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rune-pouch-reveal,
+  .rune-pouch-tray-panel,
+  .rune-pouch-reveal[data-expanded="true"] .rune-pouch-tray-panel {
+    transition: none;
+  }
+}

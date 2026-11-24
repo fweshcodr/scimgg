@@ -1,0 +1,100 @@
+/* Alt-held guide for panels hidden under other panels. It borrows the drafting convention
+   for hidden edges: the covered panel's outline is dashed, drawn straight through whatever
+   sits on top, and the shared region is lightly hatched so the stack reads at a glance.
+   Everything is quieter than the Alt move affordance it appears beside, so the panel you
+   can grab still reads first. */
+
+.overlap-guide-overlay {
+  position: absolute;
+  inset: 0;
+  visibility: hidden;
+  opacity: 0;
+  /* Fades on release, then leaves the a11y tree and hit-testing entirely. Opacity is safe
+     here, unlike on the move affordance: this layer paints after every panel, so
+     compositing it for the fade pulls no panel sprites into its layer. */
+  transition:
+    opacity 140ms cubic-bezier(0.4, 0, 1, 1),
+    visibility 0s linear 140ms;
+}
+
+.overlap-guide-overlay[data-visible] {
+  visibility: visible;
+  opacity: 1;
+  transition:
+    opacity 180ms cubic-bezier(0.22, 1, 0.36, 1),
+    visibility 0s;
+}
+
+.overlap-guide__overlap,
+.overlap-guide__outline {
+  position: absolute;
+  box-sizing: border-box;
+}
+
+/* 45deg hatch, 1px lines every 6px: texture rather than tint, so the panel on top keeps its
+   own colors and only reads as "something continues under here". */
+.overlap-guide__overlap {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    color-mix(in srgb, var(--color-secondary) 28%, transparent) 0 1px,
+    transparent 1px 6px
+  );
+}
+
+.overlap-guide__outline {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px dashed color-mix(in srgb, var(--color-secondary) 62%, transparent);
+  border-radius: 2px;
+}
+
+/* The hidden panel's nameplate, redrawn where its own Alt nameplate sits (centered) but
+   under the cover. Same chip as the move affordance's, with a dashed edge and the stack
+   mark so it reads as "beneath" rather than as a second grabbable panel. Opaque surface
+   and no outer shadow keep the 16px pixel face (its native grid) on LCD text. */
+.overlap-guide__label {
+  position: relative;
+  padding: 3px 8px 3px 24px;
+  border: 1px dashed color-mix(in srgb, var(--color-secondary) 62%, var(--color-surface));
+  border-radius: 2px;
+  background: var(--color-surface);
+  color: var(--color-secondary);
+  font-family: "RuneScape Plain 12", sans-serif;
+  font-size: 16px;
+  line-height: 16px;
+  white-space: nowrap;
+}
+
+/* Two offset squares, the "stacked" mark: the back one outlined and dimmed, the front one
+   filled with the chip's own surface so it reads as lying on top. */
+.overlap-guide__label::before,
+.overlap-guide__label::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 7px;
+  height: 7px;
+  box-sizing: border-box;
+  border: 1px solid currentColor;
+}
+
+.overlap-guide__label::before {
+  left: 11px;
+  margin-top: -6px;
+  opacity: 0.55;
+}
+
+.overlap-guide__label::after {
+  left: 8px;
+  margin-top: -2px;
+  background: var(--color-surface);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .overlap-guide-overlay,
+  .overlap-guide-overlay[data-visible] {
+    transition-duration: 60ms, 0s;
+    transition-timing-function: linear;
+  }
+}

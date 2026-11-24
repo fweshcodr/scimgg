@@ -1,0 +1,260 @@
+.zoom-hint-toast-stack {
+  position: fixed;
+  z-index: 9999;
+  display: flex;
+  gap: 8px;
+  pointer-events: none;
+  /* `layoutTransition('left')`, the rule the panels a drawer pushes move by. This toast is fixed
+     to the window while the bottom-left corner it sits on is not, so the ONLY thing keeping the
+     tip on that corner through a sidebar slide is that both move on the same curve toward
+     offsets derived from the same inset. Change one, change both.
+
+     Deliberately not guarded by prefers-reduced-motion: neither the drawer nor the scene it
+     slides is, so an exemption here would make the tip the one element that teleports. */
+  transition: left 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.zoom-hint-toast {
+  /* Square corners and an opaque fill are load-bearing for LCD text: the tip sits over the
+     composited 3D scene, and Chrome only keeps subpixel antialiasing on a layer it can prove
+     opaque edge to edge. */
+  /* Hug the content (capped) so each tip is exactly as long as its own text —
+     never padded out to a fixed width, never wrapped into a tall slab. Shares
+     the `--hud-*` overlays' color, not their proportions. */
+  position: relative;
+  width: fit-content;
+  max-width: 340px;
+  box-sizing: border-box;
+  padding: 8px 12px;
+
+  /* `--hud-bg`'s tone, but opaque and unblurred: a translucent or backdrop-filtered background
+     forces the tip's text to grayscale antialiasing, and over the dark scene `--hud-bg`'s 12% of
+     see-through barely shows. */
+  background: var(--color-bg-solid);
+  border: 1px solid var(--hud-border);
+
+  color: var(--color-secondary);
+  font-family: "RuneScape Plain 12", sans-serif;
+  /* 16px = native pixel grid of the TTF — these tips are mostly keybind
+     copy ("Alt + Drag…"), so they must read instantly and crisply. */
+  font-size: 16px;
+  line-height: 1.4;
+
+  pointer-events: auto;
+}
+
+/* The drop shadow lives on a pseudo-element: an outer box-shadow on the element that paints the
+   text's background costs the text its LCD antialiasing. */
+.zoom-hint-toast::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  z-index: -1;
+  box-shadow: var(--shadow-md);
+  pointer-events: none;
+}
+
+.zoom-hint-toast__main {
+  display: flex;
+  /* Tip, the message's first line, its action and the close all share one baseline. */
+  align-items: baseline;
+  gap: 8px;
+}
+
+/* Muted inline label that marks the tip without a header row or a loud badge:
+   recessive color, no chip box, so it names the toast then gets out of the way. */
+.zoom-hint-toast__tip {
+  flex: 0 0 auto;
+  color: var(--color-text-muted);
+  /* The Small face at its native 16px draws small capitals on whole pixels, where Bold 12 at
+     11px fell between them; the tracking is a whole pixel for the same reason. */
+  font-family: "RuneScape Small", sans-serif;
+  font-size: 16px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.zoom-hint-toast__body {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+/* A tip's one action ("Set up"): a quiet word in the accent, not a button block. It takes the
+   message's own size and baseline. Padding and a matching negative margin give it a hit area
+   larger than the word for a thumb without moving the line; a positioned pseudo-element would
+   do the same but costs the word its LCD antialiasing. */
+.zoom-hint-toast__action {
+  display: inline;
+  margin: -10px -8px;
+  padding: 10px 8px;
+  border: 0;
+  background: transparent;
+  color: var(--color-accent-text);
+  font: inherit;
+  font-family: "RuneScape Bold 12", sans-serif;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--color-accent-text) 45%, transparent);
+  text-underline-offset: 3px;
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    text-decoration-color 0.15s ease;
+}
+
+.zoom-hint-toast__action:hover {
+  color: var(--color-primary-hover);
+  text-decoration-color: currentColor;
+}
+
+.zoom-hint-toast__emph {
+  color: var(--color-text-body);
+  font-family: "RuneScape Bold 12", sans-serif;
+}
+
+/* A line of small text is too thin to hit with a thumb. Padding with a matching negative margin
+   (as the action's) gives it a taller hit area without moving it: down into the toast's own
+   bottom padding, and up only across the 3px gap, so where it meets the action's padded area
+   the line between them is the message line's bottom edge. */
+.zoom-hint-toast__opt-out {
+  margin: -3px 0 -8px;
+  padding: 3px 0 8px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+
+  /* Plain 11 at its native 16px: the smaller-drawing face, crisp, where Plain 12 at 11px was not. */
+  font-family: "RuneScape Plain 11", sans-serif;
+  font-size: 16px;
+  line-height: 16px;
+  color: var(--color-text-muted);
+  text-decoration: none;
+  text-align: left;
+
+  transition: color 0.15s ease;
+}
+
+.zoom-hint-toast__opt-out:hover {
+  color: var(--color-secondary);
+  text-decoration: underline;
+}
+
+/* An 18px glyph box with a 32px hit area: padding, and a matching negative margin so the row
+   lays out as before (the action's pattern). The area stays inside the toast's own padding. */
+.zoom-hint-toast__close {
+  flex: 0 0 auto;
+  box-sizing: content-box;
+  width: 18px;
+  height: 18px;
+  margin: -7px -9px -7px -7px;
+  padding: 7px;
+
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+
+  color: var(--color-text-muted);
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 16px;
+  line-height: 18px;
+  text-align: center;
+  transition: color 0.15s ease;
+}
+
+.zoom-hint-toast__close:hover {
+  color: var(--color-secondary);
+}
+
+.zoom-hint-toast--enter {
+  animation: zoomHintToastInRight 160ms ease-out both;
+}
+
+.zoom-hint-toast--exit {
+  animation: zoomHintToastOutRight 160ms ease-in both;
+  /* Already dismissed: a tap during the fade belongs to whatever is underneath. */
+  pointer-events: none;
+}
+
+.zoom-hint-toast-stack--left .zoom-hint-toast--enter {
+  animation-name: zoomHintToastInLeft;
+}
+
+.zoom-hint-toast-stack--left .zoom-hint-toast--exit {
+  animation-name: zoomHintToastOutLeft;
+}
+
+@keyframes zoomHintToastInRight {
+  from {
+    opacity: 0;
+    transform: translateX(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes zoomHintToastOutRight {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(14px);
+  }
+}
+
+@keyframes zoomHintToastInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes zoomHintToastOutLeft {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-14px);
+  }
+}
+
+/* ---- Settings tab icon pulse when hinting keybind customization ---- */
+
+.shortcut-hint-glow {
+  animation: shortcutHintPulse 1.2s ease-in-out infinite;
+}
+
+@keyframes shortcutHintPulse {
+  0%,
+  100% {
+    border-color: color-mix(in srgb, var(--color-primary) 35%, transparent);
+    background-color: color-mix(in srgb, var(--color-primary) 8%, transparent);
+    box-shadow: 0 0 4px color-mix(in srgb, var(--color-primary) 15%, transparent);
+  }
+  50% {
+    border-color: var(--color-primary);
+    background-color: color-mix(in srgb, var(--color-primary) 20%, transparent);
+    box-shadow:
+      0 0 10px color-mix(in srgb, var(--color-primary) 40%, transparent),
+      0 0 20px color-mix(in srgb, var(--color-primary) 15%, transparent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .zoom-hint-toast--enter,
+  .zoom-hint-toast--exit,
+  .shortcut-hint-glow {
+    animation: none;
+  }
+}

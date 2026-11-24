@@ -1,0 +1,778 @@
+.encounter-panel-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  font-family: "RuneScape Bold 12", sans-serif;
+}
+
+.encounter-panel-backdrop {
+  position: absolute;
+  inset: 0;
+  border: none;
+  background: var(--modal-backdrop);
+  cursor: default;
+}
+
+.encounter-panel-card {
+  position: relative;
+  width: min(560px, 95vw);
+  max-height: min(88vh, 800px);
+  /* biome-ignore lint/suspicious/noDuplicateProperties: deliberate progressive-enhancement pair. Browsers without dvh keep the vh value; the cascade is the fallback mechanism. */
+  max-height: min(88dvh, 800px);
+  background: var(--color-bg-solid);
+  border: 1px solid var(--modal-card-border);
+  /* Shadow on ::before, overflow left `visible`. Both are needed for subpixel text AA:
+     an outer box-shadow on the element painting behind the text is a veto, and a
+     clipped (overflow: hidden) card keeps its subtree off an opaque background. The
+     body below does its own scrolling, so nothing escapes. See the subpixel-aa skill. */
+  border-radius: var(--modal-radius);
+  display: flex;
+  flex-direction: column;
+  overflow: visible;
+  animation: encounter-card-in 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.encounter-panel-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: var(--modal-radius);
+  box-shadow: var(--modal-card-shadow);
+  pointer-events: none;
+}
+
+@keyframes encounter-card-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.encounter-panel-header {
+  flex-shrink: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 12px 12px 16px;
+  background: var(--color-bg-elevated);
+  border-bottom: 1px solid var(--color-border);
+}
+.encounter-panel-header-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+/* The wiki link rides the title's baseline rather than floating at the header's far right: at
+   this card width that would put it ~600px from the encounter it names, beside the close X. */
+.encounter-panel-title-row {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  min-width: 0;
+}
+
+.encounter-panel-header h2 {
+  margin: 0;
+  font-family: "RuneScape Bold 12", sans-serif;
+  color: var(--color-secondary);
+  font-size: 20px;
+  text-shadow: 1px 1px 0 #000;
+  font-weight: normal;
+  white-space: nowrap;
+}
+
+.encounter-panel-header-badges {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.encounter-badge {
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 11px;
+  /* Right padding is short by exactly the tracking below: `letter-spacing` adds a
+     trailing space after the final letter that belongs to no glyph, so symmetric
+     padding renders the text off-center, by a measured 0.88px. */
+  padding: 2px calc(8px - 0.08em) 2px 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  border: 1px solid;
+  line-height: 1.4;
+}
+
+/* Badge row. Every entry is a real chip — the row is the at-a-glance status read
+   for the encounter, so nothing in it is a bare text annotation.
+     tutorial   — brightest: the system's primary treatment (primary-dim fill +
+                  primary text), matching the Start Tutorial action so the badge
+                  and the button read as one feature. */
+.encounter-badge--difficulty {
+  color: var(--color-error);
+  background: rgba(50, 20, 18, 0.5);
+  border-color: var(--color-surface-hover);
+}
+
+.encounter-badge--available {
+  color: var(--color-success);
+  background: rgba(18, 38, 24, 0.5);
+  border-color: var(--color-surface-hover);
+}
+
+.encounter-badge--locked {
+  color: var(--color-text-dim);
+  background: var(--color-surface);
+  border-color: var(--color-border);
+}
+
+.encounter-badge--contract {
+  color: var(--color-secondary);
+  background: var(--color-surface-inset);
+  border-color: var(--color-primary-structure);
+}
+
+/*
+ * Playable with known limitations: the row's "proceed with awareness" status in the warning tone,
+ * conspicuous beside Boss red and Available green without outshouting them. Opaque tint, no
+ * translucent base, like the hero badge in the picker.
+ */
+.encounter-badge--beta {
+  color: var(--color-warning);
+  background: color-mix(in srgb, var(--color-warning) 12%, var(--color-bg-solid));
+  border-color: color-mix(in srgb, var(--color-warning) 40%, var(--color-bg-solid));
+}
+
+/* Text, like every other chip in this row. A glyph here was the only mark on any
+   badge in the app. */
+.encounter-badge--tutorial {
+  color: var(--color-accent-text);
+  background: var(--primary-dim);
+  border-color: color-mix(in srgb, var(--color-primary) 45%, transparent);
+}
+
+.encounter-panel-body {
+  overflow-y: auto;
+  /* Opaque fill so this scrolling layer is provably opaque and its text keeps subpixel
+     AA. Repaints the color .encounter-panel-card already paints underneath. */
+  background: var(--color-bg-solid);
+  /* The gutter is reserved whether or not a scrollbar is in it. Without this, the bar arriving
+     takes its width out of the main column, which re-flows the loadout tiles and the frame
+     under the pointer the moment the panel grows past the fold. */
+  scrollbar-gutter: stable;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 216px;
+  gap: 16px;
+  padding: 16px;
+  flex: 1;
+  min-height: 0;
+}
+
+.encounter-panel-body::-webkit-scrollbar {
+  width: 8px;
+}
+
+.encounter-panel-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.encounter-panel-body::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 2px;
+  border: 2px solid var(--color-bg-solid);
+}
+
+.encounter-panel-body::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary-structure);
+}
+
+.section-label {
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 11px;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.section-label--primary {
+  color: var(--color-secondary);
+}
+
+.encounter-panel-main {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+.loadout-section {
+  display: flex;
+  flex-direction: column;
+  --loadout-action-height: 28px;
+}
+
+@media (pointer: coarse) {
+  .loadout-section {
+    --loadout-action-height: 44px;
+  }
+}
+
+.loadout-note {
+  margin: 12px 0 0;
+  /* Repadded for the size above: 6px was the tight-group step, set for 12px copy. */
+  padding: 8px 10px;
+  background: var(--color-surface-inset);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-body);
+  /* Prose, so it takes the size the 12-series faces are hinted at rather than the chrome
+     ramp: this is read, not glanced. 16 x 1.5 keeps the line box on whole pixels. */
+  font-family: "RuneScape Plain 12", sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.loadout-note--warn {
+  border-color: var(--color-primary-structure);
+  color: var(--color-warning);
+}
+
+/* Auto-switch note: the amber tint echoes the unmet stat tiles in Combat Stats so
+   "set switched" and "raise these levels" read as one signal. Copy stays body-
+   colored; the requirement chips inside carry the warning emphasis. */
+.loadout-note--switch {
+  border-color: color-mix(in srgb, var(--color-warning) 50%, var(--color-border));
+  background: color-mix(in srgb, var(--color-warning) 9%, var(--color-surface-inset));
+}
+
+/* The frame is the largest thing an arriving set changes, so it transitions: swapping the fill,
+   the stroke and every slot between two frames would leave the two buttons appearing in the bar
+   as the only part of an import the eye could catch. */
+.loadout-editor {
+  --loadout-columns: minmax(0, 1fr) minmax(0, 1fr);
+  --loadout-column-gap: 14px;
+  --loadout-slot-size: 36px;
+  /* Where the inventory grid's center sits, measured in from the right content edge: the middle
+     of column 2. Kept beside the column rules it follows; the percentage resolves wherever it is
+     used, against a box with the frame's 10px side padding, so both measure the same width. */
+  --loadout-inventory-centre-inset: calc((100% - var(--loadout-column-gap)) / 4);
+  position: relative;
+  margin-top: 12px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+
+/* One quiet settle when a whole set lands, on its own overlay because `border-style` cannot be
+   transitioned and the frame itself must never be keyed. It traces the frame's edge once and
+   leaves; nothing moves, nothing is added to the column, nothing has to be dismissed. */
+.loadout-editor-settle {
+  position: absolute;
+  inset: -1px;
+  border: 1px solid transparent;
+  pointer-events: none;
+  animation: loadout-editor-settle 0.75s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@keyframes loadout-editor-settle {
+  from {
+    border-color: var(--color-primary);
+  }
+
+  to {
+    border-color: transparent;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loadout-editor {
+    transition: none;
+  }
+
+  .loadout-editor-settle {
+    animation: none;
+  }
+}
+
+.loadout-frame {
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--loadout-columns);
+  gap: var(--loadout-column-gap);
+  align-items: start;
+  padding: 10px;
+}
+
+/* Kit-wide supplies under the frame: the spellbook row at the start, the rune pouch bar placed so
+   its slots sit under the inventory grid (RunePouchRow.css). Both are in flow, so when they no
+   longer fit side by side the pouch wraps onto its own line instead of the two colliding.
+   `space-between` is what does both: two items on a line go to its ends, putting the pouch under
+   the inventory, while an item alone on a line starts it, so a wrapped pouch simply sits at the
+   start of its own line. */
+.loadout-supplies {
+  --supplies-row-gap: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--supplies-row-gap) var(--loadout-column-gap);
+  padding: 8px 10px;
+  border-top: 1px solid var(--color-border);
+}
+
+.loadout-supplies .section-label {
+  line-height: 16px;
+}
+
+/* The frame's instruction, under both grids and across the full width, which is what lets it
+   say the two things a slot does on one line.
+
+   It stays in flow rather than absolutely positioned into the 40px gap the shorter equipment
+   diagram leaves under itself: a second sentence does not fit there at any width, and capped
+   to the equipment column the copy wraps to two lines at desktop and three on a phone, running
+   back up into the boots cell. In flow it is one line at the card's width, with no reserve or
+   breakpoint table.
+
+   Plain 11 at its native 16px rather than an off-grid 13px, the hint ramp every other control
+   caption in the system uses. */
+.loadout-editor-guidance {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: var(--color-text-muted);
+  font:
+    16px / 18px "RuneScape Plain 11",
+    sans-serif;
+}
+
+.loadout-equipment-column,
+.loadout-inventory-column {
+  display: grid;
+  justify-items: center;
+  align-content: start;
+  min-width: 0;
+  gap: 8px;
+}
+
+.loadout-frame .loadout-grid-heading {
+  margin: 0;
+  font-weight: normal;
+  line-height: 16px;
+}
+
+@media (max-width: 359px) {
+  .loadout-editor {
+    --loadout-columns: minmax(0, 1fr);
+    --loadout-inventory-centre-inset: 50%;
+  }
+
+  .loadout-frame {
+    row-gap: 16px;
+  }
+}
+
+.encounter-panel-rail {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+  padding-left: 14px;
+  border-left: 1px solid var(--color-border);
+}
+
+.rail-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.rail-section + .rail-section {
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.encounter-panel-rail .section-label {
+  margin: 0;
+}
+
+.encounter-panel-rail .osrs-checkbox__label {
+  font-size: 16px;
+  line-height: 20px;
+}
+
+.encounter-panel-rail .mechanics-toggles {
+  gap: 8px;
+}
+
+.encounter-fight-controls {
+  padding-top: 8px;
+  border-top: 1px solid var(--color-border);
+}
+
+.encounter-assists {
+  min-width: 0;
+  margin: 8px 0 0;
+  padding: 0;
+  border: 0;
+}
+
+.encounter-fight-controls > .section-label,
+.encounter-assists > .section-label {
+  margin: 0 0 8px;
+  padding: 0;
+}
+
+.encounter-description {
+  margin: 0;
+  color: var(--color-text-body);
+  font:
+    16px / 20px "RuneScape Plain 12",
+    sans-serif;
+}
+
+.encounter-contract-oath {
+  margin: 0;
+  padding: 0;
+  color: var(--color-text-body);
+  font:
+    16px / 20px "RuneScape Plain 12",
+    sans-serif;
+}
+
+.encounter-contract-oath em {
+  font-style: normal;
+  color: var(--color-secondary);
+}
+
+.encounter-panel-footer {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 12px 16px;
+  border-top: 1px solid var(--color-border);
+  background: var(--color-bg-elevated);
+}
+
+/* Start Tutorial is an OsrsButton and keeps the default variant's own recipe. Accent ink and an
+   accent-mixed edge would make "learn it" read at the same weight as the primary "do it" beside
+   it. The footer carries one accent, on one action. */
+.encounter-tutorial-btn {
+  margin-left: 0;
+}
+
+.encounter-start-btn {
+  min-width: 176px;
+}
+
+/* Which cell sits where is set per cell from EQUIPMENT_SLOT_CELLS, because the arrow keys
+   need the same map and two copies of it drifted apart once already. This owns the tracks
+   and the cell, not the placement. */
+
+.equip-grid {
+  display: grid;
+  grid-template-columns: repeat(3, auto);
+  grid-template-rows: repeat(5, auto);
+  gap: 2px;
+  justify-items: center;
+}
+
+.equip-slot {
+  /* 46px, not 44: the label sits at its face's native 11px and the sprite canvas is 32px,
+     which needs 45px of column between them. Two pixels buys the ramp its own size back. */
+  width: 46px;
+  height: 46px;
+  background: var(--color-surface-inset);
+  border: 1px solid var(--color-surface-highlight);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease;
+  position: relative;
+}
+
+.equip-slot:hover {
+  border-color: var(--color-primary-structure);
+  background: var(--color-surface-hover);
+}
+
+.equip-slot--filled {
+  background: var(--color-surface);
+  border-color: var(--color-border);
+}
+
+.equip-slot-label {
+  font-family: "RuneScape Plain 11", sans-serif;
+  /* RuneScape Plain 11 renders hinted at 11px and nowhere else; 9px scaled every glyph
+     edge to a fraction of a pixel and smeared eleven labels the diagram is read by. */
+  font-size: 11px;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  /* Whole pixels, like every other small uppercase label in the system: 0.04em resolved to
+     0.44px here and put every glyph after the first on a fractional x, which is the same
+     fuzz the size above was corrected to avoid. */
+  letter-spacing: 1px;
+  text-align: center;
+  line-height: 1;
+}
+
+.equip-slot--filled .equip-slot-label {
+  color: var(--color-secondary);
+}
+
+.inventory-grid {
+  display: grid;
+  width: max-content;
+  grid-template-columns: repeat(4, calc(var(--loadout-slot-size, 36px) + 2px));
+  grid-template-rows: repeat(7, auto);
+  gap: 2px;
+  justify-items: center;
+}
+
+/* Supplies are half of a loadout, so every cell is a button that opens the same picker on
+   itself, exactly the way the equipment diagram does. There is no mode to enter, so the
+   grid reads as touchable at rest — which is what it is. */
+.inventory-slot {
+  /* Reset the button UA box back onto the cell: this sizes 36x36 of content, and a button
+     would otherwise measure that border-box. */
+  box-sizing: content-box;
+  width: var(--loadout-slot-size, 36px);
+  height: var(--loadout-slot-size, 36px);
+  margin: 0;
+  padding: 0;
+  background: var(--color-surface-inset);
+  border: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-appearance: none;
+  appearance: none;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease;
+  position: relative;
+}
+
+.inventory-slot:hover {
+  border-color: var(--color-primary-structure);
+  background: var(--color-surface-hover);
+}
+
+.inventory-slot--filled {
+  background: var(--color-surface);
+}
+
+:root[data-focus-source="keyboard"] .inventory-slot:focus-visible {
+  border-color: var(--color-primary);
+  box-shadow: inset 0 0 0 1px var(--color-primary);
+  outline: none;
+}
+
+/* The slot in hand, and the picker anchored to it, are one object. Selected survives
+   hover: hover may brighten the surface, never reclaim the accent. */
+.inventory-slot.inventory-slot--selected,
+.inventory-slot.inventory-slot--selected:hover {
+  background: var(--primary-dim);
+  border-color: var(--color-primary);
+  /* Glow painted from ::before: an outer shadow on the element painting the background
+     behind a slot's contents vetoes subpixel text AA for the cell. .inventory-slot is
+     already position: relative. */
+}
+
+.inventory-slot.inventory-slot--selected::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  box-shadow: var(--shadow-glow);
+  pointer-events: none;
+}
+
+/* ---- Carrying an item between slots -------------------------------------------------------
+   A press that travels takes the item out of its square and puts it on the pointer, and the
+   release trades it with whatever square it lands on. Three things have to be legible at once:
+   where the item came from, what is being carried, and where it would land. */
+
+/* No text to lose here (the cells draw sprites), and a drag across a grid of buttons otherwise
+   starts selecting the headings above it. */
+.inventory-grid {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* The square the item left, for as long as it is away: recessed and empty, so the gap in the
+   kit is visible while it is being filled from somewhere else. */
+.inventory-slot.inventory-slot--carried,
+.inventory-slot.inventory-slot--carried:hover {
+  background: var(--color-surface-inset);
+  border-color: var(--color-primary-structure);
+  border-style: dashed;
+}
+
+/* Dimming the sprite rather than the cell: `opacity` on the element painting a slot's own
+   background is one of the LCD-text vetoes this panel is careful about. */
+.inventory-slot--carried > * {
+  opacity: 0.25;
+}
+
+/* Where it would land. The accent, because a drop is a commitment and this is the only cell
+   making one; the source above is deliberately quieter so the two never compete. */
+.inventory-slot.inventory-slot--drop,
+.inventory-slot.inventory-slot--drop:hover {
+  background: var(--primary-dim);
+  border-color: var(--color-primary);
+}
+
+/* Hover belongs to the pointer's position, and while an item is in hand the drop marker is
+   already saying that. Two highlights on two different cells is the grid answering twice.
+   The drop target is excluded by the selector rather than left to source order: these are
+   (0,3,0) and the drop rule above is (0,2,0), so without the `:not` the cell under the pointer
+   would wear the resting colors it is standing in for. */
+.inventory-grid--carrying .inventory-slot:not(.inventory-slot--drop):hover {
+  border-color: var(--color-border);
+  background: var(--color-surface-inset);
+}
+
+.inventory-grid--carrying .inventory-slot--filled:not(.inventory-slot--drop):hover {
+  background: var(--color-surface);
+}
+
+/* The item on the pointer. Fixed rather than absolute so it is not clipped by the panel body's
+   scroller, and out of flow so carrying one costs the grid no layout. The negative margin is
+   half the box, which is what centers it on the pointer: the drag only ever writes the raw
+   pointer position, so the box and its offset stay one number in one place. */
+.inventory-drag-ghost {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 1300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--loadout-slot-size, 36px);
+  height: var(--loadout-slot-size, 36px);
+  margin: calc(var(--loadout-slot-size, 36px) / -2) 0 0 calc(var(--loadout-slot-size, 36px) / -2);
+  pointer-events: none;
+  /* The lift, which is the whole difference between the carried sprite and the one still in its
+     square. The shadow is on this element alone, and it paints no text. */
+  filter: drop-shadow(0 3px 4px rgb(0 0 0 / 0.55));
+}
+
+@media (max-width: 839px) {
+  .encounter-panel-overlay {
+    padding: calc(8px + var(--safe-top, 0px)) 8px calc(8px + var(--safe-bottom, 0px));
+  }
+
+  .encounter-panel-card {
+    width: 100%;
+    max-width: 100%;
+    max-height: 100%;
+  }
+
+  .encounter-panel-header {
+    padding: 10px 14px;
+  }
+
+  .encounter-panel-header h2 {
+    font-size: 16px;
+    white-space: normal;
+  }
+
+  .encounter-panel-body {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 12px;
+  }
+
+  .encounter-panel-rail {
+    padding-left: 0;
+    border-left: none;
+    padding-top: 12px;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .loadout-editor {
+    --loadout-column-gap: 12px;
+  }
+
+  .encounter-panel-footer {
+    flex-direction: column-reverse;
+    padding: 10px 14px calc(10px + var(--safe-bottom, 0px));
+  }
+
+  .encounter-panel-footer .osrs-btn {
+    width: 100%;
+  }
+
+  .encounter-panel-footer .osrs-btn:last-child {
+    min-width: 100%;
+  }
+
+  .encounter-start-btn {
+    min-width: 0;
+  }
+}
+
+/* Widen the card and center the loadout so the full config body, including all seven
+   combat stats, clears the fold at ~1280x900 without scrolling. */
+@media (min-width: 840px) {
+  .encounter-panel-card {
+    width: min(816px, 95vw);
+    max-height: min(calc(100vh - 48px), 900px);
+    /* biome-ignore lint/suspicious/noDuplicateProperties: deliberate progressive-enhancement pair. Browsers without dvh keep the vh value; the cascade is the fallback mechanism. */
+    max-height: min(calc(100dvh - 48px), 900px);
+  }
+
+  .loadout-frame {
+    justify-content: center;
+  }
+}
+
+/* ---- Mobile sheet (see ui/MobileSheet.css) ------------------------------------------------
+   A landscape phone has ~375 rows. The header folds to one row (title, wiki, badges), the
+   rail goes back beside the loadout instead of under it, and the footer stays one row. */
+@media (max-height: 540px), (max-width: 600px) {
+  :root[data-mobile-ui] .encounter-panel-header-info {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 12px;
+  }
+
+  :root[data-mobile-ui] .encounter-panel-header h2 {
+    font-size: 16px;
+  }
+
+  :root[data-mobile-ui] .encounter-panel-body {
+    gap: 12px;
+    padding: 10px 12px;
+  }
+}
+
+@media (max-height: 540px) and (orientation: landscape) {
+  :root[data-mobile-ui] .encounter-panel-body {
+    grid-template-columns: minmax(0, 1fr) 196px;
+  }
+
+  :root[data-mobile-ui] .encounter-panel-rail {
+    padding: 0 0 0 12px;
+    border-top: none;
+    border-left: 1px solid var(--color-border);
+  }
+}

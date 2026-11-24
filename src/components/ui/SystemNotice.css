@@ -1,0 +1,217 @@
+/* The app's system notices: the 3D view's status, the hardware acceleration warning and the
+   browser support screen are one family with one anatomy.
+
+   Mark · title · body · detail · steps · actions, in that order, every time. The fill is opaque,
+   depth is a 1px hairline and nothing else, and the type sits on the native 16px pixel-font em.
+   No outer `box-shadow` anywhere here: it is an LCD-text veto for the whole subtree
+   (docs/agent-reference.md, LCD text), and DESIGN.md keeps depth quiet in any case. */
+.sys-notice {
+  box-sizing: border-box;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 16px;
+  background-color: var(--notice-fill, var(--color-bg-solid));
+  border: 1px solid var(--color-border);
+  border-radius: 2px;
+  font-family: "RuneScape Plain 12", sans-serif;
+}
+
+/* The severity ladder, and the only color that changes between the three. Red is reserved for
+   the state that is actually blocked, so it still means something when it appears; amber is the
+   step below it, for something running worse than it should or being waited on. The title is
+   never tinted: `--color-heading` is the most legible ink the palette has, and the mark plus the
+   hairline already say which rung this is.
+
+   The marks are plain tokens, so every browser gets them. The tinted hairlines need `color-mix`,
+   which arrived in Safari 16.2 while the app supports iOS 15.0, so they sit behind an `@supports`
+   gate below. A declaration pair would NOT work here: `color-mix` inside `var()` parses fine and
+   only fails at computed-value time, which drops the whole border rather than falling back. */
+.sys-notice--progress {
+  --notice-mark: var(--color-warning);
+}
+
+.sys-notice--caution {
+  --notice-mark: var(--color-warning);
+}
+
+.sys-notice--blocked {
+  --notice-mark: var(--color-error);
+}
+
+/* Literal colors in the condition: the question is whether `color-mix` works at all. Without it
+   the notices keep the plain `--color-border` hairline and the pulse holds its color. */
+@supports (border-color: color-mix(in srgb, red, black)) {
+  .sys-notice--caution {
+    border-color: color-mix(in srgb, var(--color-warning) 35%, var(--color-border));
+  }
+
+  .sys-notice--blocked {
+    border-color: color-mix(in srgb, var(--color-error) 40%, var(--color-border));
+  }
+
+  .sys-notice__pulse {
+    animation: sys-notice-pulse 1.4s ease-in-out infinite alternate;
+  }
+}
+
+/* --- Anatomy ------------------------------------------------------------------------------ */
+
+.sys-notice__icon {
+  flex-shrink: 0;
+  margin-top: 1px;
+  color: var(--notice-mark);
+}
+
+.sys-notice__body {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.sys-notice__content {
+  min-width: 0;
+}
+
+.sys-notice__title {
+  margin: 0;
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 16px;
+  line-height: 20px;
+  color: var(--color-heading);
+}
+
+.sys-notice__text {
+  margin: 6px 0 0;
+  font-size: 16px;
+  line-height: 20px;
+  color: var(--color-text-body);
+}
+
+/* A fact about the session rather than an instruction, so it reads one step quieter. */
+.sys-notice__detail {
+  margin: 4px 0 0;
+  font-size: 16px;
+  line-height: 20px;
+  color: var(--color-text-muted);
+}
+
+.sys-notice__steps {
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* Plain 11 is the smaller step at the native em; the marker is square because round shapes are
+   reserved for things that are round in the game. */
+.sys-notice__step {
+  position: relative;
+  padding-left: 12px;
+  font-family: "RuneScape Plain 11", sans-serif;
+  font-size: 16px;
+  line-height: 18px;
+  color: var(--color-text-muted);
+}
+
+/* Neutral, not the severity color: these are what to do, not part of what went wrong. It keeps
+   the count of red things in a blocked notice at two, the mark and the hairline, which is what
+   makes either of them mean anything. */
+.sys-notice__step::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 7px;
+  width: 4px;
+  height: 4px;
+  background-color: var(--color-text-dim);
+}
+
+.sys-notice__actions {
+  margin-top: 14px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+/* The aside. It cannot go quieter than the steps in ink, since `text-muted` is already the last
+   level that holds 4.5:1 here, so it steps down by being ruled off and set apart instead: a
+   hairline is how this system carries hierarchy everywhere else. */
+.sys-notice__note {
+  margin: 14px 0 0;
+  padding-top: 12px;
+  border-top: 1px solid var(--color-border);
+  font-family: "RuneScape Plain 11", sans-serif;
+  font-size: 16px;
+  line-height: 18px;
+  color: var(--color-text-muted);
+}
+
+/* --- Strip: one line, for something being waited on --------------------------------------- */
+
+.sys-notice--strip {
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  max-width: 100%;
+}
+
+.sys-notice--strip .sys-notice__title {
+  color: var(--color-text-body);
+}
+
+/* The pulse is on `background-color`, not `opacity`: a compositing property here would cost the
+   line beside it its LCD text. */
+.sys-notice__pulse {
+  flex-shrink: 0;
+  width: 6px;
+  height: 6px;
+  background-color: var(--notice-mark);
+}
+
+/* Only ever run behind the `color-mix` gate above; without it the marker just holds its color. */
+@keyframes sys-notice-pulse {
+  from {
+    background-color: color-mix(in srgb, var(--notice-mark) 25%, var(--notice-fill, var(--color-bg-solid)));
+  }
+  to {
+    background-color: var(--notice-mark);
+  }
+}
+
+/* --- Banner: a wide, shallow bar for a short viewport -------------------------------------- */
+
+.sys-notice--banner {
+  padding: 12px;
+}
+
+.sys-notice--banner .sys-notice__body {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: 12px;
+  row-gap: 10px;
+}
+
+.sys-notice--banner .sys-notice__content {
+  flex: 1 1 240px;
+}
+
+.sys-notice--banner .sys-notice__actions {
+  margin-top: 0;
+  flex: 0 0 auto;
+}
+
+.sys-notice--banner .sys-notice__note {
+  margin-top: 0;
+  flex-basis: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sys-notice__pulse {
+    animation: none;
+    background-color: var(--notice-mark);
+  }
+}

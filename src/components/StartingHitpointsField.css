@@ -1,0 +1,54 @@
+/* A settings row leading the configurer's picker zone: SettingRow owns the 6px inset and
+   .mechanics-toggles the 8px rhythm; only the label row, the well and the gap between them
+   are styled here. */
+
+.starthp-field {
+  display: flex;
+  flex-direction: column;
+  /* The label-to-control step of the picker rows (.mechanics-choice) this field sits among. */
+  gap: 6px;
+}
+
+/* Same face, size and color as .mechanics-choice-label, so the field reads as a peer of
+   the pickers rather than as a section heading. The 2px gap is the letterspacing between
+   a word and the InfoHint footnote mark set on it. */
+.starthp-label {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 14px;
+  line-height: 1;
+  color: var(--color-secondary);
+  text-shadow: 1px 1px 0 #000;
+}
+
+/* Content width keeps the steppers against `/ 99`: stretched, the arrows' own mid-height
+   divider floats on the vertical center of the `/` and reads as a stray rule beside the
+   value. The fixed field width holds the `/` in place across 1, 10 and 99. */
+.starthp-input {
+  /* `.starthp-field` is a flex column, so its default `stretch` would pull the well across
+     the whole column whatever the primitive's own `inline-flex` says. */
+  align-self: flex-start;
+}
+
+.starthp-input .num-input__field {
+  /* The Combat Stats step, the one other editable number that is the point of its own
+     tile. It has to match the 16px control labels in the section below, or the value
+     of this section reads as smaller than the labels of the next one. Also the size
+     below which iOS Safari zooms the whole modal on focus. */
+  font-size: 16px;
+}
+
+@media (max-width: 720px), (pointer: coarse) {
+  /* `.num-input` already stretches its field to fill the 44px the primitive gives it here;
+     the field's own min-height and padding are content-box, so left in they stack on top
+     of that and render a 60px box. */
+  .starthp-input .num-input__field {
+    min-height: 0;
+    padding-block: 0;
+    /* The value has to stay against its bound; the primitive centers it here, which
+       reopens the gap between them. */
+    text-align: right;
+  }
+}

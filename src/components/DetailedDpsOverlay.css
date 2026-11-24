@@ -1,0 +1,185 @@
+/* Detailed DPS — the plugin-overlay surface shared with the boss health bar,
+   prayer flick helper and Zuk set timer (BossHealthBarOverlay.css,
+   PrayerFlickOverlay.css): translucent pack background, hairline border,
+   backdrop blur, 2px radius. No bevels, no drop shadow.
+
+   Type and color follow PracticePanel.css, which owns both rules for translucent
+   surfaces; the notes there are the canonical statement and are not repeated.
+
+   Apparent size is picked by FACE, never by font-size. The RuneScape TTFs carry
+   unitsPerEm = 16, so a glyph unit is a whole pixel ONLY at font-size 16px —
+   11px labels would land every glyph edge on a fraction and antialias the
+   label layer into mush. Bold 12 for the wordmark, Plain 12
+   for values, Plain 11 for labels, Small for the subordinate formula line, and
+   line heights pinned to 16px (14px for Small, whose ascent is 1px taller) so
+   the mixed faces share one baseline row.
+
+   The DPS figure is the one run above 16px: 32px is the next whole multiple of
+   the 16-unit em, so its glyph units are exactly 2px and it stays on the grid.
+   No size between the two does. */
+
+.detailed-dps {
+  /* PracticePanel.css's ramp, by the recipes it gives, kept local to this panel the way
+     .boss-hp keeps its own pair. --detailed-dps-dim carries the warning at
+     its --hud-dim: it is a separator weight, and spending it on label
+     text is what left every label in this panel reading at the bottom of the
+     ramp against a bright scene. */
+  --detailed-dps-label: color-mix(in srgb, var(--color-secondary) 85%, var(--color-text-muted));
+  --detailed-dps-dim: color-mix(in srgb, var(--color-text-muted) 70%, var(--color-secondary));
+
+  box-sizing: border-box;
+  width: 100%;
+  /* Content-sized, and the panel's box follows it — see the measurement in
+     DetailedDpsOverlay.tsx. Pinning this to 100% of a height derived from row
+     counts is what clipped the last row: the surrounding DraggablePanel is
+     `overflow: visible`, so anything past the derived height went on painting
+     outside this element's own background and border. */
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: calc(10px + var(--border-give, 0px)) calc(12px + var(--border-give, 0px));
+  background: var(--hud-bg);
+  border: var(--unscaled-px, 1px) solid var(--hud-border);
+  border-radius: calc(2 * var(--unscaled-px, 1px));
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: var(--color-text-body);
+  font-family: "RuneScape Plain 12", sans-serif;
+  font-size: 16px;
+  line-height: 16px;
+  text-shadow: 1px 1px 0 #000;
+  user-select: none;
+}
+
+.detailed-dps__caption {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  height: 16px;
+  min-width: 0;
+}
+
+.detailed-dps__title {
+  color: var(--color-secondary);
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 16px;
+  line-height: 16px;
+  font-weight: 400;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.detailed-dps__target,
+.detailed-dps__unit,
+.detailed-dps__rows dt,
+.detailed-dps__empty,
+.detailed-dps__breakdown h3,
+.detailed-dps__hit--head > span {
+  color: var(--detailed-dps-label);
+  font-family: "RuneScape Plain 11", sans-serif;
+  font-size: 16px;
+  line-height: 16px;
+  font-weight: 400;
+}
+
+.detailed-dps__target {
+  /* Flush right, and the first thing to give way: a long boss name would
+     otherwise push the wordmark out of the panel. */
+  margin-left: auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.detailed-dps__hero {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.detailed-dps__headline {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  min-width: 0;
+}
+
+.detailed-dps__value {
+  color: var(--color-accent-text);
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 32px;
+  line-height: 32px;
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+}
+
+.detailed-dps__formula {
+  margin: 0;
+  color: var(--detailed-dps-label);
+  font-family: "RuneScape Small", sans-serif;
+  font-size: 16px;
+  line-height: 14px;
+  white-space: nowrap;
+}
+
+.detailed-dps__empty {
+  margin: 0;
+}
+
+.detailed-dps__rows,
+.detailed-dps__breakdown {
+  display: grid;
+  gap: 3px;
+  margin: 0;
+  padding-top: calc(8px + var(--border-give, 0px));
+  border-top: var(--unscaled-px, 1px) solid var(--hud-border);
+}
+
+.detailed-dps__rows > div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 0;
+}
+
+.detailed-dps__rows dd,
+.detailed-dps__hit > span {
+  margin: 0;
+  color: var(--color-text-body);
+  font-size: 16px;
+  line-height: 16px;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.detailed-dps__sep {
+  color: var(--detailed-dps-dim);
+  margin: 0 1px;
+}
+
+.detailed-dps__breakdown h3 {
+  margin: 0;
+}
+
+.detailed-dps__hit {
+  display: grid;
+  gap: 6px;
+  align-items: baseline;
+  min-width: 0;
+}
+
+.detailed-dps__hit--head > span {
+  text-align: right;
+}
+
+/* After the head rule, so the index column stays left-aligned in both the head
+   row and the hit rows — the two selectors carry equal specificity. */
+.detailed-dps__hit > span:first-child {
+  text-align: left;
+  color: var(--detailed-dps-label);
+}

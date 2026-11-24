@@ -1,0 +1,976 @@
+@keyframes replayFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* The window's bottom, centered in the room left by open drawers, drawn over the chatbox and its
+   infobox rows wherever they meet: the chat never moves it. Grid supplies window-relative drawer
+   insets and the available width at the chrome's zoom. With drawers closed, this is the window's
+   center. The dock takes no clicks; only .replay-bar does, so the
+   chat beside the bar keeps working. `safe` keeps a bar wider than the window's room on screen,
+   starting at the dock's left edge, instead of overflowing both edges. */
+.replay-transport-dock {
+  position: fixed;
+  bottom: max(8px, env(safe-area-inset-bottom));
+  left: 8px;
+  right: 8px;
+  display: flex;
+  justify-content: safe center;
+  pointer-events: none;
+}
+
+.replay-bar {
+  position: relative;
+  z-index: 30;
+  --surface-rest: var(--color-bg-elevated);
+  --surface-raise: var(--color-surface-hover);
+  --replay-inset: 12px;
+  /* The practice panel's text ramp (PracticePanel.css). Must match: this bar is not inside
+     a .practice-panel, so it cannot inherit the definitions from there. Brightest first: value > accent > label > dim. */
+  --hud-label: var(--color-secondary);
+  --hud-value: var(--color-text-body);
+  --hud-accent: var(--color-secondary);
+  --hud-dim: var(--color-text-muted);
+  /* One box for every icon-mode action. One value, raised together for coarse pointers, is
+     what keeps the row a row. */
+  --action-box: 22px;
+  /* Sized by its contents, not by a number. Every child carries flex-shrink: 0 and
+     .replay-actions carries margin-left: auto, so a fixed width the contents outgrow pushes
+     the excess silently onto the last control and renders Exit outside the border.
+     max-content cannot overflow, so adding a control widens the bar instead of ejecting one.
+     The min-widths are floors that keep the scrubber long enough to be worth dragging on a
+     short replay. The window and the space between open drawers bound the width. */
+  width: max-content;
+  /* Borders plus border-give padding total 2 authored pixels around the content box. */
+  max-width: min(calc(96vw / var(--overlay-scale, 1)), calc(var(--transport-room, 100vw) - 2px));
+  pointer-events: auto;
+  /* Opaque: the bar takes clicks, and only click-through overlays are translucent (DESIGN.md,
+     Opacity). Its own fill also keeps its text's LCD antialiasing. */
+  background: var(--color-bg-solid);
+  border: var(--unscaled-px, 1px) solid var(--color-border);
+  border-radius: calc(2 * var(--unscaled-px, 1px));
+  /* Gives back what the 1x-thin border no longer takes, so the rows inside sit where they
+     do at 1x on the device-pixel grid (chromeZoom.ts). Zero at 1x. */
+  padding: var(--border-give, 0px);
+  /* Native pixel grid: font-size is 16px across the bar and apparent size is picked by
+     FACE per run (Bold 12 for values, Plain 11 for labels), the readouts' convention
+     everywhere. Fractional 11/12px sizes would land glyph edges mid-pixel, where
+     nothing could hide it. */
+  font-family: "RuneScape Plain 12", sans-serif;
+  font-size: 16px;
+  /* `backwards`, not `both`: a transform kept after the fade would hold the bar on its own layer. */
+  animation: replayFadeIn 0.15s ease-out backwards;
+}
+
+.replay-bar--full {
+  min-width: min(420px, calc(var(--transport-room, 422px) - 2px));
+}
+
+.replay-bar--compact {
+  --replay-inset: 8px;
+  min-width: min(320px, calc(96vw / var(--overlay-scale, 1) - 2px), calc(var(--transport-room, 322px) - 2px));
+}
+
+.replay-seek-row {
+  padding: 6px var(--replay-inset) 0;
+}
+
+/* The slider's box, and the frame the late-tick and wave markers are placed in. Thumb and rail
+   sizes are variables so the markers can find the thumb's travel and the rail's top edge, and
+   so the component can measure the rail it cuts the wave boundaries into. */
+.replay-seek-track {
+  position: relative;
+  --seek-thumb: 6px;
+  --seek-rail: 2px;
+  --late-mark-h: 4px;
+  --wave-mark-h: 4px;
+  /* How wide one wave boundary is cut out of the rail. Read by the component, which rounds every
+     cut to whole pixels: a fractional one-pixel stop paints two pixels of gray instead. */
+  --seek-cut: 1px;
+  /* What a cut shows through to, which is whatever paints the bar's surface behind the rail. */
+  --replay-rail-cut: var(--color-bg-solid);
+}
+
+.replay-seek {
+  -webkit-appearance: none;
+  appearance: none;
+  display: block;
+  /* Stacks the slider over the late-tick markers, so the thumb covers a marker it sits on. */
+  position: relative;
+  width: 100%;
+  /* A fine rail within a generous hit strip. No native input margin: the slider and
+     its markers must share exactly the same origin and thumb travel. */
+  height: var(--seek-rail);
+  margin: 0;
+  padding: 6px 0;
+  /* Two layers, both clipped to the rail: the wave boundaries the component computes (`none` on
+     every replay without chapters), over the played / unplayed fill. The boundaries ride the
+     slider's own background rather than an element above it, so the thumb still paints over the
+     marks it passes and nothing new can intercept a seek gesture. */
+  background-image:
+    var(--seek-waves, none),
+    linear-gradient(
+      to right,
+      var(--color-secondary) 0%,
+      var(--color-secondary) var(--seek-progress, 0%),
+      var(--seek-empty, var(--color-border)) var(--seek-progress, 0%),
+      var(--seek-empty, var(--color-border)) 100%
+    );
+  background-clip: content-box;
+  border: none;
+  border-radius: calc(2 * var(--unscaled-px, 1px));
+  outline: none;
+  cursor: pointer;
+}
+
+/* Hover is an affordance, not a state: the empty track lifts and the thumb brightens while the
+   played portion holds --color-secondary. Swapping the fill to --color-primary would make a
+   transient pointer-over the loudest thing in a bar whose actual states — playhead, current
+   tick, Take Over, active Cursor — all live on secondary. */
+.replay-seek:hover,
+.replay-seek:active {
+  --seek-empty: var(--color-primary-structure);
+}
+
+.replay-seek::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: var(--seek-thumb);
+  height: 12px;
+  background: var(--hud-accent);
+  border: none;
+  border-radius: var(--unscaled-px, 1px);
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.replay-seek:hover::-webkit-slider-thumb {
+  background: var(--hud-value);
+}
+
+.replay-seek::-moz-range-thumb {
+  width: var(--seek-thumb);
+  height: 12px;
+  background: var(--hud-accent);
+  border: none;
+  border-radius: var(--unscaled-px, 1px);
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.replay-seek:hover::-moz-range-thumb {
+  background: var(--hud-value);
+}
+
+.replay-seek::-moz-range-track {
+  height: var(--seek-rail);
+  /* Transparent: Firefox paints the track over the input's own background, so an
+     opaque fill here hides the progress gradient the WebKit path shows. */
+  background: transparent;
+  border: none;
+  border-radius: calc(2 * var(--unscaled-px, 1px));
+}
+
+/* Late ticks: a pip above the rail where each one sits, in the warning color the capture notice
+   uses. Under the slider, so they never take a press, and above the rail rather than across it,
+   so the played fill cannot hide them. */
+.replay-late-marks {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.replay-late-mark {
+  position: absolute;
+  /* Where the thumb's center sits on this tick: it travels its own width short of each end. */
+  left: calc(var(--seek-thumb) / 2 + (100% - var(--seek-thumb)) * var(--at));
+  top: calc(50% - var(--seek-rail) / 2 - var(--late-mark-h) - 1px);
+  width: 2px;
+  height: var(--late-mark-h);
+  margin-left: -1px;
+  background: var(--color-warning);
+}
+
+/* Landmark waves: a thin mark BELOW the rail, in the bar's own label color. The lane keeps them
+   apart from the late-tick pips above, which are a warning and must never be read for a landmark;
+   the restart nub shares this lane and sits over them, being the one mark the player placed. Only
+   the landmarks get a mark: the rail's boundary cuts already show where every wave is. */
+.replay-wave-marks {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.replay-wave-mark {
+  position: absolute;
+  left: calc(var(--seek-thumb) / 2 + (100% - var(--seek-thumb)) * var(--at));
+  top: calc(50% + var(--seek-rail) / 2 + 1px);
+  width: var(--seek-cut);
+  height: var(--wave-mark-h);
+  margin-left: calc(var(--seek-cut) / -2);
+  background: var(--color-secondary);
+}
+
+/* The wave readout: the coarse coordinate, with a step either way and the list behind the label.
+   It sits before the tick, so the pair reads from the run's shape down to its single tick. */
+.replay-wave {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.replay-wave__step {
+  width: 20px;
+}
+
+.replay-wave__label {
+  box-sizing: border-box;
+  min-height: 20px;
+  padding: 2px 5px;
+  border: none;
+  border-radius: calc(2 * var(--unscaled-px, 1px));
+  background: transparent;
+  color: var(--hud-accent);
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 16px;
+  line-height: 16px;
+  text-shadow: 1px 1px 0 #000;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    background 0.15s ease;
+}
+
+.replay-wave__label:hover:not(:disabled) {
+  background: var(--surface-raise);
+  color: var(--hud-value);
+}
+
+/* Open, like More's toggle: the quiet brass surface, so the panel above reads as this control's. */
+.replay-wave__label--open,
+.replay-wave__label--open:hover:not(:disabled) {
+  background: var(--primary-dim);
+  color: var(--color-accent-text);
+}
+
+.replay-wave__label:disabled {
+  color: var(--hud-dim);
+  cursor: not-allowed;
+}
+
+/* A recording of one wave has nowhere to step or jump to, so the name is only a readout. */
+.replay-wave__label--static {
+  cursor: default;
+}
+
+.replay-wave__label--static:hover {
+  background: transparent;
+  color: var(--hud-accent);
+}
+
+/* The picker, over the bar where More's actions open. Opaque, like every surface that takes a
+   press, so its figures keep their LCD antialiasing (DESIGN.md, Opacity). */
+.replay-waves {
+  position: absolute;
+  left: var(--replay-inset);
+  bottom: calc(100% + 4px);
+  z-index: 1;
+  box-sizing: border-box;
+  /* A fieldset groups the cells for assistive tech; none of its own box is wanted. */
+  margin: 0;
+  min-inline-size: 0;
+  padding: 8px;
+  border: var(--unscaled-px, 1px) solid var(--color-border);
+  border-radius: calc(2 * var(--unscaled-px, 1px));
+  background: var(--color-bg-solid);
+}
+
+/* Ten tracks whatever the recording holds, so the panel is the same width for a practice run of
+   three waves as for all 68, and the line below always has its measure. */
+.replay-waves__grid {
+  --wave-cell: 24px;
+  display: grid;
+  grid-template-columns: repeat(10, var(--wave-cell));
+  gap: 2px;
+}
+
+.replay-waves__cell {
+  box-sizing: border-box;
+  height: var(--wave-cell);
+  padding: 0;
+  border: var(--unscaled-px, 1px) solid transparent;
+  border-radius: calc(2 * var(--unscaled-px, 1px));
+  background: transparent;
+  color: var(--color-text-muted);
+  font-family: "RuneScape Plain 11", sans-serif;
+  font-size: 16px;
+  line-height: 16px;
+  text-align: center;
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    background 0.15s ease;
+}
+
+/* A wave worth finding reads brighter, so the run's shape is visible without reading a word. */
+.replay-waves__cell--landmark {
+  color: var(--color-secondary);
+  font-family: "RuneScape Bold 12", sans-serif;
+}
+
+/* A wave the recording never shows finished (the run ended here) is drawn open. */
+.replay-waves__cell--open {
+  border-color: var(--color-border);
+}
+
+.replay-waves__cell:hover {
+  background: var(--color-surface-hover);
+  color: var(--color-text-body);
+}
+
+/* Where the playhead is. Sticky under hover, as every active state here is. */
+.replay-waves__cell--current,
+.replay-waves__cell--current:hover {
+  border-color: var(--color-primary);
+  background: var(--color-surface-inset);
+  color: var(--color-primary);
+}
+
+/* Two lines held open, so naming a different wave never moves the grid above it. */
+.replay-waves__detail {
+  min-height: 36px;
+  width: 0;
+  min-width: 100%;
+  margin: 6px 0 0;
+  color: var(--color-text-muted);
+  font-family: "RuneScape Plain 11", sans-serif;
+  font-size: 16px;
+  line-height: 18px;
+}
+
+/* The count beside the tick readout: an icon plus a figure, so it never relies on color. Its
+   tooltip names the worst ticks; the aria-label carries the same summary. */
+.replay-late {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  flex-shrink: 0;
+  color: var(--color-warning);
+  font-family: "RuneScape Plain 11", sans-serif;
+  font-size: 16px;
+  line-height: 14px;
+  text-shadow: 1px 1px 0 #000;
+  white-space: nowrap;
+  cursor: default;
+}
+
+.replay-late > svg {
+  flex-shrink: 0;
+}
+
+.replay-controls-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px var(--replay-inset) 8px;
+}
+
+.replay-bar--compact .replay-controls-row {
+  gap: 12px;
+  justify-content: space-between;
+}
+
+.replay-transport {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.replay-btn {
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  background: transparent;
+  color: var(--hud-label);
+  border: none;
+  border-radius: calc(2 * var(--unscaled-px, 1px));
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    background 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.replay-btn:hover:not(:disabled) {
+  color: var(--hud-value);
+  background: var(--surface-raise);
+}
+
+.replay-btn:active:not(:disabled) {
+  color: var(--hud-accent);
+  background: var(--color-surface-inset);
+}
+
+.replay-btn:disabled {
+  /* Dim by color, not opacity: opacity over this translucent panel dissolves the
+     icons into the scene, the same call the readouts make for their dim rows. */
+  color: var(--hud-dim);
+  cursor: not-allowed;
+}
+
+/* The anchor of the bar. A resting surface plus the larger box makes play/pause the heaviest
+   thing in the transport, as it should be. */
+.replay-btn--play {
+  width: 28px;
+  height: 28px;
+  color: var(--hud-accent);
+  background: var(--surface-rest);
+}
+
+.replay-btn--play:hover:not(:disabled) {
+  color: var(--hud-value);
+  background: var(--surface-raise);
+}
+
+.replay-bar--compact .replay-btn {
+  width: 24px;
+  height: 24px;
+}
+
+.replay-bar--compact .replay-btn--play {
+  width: 28px;
+  height: 28px;
+}
+
+.replay-tick {
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 16px;
+  line-height: 16px;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 1px 1px 0 #000;
+  flex-shrink: 0;
+}
+
+.replay-tick {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  box-sizing: border-box;
+}
+
+.replay-tick-label {
+  color: var(--hud-label);
+  font-family: "RuneScape Plain 11", sans-serif;
+}
+
+.replay-tick-input {
+  box-sizing: content-box;
+  min-width: 3ch;
+  min-height: 20px;
+  padding: 3px 6px;
+  border: var(--unscaled-px, 1px) solid var(--color-border);
+  border-radius: calc(2 * var(--unscaled-px, 1px));
+  background: var(--color-surface-inset);
+  color: var(--hud-value);
+  font:
+    16px / 20px "RuneScape Bold 12",
+    sans-serif;
+  text-align: center;
+  caret-color: var(--color-primary);
+}
+
+.replay-tick-input:hover:not(:disabled) {
+  border-color: var(--color-primary-structure);
+}
+
+.replay-tick-input:focus {
+  border-color: var(--color-primary);
+}
+.replay-tick-input[aria-invalid="true"] {
+  border-color: var(--color-error);
+}
+
+.replay-tick-input:disabled {
+  background: var(--color-bg-elevated);
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+}
+
+.replay-restart-mark {
+  position: absolute;
+  z-index: 1;
+  left: calc(var(--seek-thumb) / 2 + (100% - var(--seek-thumb)) * var(--at));
+  top: calc(50% + var(--seek-rail) / 2 + 1px);
+  width: 4px;
+  height: 4px;
+  margin-left: -2px;
+  background: var(--color-primary);
+  pointer-events: none;
+}
+
+.replay-tick-current {
+  /* tabular-nums cannot steady this font: RuneScape Bold 12 digits are not fixed-width.
+     The component reserves the total's digit count in ch (inline width) and the digits
+     right-align in that box, so the content-sized bar does not jitter as the tick grows. */
+  display: inline-block;
+  text-align: right;
+  color: var(--hud-accent);
+}
+
+.replay-tick-sep {
+  color: var(--hud-dim);
+  margin: 0 1px;
+}
+
+.replay-tick-total {
+  color: var(--color-text-muted);
+  font-family: "RuneScape Plain 11", sans-serif;
+}
+
+.replay-bar--compact .replay-tick {
+  /* A 14px line box for the compact readout: the figure stays on the
+     native grid and the row gives up leading instead. */
+  line-height: 14px;
+}
+
+.replay-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.replay-utilities {
+  order: 3;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 6px;
+  padding-left: 10px;
+  border-left: var(--unscaled-px, 1px) solid var(--color-border);
+}
+
+.replay-bar--compact .replay-actions {
+  /* Tighter than the row's 5px group gap. At 6px the actions spread wider than the gap that is
+     supposed to separate them from the tick readout, so four controls read as four islands
+     rather than one cluster. */
+  gap: 3px;
+}
+
+.replay-action {
+  box-sizing: border-box;
+  min-height: 28px;
+  padding: 4px 8px;
+  /* Plain 11: the control-label face the practice panel's action buttons use. */
+  font-family: "RuneScape Plain 11", sans-serif;
+  font-size: 16px;
+  line-height: 18px;
+  font-weight: normal;
+  border-radius: calc(2 * var(--unscaled-px, 1px));
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    background 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  border: none;
+  background: transparent;
+  color: var(--hud-label);
+  text-shadow: 1px 1px 0 #000;
+}
+
+.replay-action:hover {
+  color: var(--hud-value);
+  background: var(--surface-raise);
+}
+
+.replay-action:active {
+  color: var(--hud-accent);
+  background: var(--color-surface-inset);
+}
+
+.replay-action:disabled {
+  color: var(--hud-dim);
+  cursor: not-allowed;
+}
+
+.replay-action:disabled:hover {
+  background: transparent;
+  color: var(--hud-dim);
+}
+
+.replay-action--takeover {
+  color: var(--hud-accent);
+}
+
+.replay-action--takeover:hover {
+  color: var(--hud-value);
+}
+
+/* Take Over sits in a wrapper so a native title can explain why it is disabled: a disabled
+   button swallows pointer events, so the game tooltip never fires on it. The button opts out
+   of hit-testing while disabled so the hover falls through to the wrapper's title. */
+.replay-takeover-wrap {
+  display: inline-flex;
+  align-items: center;
+}
+
+.replay-takeover-wrap > button:disabled {
+  pointer-events: none;
+}
+
+.replay-cursor-toggle {
+  box-sizing: border-box;
+  min-height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border: none;
+  border-radius: calc(2 * var(--unscaled-px, 1px));
+  background: transparent;
+  color: var(--hud-label);
+  cursor: pointer;
+  font-family: "RuneScape Plain 11", sans-serif;
+  font-size: 16px;
+  line-height: 14px;
+  font-weight: normal;
+  text-shadow: 1px 1px 0 #000;
+  transition:
+    color 0.15s ease,
+    background 0.15s ease;
+  white-space: nowrap;
+}
+
+.replay-cursor-toggle:hover {
+  background: var(--surface-raise);
+  color: var(--hud-value);
+}
+
+/* On, not loud. The color carries the state; the fill only has to be legible under it, and
+   must stay below play/pause. Active survives hover by keeping its own color. */
+.replay-cursor-toggle--active {
+  background: var(--surface-rest);
+  color: var(--hud-accent);
+}
+
+.replay-cursor-toggle--active:hover {
+  background: var(--surface-raise);
+  color: var(--hud-accent);
+}
+
+.replay-cursor-toggle__label {
+  color: inherit;
+}
+
+.replay-cursor-toggle--compact {
+  /* border-box because there is no global reset: padding must not enlarge the toggle. */
+  box-sizing: border-box;
+  width: var(--action-box);
+  height: var(--action-box);
+  padding: 0;
+}
+
+/* Touch users can't reliably hit 18–24px buttons. */
+@media (pointer: coarse) {
+  .replay-bar--compact {
+    /* Give the compact variant a bit more room so the enlarged buttons fit. Still a floor:
+       the shell continues to size to its contents. */
+    min-width: 240px;
+  }
+
+  .replay-btn {
+    width: 32px;
+    height: 32px;
+  }
+
+  .replay-btn--play {
+    width: 36px;
+    height: 36px;
+  }
+
+  .replay-bar--compact .replay-btn {
+    width: 26px;
+    height: 26px;
+  }
+
+  .replay-bar--compact .replay-btn--play {
+    width: 30px;
+    height: 30px;
+  }
+
+  .replay-bar {
+    /* Above the 24px minimum target size, and reached by raising one value rather than four. */
+    --action-box: 28px;
+  }
+
+  .replay-action {
+    padding: 6px 10px;
+  }
+
+  .replay-seek-track {
+    /* Thicker hit strip makes scrubbing possible with a thumb. */
+    --seek-thumb: 14px;
+    --seek-rail: 4px;
+    --late-mark-h: 5px;
+    --wave-mark-h: 5px;
+    /* Two pixels of cut in a four-pixel rail: one would disappear at this weight. */
+    --seek-cut: 2px;
+  }
+
+  /* Denser than the bar's 44px row on purpose: a wave grid is a precision picker, like the game's
+     own inventory, and 68 cells at 44px could not be reached above the transport at all. */
+  .replay-waves__grid {
+    --wave-cell: 28px;
+  }
+
+  .replay-seek {
+    padding: 10px 0;
+  }
+
+  .replay-seek::-webkit-slider-thumb {
+    height: 14px;
+    border-radius: calc(2 * var(--unscaled-px, 1px));
+  }
+
+  .replay-seek::-moz-range-thumb {
+    height: 14px;
+    border-radius: calc(2 * var(--unscaled-px, 1px));
+  }
+}
+
+/* No background or box-shadow of its own: the bar's opaque fill is its surface, and it takes
+   the native 16px grid and the pixel shadow the bar's other text runs carry. */
+.replay-takeover-error {
+  box-sizing: border-box;
+  width: 0;
+  min-width: 100%;
+  padding: 0 var(--replay-inset) 8px;
+  color: var(--color-error);
+  font-family: "RuneScape Plain 11", sans-serif;
+  font-size: 16px;
+  line-height: 16px;
+  text-shadow: 1px 1px 0 #000;
+}
+
+.replay-capture-notice {
+  box-sizing: border-box;
+  width: 0;
+  min-width: 100%;
+  padding: 5px var(--replay-inset) 0;
+  color: var(--color-warning);
+  font-family: "RuneScape Plain 11", sans-serif;
+  font-size: 16px;
+  line-height: 16px;
+  text-shadow: 1px 1px 0 #000;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.replay-more-toggle {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 2px;
+  background: transparent;
+  color: var(--hud-label);
+  cursor: pointer;
+}
+
+.replay-more-toggle:hover {
+  background: var(--color-surface-hover);
+  color: var(--hud-value);
+}
+.replay-more-toggle--open,
+.replay-more-toggle--open:hover {
+  background: var(--primary-dim);
+  color: var(--color-accent-text);
+}
+
+.replay-actions--more {
+  position: absolute;
+  left: 0;
+  bottom: calc(100% + 4px);
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: none;
+  padding: 8px;
+  margin: 0;
+  border: var(--unscaled-px, 1px) solid var(--color-border);
+  border-radius: 2px;
+  background: var(--color-bg-solid);
+}
+
+.replay-actions--more .replay-action,
+.replay-actions--more .replay-cursor-toggle {
+  width: 100%;
+  min-height: 28px;
+}
+.replay-actions--more .replay-utilities {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 4px 0 0;
+  padding: 4px 0 0;
+  border: 0;
+  border-top: var(--unscaled-px, 1px) solid var(--color-border);
+}
+.replay-actions--more :is(.replay-practice-wrap, .replay-takeover-wrap) {
+  display: flex;
+  min-width: 0;
+}
+.replay-actions--more .replay-more-note {
+  grid-column: 1 / -1;
+  min-width: 0;
+  margin: 0;
+  color: var(--color-text-muted);
+  font:
+    16px / 18px "RuneScape Plain 11",
+    sans-serif;
+}
+
+.replay-practice-wrap {
+  display: inline-flex;
+  align-items: center;
+}
+.replay-practice-wrap > button:disabled {
+  pointer-events: none;
+}
+
+@media (pointer: coarse) {
+  .replay-tick-input {
+    min-height: 28px;
+  }
+  .replay-more-toggle {
+    width: 32px;
+    height: 32px;
+  }
+  .replay-actions--more .replay-action,
+  .replay-actions--more .replay-cursor-toggle {
+    min-height: 40px;
+  }
+}
+
+/* The playhead is one quiet readout. Leaving playback is a separate, equally weighted pair. */
+.replay-action--takeover,
+.replay-action--practice {
+  min-height: 28px;
+  padding: 4px 8px;
+  border: var(--unscaled-px, 1px) solid var(--color-border);
+  background: var(--color-bg-elevated);
+  color: var(--color-secondary);
+  line-height: 18px;
+  font-family: "RuneScape Bold 12", sans-serif;
+}
+
+.replay-action--takeover:hover:not(:disabled),
+.replay-action--practice:hover:not(:disabled) {
+  border-color: var(--color-primary-structure);
+  background: var(--color-surface-hover);
+  color: var(--color-accent-text);
+}
+
+.replay-action--takeover:active:not(:disabled),
+.replay-action--practice:active:not(:disabled) {
+  background: var(--color-surface-inset);
+  color: var(--color-heading);
+}
+
+.replay-action--takeover:disabled,
+.replay-action--practice:disabled {
+  background: var(--color-bg-solid);
+  color: var(--color-text-muted);
+}
+
+.replay-actions--more .replay-takeover-wrap {
+  order: 1;
+}
+.replay-actions--more .replay-practice-wrap {
+  order: 2;
+}
+.replay-actions--more .replay-more-note {
+  order: 6;
+}
+.replay-actions--more .replay-action--takeover,
+.replay-actions--more .replay-action--practice {
+  flex-direction: column;
+  gap: 2px;
+  min-height: 52px;
+  white-space: normal;
+}
+
+.replay-action__description {
+  display: none;
+  color: var(--color-text-muted);
+  font:
+    16px / 18px "RuneScape Plain 11",
+    sans-serif;
+}
+
+.replay-actions--more .replay-action__description {
+  display: block;
+}
+
+@media (pointer: coarse) {
+  .replay-bar :is(.replay-btn, .replay-more-toggle) {
+    min-width: 44px;
+    min-height: 44px;
+  }
+  .replay-bar :is(.replay-action, .replay-cursor-toggle, .replay-wave__label) {
+    min-width: 44px;
+    min-height: 44px;
+  }
+  .replay-tick-input {
+    min-width: 30px;
+    min-height: 36px;
+  }
+  .replay-seek {
+    padding: 20px 0;
+  }
+  .replay-action__description {
+    display: block;
+  }
+  .replay-action--takeover,
+  .replay-action--practice {
+    flex-direction: column;
+    gap: 2px;
+  }
+}
+
+.replay-action:disabled .replay-action__description {
+  color: var(--color-text-dim);
+}
+
+.replay-action__description.replay-action__description--warning {
+  color: var(--color-warning);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .replay-bar {
+    animation: none;
+  }
+}

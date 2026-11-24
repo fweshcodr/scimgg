@@ -1,0 +1,49 @@
+/* The shared brief mark on a setting or control (settingsReveal.ts): a wash that reaches a few pixels past
+   the target so its text is not pressed against the mark's edge, then fades. A wash rather than an
+   outline because a Settings section clips its content at its sides (CollapsibleSection's
+   overflow), which would cut an outline's sides off but only trims a wash.
+
+   LCD text: the wash is a light translucent fill over the drawer's already opaque scroller, and the
+   color transition creates no compositing layer. The target becomes a stacking context only so
+   the wash can sit under its text and over its own state fill (an expanded plugin row's); that
+   neither promotes a layer nor moves anything. `::after`, because SettingRow's modified bar is its
+   `::before`. */
+:root [data-reveal-highlight] {
+  position: relative;
+  z-index: 0;
+}
+
+:root [data-reveal-highlight]::after {
+  content: "";
+  position: absolute;
+  inset: -4px -6px;
+  z-index: -1;
+  border-radius: 2px;
+  pointer-events: none;
+  background-color: color-mix(in srgb, var(--color-primary) 20%, transparent);
+  transition: background-color 0.7s ease;
+}
+
+:root [data-reveal-highlight="fading"]::after {
+  background-color: transparent;
+}
+
+/* In the game panel the mark sits on the client's own pixel art, where the sidebars' quiet wash
+   all but disappears into the stone texture. A stronger wash plus a 1px ring in the accent makes
+   the landing spot unmistakable; the panel's text is not on LCD antialiasing to protect (it sits
+   on sprite art), and the ring is an inset shadow on the mark, not on any text's layer. */
+:root [data-search-id^="gamepanel."][data-reveal-highlight]::after,
+:root [data-search-id^="gamepanel."] [data-reveal-highlight]::after {
+  inset: -2px;
+  background-color: color-mix(in srgb, var(--color-primary) 34%, transparent);
+  box-shadow: inset 0 0 0 1px var(--color-primary);
+  transition:
+    background-color 0.7s ease,
+    box-shadow 0.7s ease;
+}
+
+:root [data-search-id^="gamepanel."][data-reveal-highlight="fading"]::after,
+:root [data-search-id^="gamepanel."] [data-reveal-highlight="fading"]::after {
+  background-color: transparent;
+  box-shadow: inset 0 0 0 1px transparent;
+}

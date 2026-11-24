@@ -1,0 +1,591 @@
+/* Timings, easings, spacing and breakpoints are deliberately identical to the
+   victory crest (VictoryModal.css) — keep them in lockstep.
+
+   Layout contract, every viewport: the crest and the actions never scroll away.
+   The content column is capped at the overlay's height and only the damage panel
+   may shrink; when it does, its rows scroll inside their own region. Short
+   very short landscape screens (phones on their side) split into crest + actions on the
+   left and the panel on the right. */
+
+.death-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100000;
+  display: flex;
+  box-sizing: border-box;
+  /* Last-resort scroll only: the column below caps itself at this box's height,
+     so this engages solely when the crest and actions alone cannot fit. Kept so
+     nothing is ever clipped out of reach by the parent stage (overflow: hidden). */
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  /* A 16px gutter plus the open sidebars (App's --ui-inset-*), so the crest
+     re-centers within the *visible* viewport when a panel opens. */
+  padding-inline: calc(16px + var(--ui-inset-left, 0px)) calc(16px + var(--ui-inset-right, 0px));
+  padding-block: max(clamp(20px, 5vh, 56px), var(--safe-top, 0px)) max(clamp(20px, 5vh, 56px), var(--safe-bottom, 0px));
+  /* Match the sidebar push timing (Grid/stage use 0.3s) so the crest
+     slides in lockstep with the canvas when a panel toggles mid-death. */
+  transition: padding 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  /* Deliberately TRANSLUCENT so the dimmed arena still reads behind the crest.
+     That costs the free-floating crest text (eyebrow/hero/reason/buttons) its
+     subpixel AA — an accepted tradeoff. The damage panel below opts back in by
+     painting its own opaque fill. */
+  background:
+    radial-gradient(
+      ellipse 60% 54% at 50% 42%,
+      transparent 20%,
+      color-mix(in srgb, var(--color-surface-inset) 36%, transparent) 58%,
+      color-mix(in srgb, var(--color-surface-inset) 62%, transparent) 100%
+    ),
+    color-mix(in srgb, var(--color-surface-inset) 92%, transparent);
+  /* Resting opacity 1 + backwards fill: a `forwards` opacity animation keeps
+     this translucent vignette overlay on a composited layer even after it
+     settles, and a composited NON-opaque layer forces every descendant's text
+     (the whole crest) into grayscale AA. `backwards` keeps it hidden pre-roll
+     then settles into the resting layer (no lingering compositing). */
+  opacity: 1;
+  animation: death-overlay-in 0.8s cubic-bezier(0.4, 0, 0.2, 1) backwards;
+}
+
+@keyframes death-overlay-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.death-modal-content-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 560px;
+  /* The cap that keeps the actions on screen: the column never outgrows the
+     overlay, so the one shrinkable child (the damage panel) gives up height
+     instead of pushing the buttons below the fold. */
+  max-height: 100%;
+  min-height: 0;
+  /* Side notches in landscape; stacks onto the overlay's 16px gutter + sidebar insets. */
+  padding-inline: var(--safe-left, 0px) var(--safe-right, 0px);
+  text-align: center;
+  /* auto margins center on both axes AND stay scroll-safe: when the crest
+     is taller than the arena the top stays reachable (unlike
+     justify-content: center, which clips it). */
+  margin: auto;
+  flex: 0 0 auto;
+}
+
+.death-modal-content-wrapper > * {
+  flex-shrink: 0;
+}
+
+.death-modal-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 16px;
+  line-height: 20px;
+  letter-spacing: 5px;
+  /* Center the tracked run: letter-spacing trails the last glyph. */
+  padding-left: 5px;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  text-shadow: var(--crest-shadow-sm);
+  margin: 0 0 12px;
+  opacity: 1;
+  animation: death-fade-rise 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.1s backwards;
+}
+
+.death-modal-eyebrow::before,
+.death-modal-eyebrow::after {
+  content: "";
+  width: 34px;
+  height: 1px;
+  opacity: 0.6;
+}
+
+.death-modal-eyebrow::before {
+  background: linear-gradient(90deg, transparent, var(--color-text-muted));
+}
+
+.death-modal-eyebrow::after {
+  background: linear-gradient(90deg, var(--color-text-muted), transparent);
+}
+
+.death-modal-heading {
+  font-family: "RuneScape Bold 12", sans-serif;
+  /* 48px = 3x the face's native 16px em (see .death-modal-table): the only
+     sizes where a glyph's stems all rasterize the same width. */
+  font-size: 48px;
+  font-weight: normal;
+  line-height: 1;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--color-error);
+  margin: 0 0 12px 0;
+  /* The crest brings its own dimmed overlay, so the hard offset carries the
+     depth alone — no rim (that is for the arena-floating crests).
+
+     Ink tinted into the hero's own red: at 3x scale the shared near-black
+     under mid-tone #d46a60 reads as a chunky slab beside the same offset under
+     the brighter gold crests. The offset stays 3px — it tracks the glyph scale.
+
+     --crest-shadow-lg MUST be redeclared here, not just --crest-ink: a var()
+     inside a custom property is substituted where that property is DECLARED,
+     so the :root copy resolves against the root ink and descendants inherit it
+     already-substituted. Overriding the ink alone computes to rgb(13, 8, 3). */
+  --crest-ink: #1c0806;
+  --crest-shadow-lg: 3px 3px 0 var(--crest-ink);
+  text-shadow: var(--crest-shadow-lg);
+  opacity: 1;
+  animation: death-hero-in 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.2s backwards;
+}
+
+.death-modal-emblem {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  opacity: 0;
+  animation: death-emblem-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.35s forwards;
+}
+
+.death-modal-emblem-line {
+  width: clamp(48px, 9vw, 72px);
+  height: 1px;
+  transform: scaleX(0);
+  animation: death-line-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.35s forwards;
+}
+
+.death-modal-emblem-line--l {
+  background: linear-gradient(90deg, transparent, var(--color-error));
+  transform-origin: right center;
+}
+
+.death-modal-emblem-line--r {
+  background: linear-gradient(90deg, var(--color-error), transparent);
+  transform-origin: left center;
+}
+
+/* Rotated CSS square, NOT a glyph: geometrically centered on the 1px lines. */
+.death-modal-emblem-diamond {
+  width: 6px;
+  height: 6px;
+  flex: 0 0 auto;
+  background: var(--color-error);
+  transform: rotate(45deg) scale(0);
+  animation: death-diamond-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.35s forwards;
+}
+
+.death-modal-reason {
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 16px;
+  line-height: 20px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--color-secondary);
+  text-shadow: var(--crest-shadow-sm);
+  margin: 0 0 24px 0;
+  opacity: 1;
+  animation: death-fade-rise 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.45s backwards;
+}
+
+.death-modal-damage-section {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 400px;
+  /* The one child allowed to give up height (see .death-modal-content-wrapper). */
+  flex: 0 1 auto;
+  min-height: 0;
+  /* Opaque fill + `contain: paint` is what buys this panel subpixel text AA while the
+     overlay behind it stays translucent. The overlay is a scroller, and a translucent
+     scrolling layer vetoes LCD text for its WHOLE subtree — an opaque child cannot opt
+     back in on its own. `contain: paint` promotes this panel to its own layer, which IS
+     provably opaque, so its text is judged against that instead. --color-surface is the
+     opaque twin of --color-surface-translucent, so the panel reads the same.
+     The paint clip also bounds the rows scroller below when the panel shrinks. */
+  background: var(--color-surface);
+  contain: paint;
+  border: 1px solid var(--color-border);
+  border-radius: var(--modal-radius);
+  padding: 12px 14px 12px;
+  margin-bottom: 20px;
+  /* No box-shadow: an outer shadow on the element painting the background behind
+     text is an LCD-text veto regardless of color. The border above carries the edge. */
+  /* backwards fill keeps the panel hidden during its entrance delay (via the
+     `from` keyframe), then settles into the resting state — no lingering
+     composited transform from a fill-forwards identity matrix. */
+  opacity: 1;
+  animation: death-fade-rise 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.55s backwards;
+}
+
+.death-modal-damage-header {
+  flex: 0 0 auto;
+  text-align: left;
+  font-family: "RuneScape Plain 11", sans-serif;
+  font-size: 16px;
+  font-weight: normal;
+  line-height: 20px;
+  color: var(--color-text-muted);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin: 0 0 6px 0;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.death-modal-table {
+  display: flex;
+  flex-direction: column;
+  flex: 0 1 auto;
+  min-height: 0;
+  /* Readable body face for the record; column headings and ticks use the smaller
+     Plain 11 face below. Both remain on the native 16px pixel grid. */
+  font-family: "RuneScape Plain 12", sans-serif;
+  font-size: 16px;
+  line-height: 20px;
+}
+
+.death-modal-table-headers {
+  display: grid;
+  flex: 0 0 auto;
+  grid-template-columns: 28px 1fr 36px 52px;
+  /* Keeps "TICK" off "SOURCE" where the narrow columns below are a glyph short. */
+  column-gap: 4px;
+  align-items: center;
+  text-align: left;
+  padding: 0 0 3px 6px;
+  font-family: "RuneScape Plain 11", sans-serif;
+  font-size: 16px;
+  color: var(--color-text-muted);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+.death-modal-table-headers span:nth-child(3),
+.death-modal-table-headers span:nth-child(4) {
+  text-align: right;
+}
+
+/* Rows scroll here, never the page, when a short screen cannot fit all ten.
+   A scroller gets its own compositing layer and an ancestor's fill does not
+   count towards it, so this opaque background is load-bearing for LCD text. */
+.death-modal-table-body {
+  flex: 0 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: var(--color-surface);
+}
+
+.death-modal-row {
+  display: grid;
+  grid-template-columns: 28px 1fr 36px 52px;
+  column-gap: 4px;
+  align-items: baseline;
+  text-align: left;
+  padding: 4px 0 4px 6px;
+}
+
+.death-modal-row:not(:last-child) {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.death-modal-row.is-wrong {
+  background: color-mix(in srgb, var(--color-error) 8%, transparent);
+}
+
+.death-modal-tick {
+  color: var(--color-text-muted);
+  font-family: "RuneScape Plain 11", sans-serif;
+  font-size: 16px; /* native pixel grid — crisp (was 12px, antialiased) */
+  font-variant-numeric: tabular-nums;
+}
+
+.death-modal-source {
+  color: var(--color-text-body);
+}
+
+.death-modal-attack-style {
+  color: var(--color-text-muted);
+  font-family: "RuneScape Plain 11", sans-serif;
+  margin-left: 4px;
+  font-size: 16px;
+  text-shadow: none;
+}
+
+.death-modal-amount {
+  text-align: right;
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-variant-numeric: tabular-nums;
+}
+
+.death-modal-amount.is-damage {
+  color: var(--color-error);
+}
+.death-modal-amount.is-zero {
+  color: var(--color-text-muted);
+}
+
+.death-modal-prayer {
+  text-align: right;
+  color: var(--color-secondary);
+}
+
+.death-modal-prayer.is-wrong {
+  color: var(--color-error);
+}
+.death-modal-prayer.is-none {
+  color: var(--color-text-muted);
+}
+
+.death-modal-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  max-width: 400px;
+  /* Opaque layers live on the individual controls, leaving the crest unboxed. */
+  opacity: 1;
+  animation: outcome-actions-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.65s backwards;
+}
+
+@keyframes death-fade-rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes death-hero-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes death-emblem-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes death-line-in {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes death-diamond-in {
+  from {
+    transform: rotate(45deg) scale(0);
+  }
+  to {
+    transform: rotate(45deg) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .death-modal-overlay {
+    animation-duration: 0.01ms;
+    opacity: 1;
+  }
+
+  .death-modal-eyebrow,
+  .death-modal-heading,
+  .death-modal-reason,
+  .death-modal-damage-section,
+  .death-modal-actions {
+    transform: none;
+    animation: death-reduced-fade 0.4s ease-out forwards;
+  }
+
+  .death-modal-emblem {
+    animation: death-reduced-fade 0.4s ease-out forwards;
+  }
+
+  .death-modal-emblem-line {
+    transform: scaleX(1);
+    animation: none;
+  }
+
+  .death-modal-emblem-diamond {
+    transform: rotate(45deg) scale(1);
+    animation: none;
+  }
+
+  @keyframes death-reduced-fade {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+}
+
+/* ---- Narrow: phones and slim windows ------------------------------------- */
+@media (max-width: 720px) {
+  .death-modal-content-wrapper {
+    max-width: 520px;
+  }
+
+  /* Step the hero down a whole multiple (3x → 2x of the 16px em) with its
+     offset; a clamp between them puts the stems back off the pixel grid. */
+  .death-modal-heading {
+    font-size: 32px;
+    letter-spacing: 2px;
+    text-shadow: var(--crest-shadow-md);
+  }
+
+  .death-modal-eyebrow {
+    letter-spacing: 4px;
+    padding-left: 4px;
+  }
+
+  .death-modal-reason {
+    margin-bottom: 16px;
+  }
+
+  .death-modal-damage-section {
+    padding: 10px 12px 10px;
+    margin-bottom: 16px;
+  }
+
+  .death-modal-table-headers,
+  .death-modal-row {
+    grid-template-columns: 24px 1fr 32px 46px;
+  }
+}
+
+/* ---- Short: landscape phones, small tablets, squat windows --------------- */
+@media (max-height: 560px) {
+  .death-modal-overlay {
+    padding-block: max(12px, var(--safe-top, 0px)) max(12px, var(--safe-bottom, 0px));
+  }
+
+  .death-modal-eyebrow,
+  .death-modal-heading,
+  .death-modal-emblem {
+    margin-bottom: 8px;
+  }
+
+  .death-modal-heading {
+    font-size: 32px;
+    letter-spacing: 2px;
+    text-shadow: var(--crest-shadow-md);
+  }
+
+  .death-modal-reason,
+  .death-modal-damage-section {
+    margin-bottom: 16px;
+  }
+
+  .death-modal-damage-section {
+    padding-block: 8px;
+  }
+
+  .death-modal-damage-header {
+    margin-bottom: 4px;
+    padding-bottom: 4px;
+  }
+
+  .death-modal-row {
+    padding-block: 3px;
+  }
+
+  .death-modal-actions {
+    gap: 8px;
+  }
+}
+
+/* ---- Small portrait phones ------------------------------------------------
+   The eyebrow restates the heading ("Defeated" / "YOU DIED"); on a short
+   portrait screen its row goes to the damage panel instead. */
+@media (max-width: 600px) and (max-height: 720px) {
+  .death-modal-eyebrow {
+    display: none;
+  }
+}
+
+/* Portrait phones: tighten the vertical gutter to the safe area so the panel
+   keeps the height for all ten rows. */
+@media (max-width: 600px) and (orientation: portrait) {
+  .death-modal-overlay {
+    padding-block: max(16px, var(--safe-top, 0px)) max(16px, var(--safe-bottom, 0px));
+  }
+}
+
+/* ---- Landscape phones: side by side ---------------------------------------
+   Too short to stack a crest, ten rows and the actions; plenty wide. The crest
+   and actions take the left column, centered; the panel takes the right and
+   scrolls its rows if it must. Grid areas keep the DOM order (and so the Tab
+   order and the screen-reader reading order) unchanged. With no hits to list
+   there is no second column, so the plain stack above stays. */
+@media (max-height: 440px) and (min-width: 560px) and (orientation: landscape) {
+  .death-modal-content-wrapper:has(> .death-modal-damage-section) {
+    display: grid;
+    max-width: 760px;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+    grid-template-rows: minmax(0, 1fr) repeat(6, auto) minmax(0, 1fr);
+    grid-template-areas:
+      ". panel"
+      "eyebrow panel"
+      "heading panel"
+      "emblem panel"
+      "reason panel"
+      "actions panel"
+      "lobby panel"
+      ". panel";
+    column-gap: 24px;
+    justify-items: center;
+  }
+
+  .death-modal-eyebrow {
+    grid-area: eyebrow;
+  }
+  .death-modal-heading {
+    grid-area: heading;
+  }
+  .death-modal-emblem {
+    grid-area: emblem;
+  }
+  .death-modal-reason {
+    grid-area: reason;
+  }
+  .death-modal-actions {
+    grid-area: actions;
+  }
+
+  .death-modal-damage-section {
+    grid-area: panel;
+    align-self: center;
+    max-width: 100%;
+    max-height: 100%;
+    margin-bottom: 0;
+  }
+}

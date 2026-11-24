@@ -1,0 +1,375 @@
+.keybindings-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-text-body);
+  font:
+    16px / 18px "RuneScape Bold 12",
+    sans-serif;
+  text-shadow: 1px 1px 0 var(--color-surface-inset);
+}
+
+.keybindings-categories {
+  display: flex;
+  flex-shrink: 0;
+  gap: 4px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.keybindings-categories > button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+  padding: 2px 0;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: var(--color-secondary);
+  font:
+    14px / 16px "RuneScape Bold 12",
+    sans-serif;
+  text-shadow: inherit;
+  cursor: pointer;
+}
+
+.keybindings-categories > button:hover {
+  color: var(--color-text-body);
+}
+
+.keybindings-categories > button[aria-selected="true"],
+.keybindings-categories > button[aria-selected="true"]:hover {
+  border-bottom-color: var(--color-primary);
+  color: var(--color-accent-text);
+}
+
+.keybindings-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  overflow-x: hidden;
+  margin: 4px -4px 0 0;
+  padding-right: 4px;
+  background: transparent;
+}
+
+.keybindings-scroll section,
+.keybindings-scroll details {
+  outline: none;
+}
+
+.keybindings-scroll section + section,
+.keybindings-scroll details + section,
+.keybindings-scroll details {
+  margin-top: 8px;
+}
+
+.keybindings-group-divider {
+  margin: 0 0 6px;
+  border: 0;
+  border-top: 1px solid var(--color-border);
+}
+
+.keybindings-row {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  min-height: 22px;
+  padding: 1px 0;
+  color: var(--color-secondary);
+}
+
+/* Rows fill their scroller: keep the shared reveal ring inside its clipping edges. */
+:root .keybindings-content .keybindings-row[data-reveal-highlight]::after {
+  inset: 0;
+}
+
+.keybindings-row > canvas {
+  flex-shrink: 0;
+}
+
+.keybindings-label {
+  flex: 1;
+  min-width: 0;
+}
+
+.keybindings-label--hint {
+  --info-hint-reach: 10px;
+  display: block;
+}
+
+.keybindings-hint-word {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+.keybindings-hint-word > .info-hint {
+  flex-shrink: 0;
+}
+
+.keybindings-value {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: max-content;
+  min-width: 44px;
+  max-width: 100%;
+  height: 20px;
+  padding: 0 6px;
+  border: 1px solid var(--color-border);
+  border-radius: 0;
+  background: color-mix(in srgb, var(--color-surface-inset) 20%, transparent);
+  color: var(--color-text-body);
+  text-shadow: inherit;
+  cursor: pointer;
+}
+
+/* An Unbound field is wider: keep its left edge above the hint's expanded tap target. */
+.keybindings-label--hint + .keybindings-value {
+  position: relative;
+}
+
+.keybindings-value kbd {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font:
+    16px / 18px "RuneScape Bold 12",
+    sans-serif;
+}
+
+.keybindings-value:hover {
+  border-color: var(--color-primary-structure);
+  background: var(--color-surface-highlight);
+}
+
+.keybindings-value.is-recording,
+.keybindings-value.is-recording:hover {
+  border-color: var(--color-primary);
+  color: var(--color-accent-text);
+  background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+}
+
+.keybindings-value.is-unbound:not(.is-recording) {
+  color: var(--color-secondary);
+}
+
+.keybindings-row--plugin {
+  flex-wrap: wrap;
+  gap: 2px 6px;
+  padding: 2px 0;
+}
+
+.keybindings-row--plugin .keybindings-label {
+  flex: 1 0 auto;
+}
+
+.keybindings-row--plugin .keybindings-value {
+  margin-left: auto;
+}
+
+.keybindings-row-status {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  color: var(--color-warning);
+  font:
+    14px / 18px "RuneScape Plain 12",
+    sans-serif;
+}
+
+.keybindings-help {
+  margin: 0;
+  color: var(--color-secondary);
+  font:
+    14px / 16px "RuneScape Plain 12",
+    sans-serif;
+}
+
+.keybindings-plugin-group > .keybindings-help {
+  margin-bottom: 4px;
+  font:
+    16px / 18px "RuneScape Plain 11",
+    sans-serif;
+}
+
+.keybindings-scroll summary {
+  padding: 4px 0;
+  color: var(--color-secondary);
+  font:
+    14px / 18px "RuneScape Bold 12",
+    sans-serif;
+  cursor: pointer;
+}
+
+.keybindings-scroll summary:hover {
+  color: var(--color-text-body);
+}
+
+.keybindings-chevron {
+  color: var(--color-text-muted);
+}
+
+.keybindings-scroll summary:hover .keybindings-chevron {
+  color: var(--color-secondary);
+}
+
+.keybindings-scroll details[open] > summary .keybindings-chevron,
+.keybindings-scroll details[open] > summary:hover .keybindings-chevron {
+  color: var(--color-primary);
+}
+
+.keybindings-footer {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  gap: 6px;
+  height: 40px;
+  padding-top: 2px;
+  border-top: 1px solid var(--color-border);
+}
+
+.keybindings-footer.is-editing {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+}
+
+.keybindings-footer.has-unbound {
+  border-top-color: var(--color-primary-structure);
+}
+
+.keybindings-feedback {
+  flex: 1;
+  min-height: 0;
+  max-height: 100%;
+  overflow: auto;
+  background: transparent;
+  color: var(--color-secondary);
+  font:
+    14px / 16px "RuneScape Plain 12",
+    sans-serif;
+}
+
+.keybindings-feedback.is-warning {
+  color: var(--color-warning);
+}
+
+.keybindings-notice-label {
+  display: block;
+  color: var(--color-secondary);
+}
+
+.keybindings-notice-actions {
+  display: block;
+  color: var(--color-text-body);
+  font:
+    16px / 18px "RuneScape Plain 11",
+    sans-serif;
+}
+
+.keybindings-edit-tools {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  gap: 8px;
+  height: 20px;
+}
+
+.keybindings-cancel {
+  margin-left: auto;
+}
+
+.keybindings-text-button {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-secondary);
+  font:
+    14px / 18px "RuneScape Bold 12",
+    sans-serif;
+  text-shadow: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+
+.keybindings-text-button:hover {
+  color: var(--color-text-body);
+}
+
+.keybindings-content button:disabled {
+  color: var(--color-text-muted);
+  cursor: default;
+}
+
+.keybindings-content button:disabled:hover {
+  background: transparent;
+}
+
+.keybindings-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+
+.keybindings-content--feature {
+  flex: none;
+  gap: 6px;
+  width: 100%;
+}
+
+.keybindings-content--feature .keybindings-scroll {
+  flex: none;
+  overflow: visible;
+  margin: 0;
+  padding: 0;
+}
+
+.keybindings-content--feature .keybindings-footer {
+  height: auto;
+  min-height: 40px;
+}
+
+.keybindings-content--feature .keybindings-feedback {
+  overflow: visible;
+  max-height: none;
+}
+
+/* Embedded variant for the configurer rail: the host row supplies the attachment, so the footer
+   rule goes and statuses step to caption size. Warning and unbound notices keep their own
+   colors — compact must never recolor a real state. */
+.keybindings-content--compact .keybindings-footer {
+  border-top: none;
+  min-height: 0;
+  padding-top: 0;
+}
+
+.keybindings-content--compact .keybindings-feedback {
+  color: var(--color-text-muted);
+  font:
+    12px / 16px "RuneScape Plain 12",
+    sans-serif;
+}
+
+/* Restored at (0,3,0): the compact feedback rule above otherwise ties and beats .is-warning on
+   source order, muting the one line that must stay loud. */
+.keybindings-content--compact .keybindings-feedback.is-warning {
+  color: var(--color-warning);
+}

@@ -1,0 +1,2384 @@
+capture inferno-waves-1-68-packet-data.txt stream 1 ticks 470-1023
+life pillar#34279#0 459 9659
+life pillar#34277#0 459 9659
+life pillar#34278#0 459 9659
+life bat#34538#0 480 508
+life nibbler#34539#0 480 489
+life nibbler#34540#0 480 499
+life nibbler#34541#0 480 489
+life nibbler#34949#0 514 524
+life nibbler#34950#0 514 533
+life nibbler#34951#0 514 524
+life bat#34948#0 514 541
+life bat#34947#0 514 545
+life nibbler#35396#0 551 562
+life nibbler#35397#0 551 562
+life nibbler#35398#0 551 562
+life nibbler#35399#0 551 570
+life nibbler#35400#0 551 567
+life nibbler#35401#0 551 573
+life nibbler#35694#0 579 600
+life nibbler#35695#0 579 596
+life nibbler#35696#0 579 589
+life blob#35693#0 579 609
+life blob_melee#35956#0 609 631
+life blob_range#35955#0 609 625
+life blob_mage#35957#0 609 625
+life bat#36286#0 637 656
+life nibbler#36287#0 637 646
+life nibbler#36288#0 637 646
+life nibbler#36289#0 637 646
+life blob#36285#0 637 670
+life blob_range#36741#0 670 679
+life blob_melee#36742#0 670 696
+life blob_mage#36743#0 670 679
+life bat#37155#0 702 758
+life nibbler#37156#0 702 711
+life nibbler#37157#0 702 711
+life nibbler#37158#0 702 743
+life bat#37154#0 702 731
+life blob#37153#0 702 774
+life blob_range#37899#0 774 784
+life blob_melee#37900#0 774 792
+life blob_mage#37901#0 774 784
+life nibbler#38132#0 798 831
+life nibbler#38133#0 798 817
+life nibbler#38134#0 798 822
+life blob#38131#0 798 887
+life blob#38130#0 798 849
+life blob_range#38753#0 849 856
+life blob_melee#38754#0 849 868
+life blob_mage#38755#0 849 856
+life blob_range#39110#0 887 903
+life blob_melee#39111#0 887 897
+life blob_mage#39112#0 887 903
+life nibbler#39357#0 909 917
+life nibbler#39358#0 909 923
+life nibbler#39359#0 909 917
+life nibbler#39360#0 909 917
+life nibbler#39361#0 909 923
+life nibbler#39362#0 909 917
+life nibbler#39536#0 929 945
+life nibbler#39537#0 929 948
+life nibbler#39538#0 929 937
+life meleer#39535#0 929 965
+life nibbler#39969#0 971 979
+life nibbler#39970#0 971 979
+life nibbler#39971#0 971 983
+life bat#39968#0 971 994
+life meleer#39967#0 971 1023
+start 469
+  player 30,32
+  npc pillar#34279#0 34,39
+  npc pillar#34277#0 17,37
+  npc pillar#34278#0 27,23
+t470
+  run player 30,32 -> 32,33 @300
+t471
+  run player 32,33 -> 34,35 @306
+t472
+  run player 34,35 -> 36,37 @310
+t473
+  run player 36,37 -> 38,39 @314
+t475
+  run player 38,39 -> 36,38 @322
+t476
+  run player 36,38 -> 38,39 @331
+t480
+  wave 1 @352
+  run player 38,39 -> 36,37 @354
+  add bat#34538#0 39,41 @357
+  add nibbler#34539#0 27,34 @358
+  add nibbler#34540#0 25,34 @359
+  add nibbler#34541#0 27,34 @360
+t481
+  run player 36,37 -> 34,37 @365
+  seq bat#34538#0 7578 @369
+  walk nibbler#34539#0 27,34 -> 28,35 @371
+  walk nibbler#34540#0 25,34 -> 26,35 @373
+  walk nibbler#34541#0 27,34 -> 28,35 @375
+  proj 1382 39,41 -> player 36,37 [10,64,16,128,200,124] @377
+t482
+  run player 34,37 -> 32,37 @384
+  walk bat#34538#0 39,41 -> 38,40 @386
+  walk nibbler#34539#0 28,35 -> 29,36 @388
+  walk nibbler#34540#0 26,35 -> 27,36 @389
+  walk nibbler#34541#0 28,35 -> 29,36 @390
+t483
+  varbit 4117 1 @394
+  run player 32,37 -> 30,37 @396
+  hit player 12 0 @397
+  walk bat#34538#0 38,40 -> 37,39 @400
+  walk nibbler#34539#0 29,36 -> 30,37 @402
+  walk nibbler#34540#0 27,36 -> 28,37 @403
+  walk nibbler#34541#0 29,36 -> 30,37 @404
+t484
+  seq player 10092 @420
+  walk bat#34538#0 37,39 -> 37,38 @422
+  walk nibbler#34539#0 30,37 -> 31,38 @424
+  seq nibbler#34539#0 7575 @425
+  gfx nibbler#34539#0 363 @426
+  walk nibbler#34540#0 28,37 -> 29,38 @427
+  walk nibbler#34541#0 30,37 -> 31,38 @428
+  seq nibbler#34541#0 7575 @429
+  gfx nibbler#34541#0 363 @430
+  proj 366 31,38 -> nibbler#34541#0 31,38 [51,56,16,64,172,0] @431
+t485
+  run player 30,37 -> 30,39 @443
+  walk bat#34538#0 37,38 -> 36,37 @446
+  walk nibbler#34540#0 29,38 -> 30,39 @448
+t486
+  walk bat#34538#0 36,37 -> 35,37 @455
+  hit nibbler#34539#0 16 10 @458
+  dead nibbler#34539#0 @459
+  walk nibbler#34540#0 30,39 -> 31,39 @460
+  hit nibbler#34541#0 16 10 @462
+  dead nibbler#34541#0 @463
+t487
+  run player 30,39 -> 29,41 @472
+  walk bat#34538#0 35,37 -> 34,37 @475
+  seq bat#34538#0 7578 @476
+  seq nibbler#34539#0 7576 @479
+  walk nibbler#34540#0 31,39 -> 32,39 @480
+  seq nibbler#34541#0 7576 @482
+  proj 1382 34,37 -> player 30,39 [10,64,16,128,200,124] @483
+t488
+  walk player 29,41 -> 30,41 @495
+  walk bat#34538#0 34,37 -> 33,37 @497
+  walk nibbler#34540#0 32,39 -> 33,39 @499
+t489
+  hit player 12 0 @517
+  hit pillar#34279#0 13 0 @521
+  del nibbler#34539#0 31,38 @525
+  seq nibbler#34540#0 7574 @527
+  del nibbler#34541#0 31,38 @529
+t490
+  seq player 11057 @546
+  seq bat#34538#0 7578 @549
+  seq nibbler#34540#0 7575 @551
+  proj 1382 33,37 -> player 30,41 [10,64,16,128,200,124] @552
+t491
+  run player 30,41 -> 32,42 @566
+t492
+  hit player 12 0 @574
+t493
+  varbit 5657 4 @584
+  seq player 11057 @589
+  hit pillar#34279#0 17 4 @592
+  seq bat#34538#0 7578 @595
+  hit nibbler#34540#0 16 7 @597
+  hit nibbler#34540#0 74 1 @598
+  seq nibbler#34540#0 7575 @601
+  proj 1382 33,37 -> player 32,42 [10,72,16,128,200,124] @603
+t494
+  walk player 32,42 -> 32,41 @619
+t495
+  hit player 12 0 @626
+t496
+  seq player 11057 @639
+  seq bat#34538#0 7579 @642
+  hit nibbler#34540#0 16 2 @644
+  dead nibbler#34540#0 @645
+  proj 1382 33,37 -> player 32,41 [10,64,16,128,200,124] @646
+t497
+  seq nibbler#34540#0 7576 @660
+t498
+  hit player 12 0 @667
+t499
+  seq player 11057 @675
+  hit bat#34538#0 12 0 @678
+  seq bat#34538#0 7579 @680
+  del nibbler#34540#0 33,39 @681
+  proj 1382 33,37 -> player 32,41 [10,64,16,128,200,124] @682
+t500
+  varbit 4117 0 @696
+  varbit 4117 1 @698
+t501
+  varbit 4117 0 @721
+  varbit 4117 1 @723
+  hit player 12 0 @726
+t502
+  varbit 4117 0 @736
+  varbit 4117 1 @738
+  seq player 11057 @744
+  hit bat#34538#0 16 4 @747
+  seq bat#34538#0 7579 @749
+  proj 1382 33,37 -> player 32,41 [10,64,16,128,200,124] @750
+t503
+  varbit 4117 0 @768
+  varbit 4117 1 @770
+t504
+  varbit 4117 0 @780
+  varbit 4117 1 @782
+  hit player 12 0 @785
+t505
+  varbit 4117 0 @795
+  varbit 4117 1 @797
+  hit bat#34538#0 16 20 @805
+  hit bat#34538#0 74 1 @806
+  dead bat#34538#0 @808
+  seq bat#34538#0 7578 @809
+  proj 1382 33,37 -> player 32,41 [10,64,16,128,200,124] @810
+t506
+  varbit 4117 0 @824
+  varbit 4117 1 @826
+  seq bat#34538#0 7580 @833
+t507
+  varbit 4117 0 @843
+  hit player 12 0 @846
+t508
+  del bat#34538#0 33,37 @859
+t510
+  walk player 32,41 -> 31,41 @870
+t511
+  run player 31,41 -> 31,43 @876
+t512
+  run player 31,43 -> 31,45 @880
+t513
+  walk player 31,45 -> 30,46 @884
+t514
+  wave 2 @889
+  add nibbler#34949#0 26,34 @891
+  add nibbler#34950#0 27,35 @892
+  add nibbler#34951#0 25,35 @893
+  add bat#34948#0 18,41 @894
+  add bat#34947#0 22,23 @895
+t515
+  run player 30,46 -> 30,44 @901
+  walk nibbler#34949#0 26,34 -> 25,35 @903
+  walk nibbler#34950#0 27,35 -> 26,36 @905
+  walk nibbler#34951#0 25,35 -> 24,36 @907
+  walk bat#34948#0 18,41 -> 19,42 @909
+  walk bat#34947#0 22,23 -> 23,24 @911
+t516
+  run player 30,44 -> 30,42 @922
+  walk nibbler#34949#0 25,35 -> 24,36 @924
+  walk nibbler#34950#0 26,36 -> 25,37 @925
+  walk nibbler#34951#0 24,36 -> 23,37 @926
+  walk bat#34948#0 19,42 -> 20,43 @927
+  walk bat#34947#0 23,24 -> 24,25 @929
+t517
+  seq player 10092 @956
+  walk nibbler#34949#0 24,36 -> 23,37 @958
+  seq nibbler#34949#0 7575 @959
+  gfx nibbler#34949#0 363 @960
+  walk nibbler#34950#0 25,37 -> 24,37 @961
+  seq nibbler#34950#0 7575 @962
+  gfx nibbler#34950#0 363 @963
+  walk nibbler#34951#0 23,37 -> 22,37 @964
+  seq nibbler#34951#0 7575 @965
+  gfx nibbler#34951#0 363 @966
+  walk bat#34948#0 20,43 -> 21,42 @967
+  walk bat#34947#0 24,25 -> 25,26 @969
+  proj 366 23,37 -> nibbler#34949#0 23,37 [51,116,16,64,172,0] @972
+t518
+  walk player 30,42 -> 30,41 @983
+  walk bat#34948#0 21,42 -> 22,42 @986
+  walk bat#34947#0 25,26 -> 26,27 @988
+t519
+  walk bat#34948#0 22,42 -> 23,41 @998
+  walk bat#34947#0 26,27 -> 27,28 @1000
+t520
+  varbit 4117 1 @1006
+  run player 30,41 -> 32,41 @1008
+  walk bat#34948#0 23,41 -> 24,41 @1011
+  walk bat#34947#0 27,28 -> 28,29 @1013
+t521
+  hit nibbler#34949#0 16 10 @1029
+  dead nibbler#34949#0 @1030
+  hit nibbler#34950#0 16 3 @1032
+  hit nibbler#34951#0 16 10 @1035
+  dead nibbler#34951#0 @1036
+  walk bat#34948#0 24,41 -> 25,41 @1037
+  walk bat#34947#0 28,29 -> 29,30 @1039
+t522
+  seq player 10092 @1056
+  seq nibbler#34949#0 7576 @1059
+  seq nibbler#34950#0 7575 @1061
+  gfx nibbler#34950#0 363 @1062
+  seq nibbler#34951#0 7576 @1064
+  walk bat#34948#0 25,41 -> 26,41 @1065
+  walk bat#34947#0 29,30 -> 30,31 @1067
+  proj 366 24,37 -> nibbler#34950#0 24,37 [51,126,16,64,172,0] @1069
+t523
+  run player 32,41 -> 30,42 @1081
+  walk bat#34948#0 26,41 -> 27,41 @1085
+  seq bat#34948#0 7578 @1086
+  walk bat#34947#0 30,31 -> 31,32 @1088
+  proj 1382 27,41 -> player 32,41 [10,72,16,128,200,124] @1090
+t524
+  del nibbler#34949#0 23,37 @1104
+  del nibbler#34951#0 22,37 @1105
+  walk bat#34947#0 31,32 -> 30,33 @1108
+t525
+  hit player 12 0 @1127
+  walk bat#34947#0 30,33 -> 30,34 @1131
+t526
+  varbit 4117 0 @1140
+  varbit 4117 1 @1142
+  seq bat#34948#0 7578 @1148
+  walk bat#34947#0 30,34 -> 30,35 @1149
+  proj 1382 27,41 -> player 30,42 [10,56,16,128,200,124] @1151
+t527
+  varbit 4117 0 @1162
+  varbit 4117 1 @1164
+  hit player 12 0 @1170
+  seq player 11057 @1172
+  hit nibbler#34950#0 16 1 @1175
+  seq nibbler#34950#0 7575 @1177
+  walk bat#34947#0 30,35 -> 30,36 @1178
+t528
+  varbit 4117 0 @1195
+  varbit 4117 1 @1197
+  walk bat#34947#0 30,36 -> 30,37 @1202
+  seq bat#34947#0 7578 @1203
+  proj 1382 30,37 -> player 30,42 [10,72,16,128,200,124] @1205
+t529
+  varbit 4117 0 @1216
+  varbit 4117 1 @1218
+  seq bat#34948#0 7578 @1224
+  proj 1382 27,41 -> player 30,42 [10,56,16,128,200,124] @1225
+t530
+  hit player 12 0 @1240
+  hit player 12 0 @1241
+  seq player 11057 @1246
+  hit nibbler#34950#0 16 6 @1249
+  dead nibbler#34950#0 @1250
+  seq bat#34948#0 7579 @1252
+t531
+  varbit 4117 0 @1266
+  varbit 4117 1 @1268
+  seq nibbler#34950#0 7576 @1275
+  seq bat#34947#0 7578 @1277
+  proj 1382 30,37 -> player 30,42 [10,72,16,128,200,124] @1278
+t532
+  varbit 4117 0 @1290
+  varbit 4117 1 @1292
+  hit bat#34948#0 16 7 @1300
+  hit bat#34948#0 74 1 @1301
+  seq bat#34948#0 7578 @1304
+  proj 1382 27,41 -> player 30,42 [10,56,16,128,200,124] @1305
+t533
+  varbit 4117 0 @1318
+  varbit 4117 1 @1320
+  hit player 12 0 @1324
+  hit player 12 0 @1325
+  seq player 11057 @1328
+  del nibbler#34950#0 24,37 @1330
+  seq bat#34948#0 7579 @1332
+t534
+  varbit 4117 0 @1348
+  varbit 4117 1 @1350
+  seq bat#34947#0 7578 @1356
+  proj 1382 30,37 -> player 30,42 [10,72,16,128,200,124] @1357
+t535
+  varbit 4117 0 @1368
+  varbit 4117 1 @1370
+  hit bat#34948#0 16 10 @1377
+  seq bat#34948#0 7578 @1379
+  proj 1382 27,41 -> player 30,42 [10,56,16,128,200,124] @1380
+t536
+  varbit 4117 0 @1393
+  varbit 4117 1 @1395
+  hit player 12 0 @1399
+  hit player 12 0 @1400
+  seq player 11057 @1404
+  hit bat#34948#0 74 1 @1407
+  seq bat#34948#0 7579 @1409
+t537
+  varbit 4117 0 @1426
+  varbit 4117 1 @1428
+  seq bat#34947#0 7578 @1434
+  proj 1382 30,37 -> player 30,42 [10,72,16,128,200,124] @1435
+t538
+  hit bat#34948#0 16 6 @1453
+  dead bat#34948#0 @1454
+  seq bat#34948#0 7578 @1455
+  proj 1382 27,41 -> player 30,42 [10,56,16,128,200,124] @1456
+t539
+  varbit 4117 0 @1465
+  varbit 4117 1 @1467
+  hit player 12 0 @1473
+  hit player 12 0 @1474
+  seq player 11057 @1478
+  seq bat#34948#0 7580 @1481
+  seq bat#34947#0 7579 @1484
+t540
+  varbit 4117 0 @1501
+  varbit 4117 1 @1503
+  seq bat#34947#0 7578 @1509
+  proj 1382 30,37 -> player 30,42 [10,72,16,128,200,124] @1510
+t541
+  varbit 4117 0 @1522
+  varbit 4117 1 @1524
+  del bat#34948#0 27,41 @1528
+t542
+  varbit 4117 0 @1536
+  varbit 4117 1 @1538
+  hit player 12 0 @1543
+  hit bat#34947#0 16 24 @1547
+  hit bat#34947#0 74 1 @1548
+  dead bat#34947#0 @1550
+t543
+  varbit 4117 0 @1561
+  varbit 4117 1 @1563
+  seq bat#34947#0 7580 @1570
+t544
+  varbit 4117 0 @1580
+  varbit 4117 1 @1582
+t545
+  walk player 30,42 -> 31,41 @1593
+  del bat#34947#0 30,37 @1596
+t546
+  varbit 4117 0 @1601
+t547
+  walk player 31,41 -> 32,41 @1610
+t551
+  wave 3 @1647
+  add nibbler#35396#0 25,35 @1649
+  add nibbler#35397#0 26,33 @1650
+  add nibbler#35398#0 26,33 @1651
+  add nibbler#35399#0 26,34 @1652
+  add nibbler#35400#0 25,33 @1653
+  add nibbler#35401#0 26,34 @1654
+t552
+  walk nibbler#35396#0 25,35 -> 26,34 @1658
+  walk nibbler#35397#0 26,33 -> 27,32 @1660
+  walk nibbler#35398#0 26,33 -> 27,32 @1662
+  walk nibbler#35399#0 26,34 -> 27,33 @1664
+  walk nibbler#35400#0 25,33 -> 26,32 @1666
+  walk nibbler#35401#0 26,34 -> 27,33 @1668
+t553
+  varbit 4117 1 @1673
+  walk nibbler#35396#0 26,34 -> 27,33 @1677
+  walk nibbler#35397#0 27,32 -> 27,31 @1678
+  walk nibbler#35398#0 27,32 -> 27,31 @1679
+  walk nibbler#35399#0 27,33 -> 27,32 @1680
+  walk nibbler#35400#0 26,32 -> 27,31 @1681
+  walk nibbler#35401#0 27,33 -> 27,32 @1682
+t554
+  seq player 10092 @1699
+  walk nibbler#35396#0 27,33 -> 27,32 @1701
+  seq nibbler#35396#0 7575 @1702
+  gfx nibbler#35396#0 363 @1703
+  walk nibbler#35397#0 27,31 -> 27,30 @1704
+  seq nibbler#35397#0 7575 @1705
+  gfx nibbler#35397#0 363 @1706
+  walk nibbler#35398#0 27,31 -> 27,30 @1707
+  seq nibbler#35398#0 7575 @1708
+  gfx nibbler#35398#0 363 @1709
+  walk nibbler#35399#0 27,32 -> 27,31 @1710
+  seq nibbler#35399#0 7575 @1711
+  gfx nibbler#35399#0 363 @1712
+  walk nibbler#35400#0 27,31 -> 27,30 @1713
+  seq nibbler#35400#0 7575 @1714
+  gfx nibbler#35400#0 85 delay 146 @1715
+  walk nibbler#35401#0 27,32 -> 27,31 @1716
+  seq nibbler#35401#0 7575 @1717
+  gfx nibbler#35401#0 363 @1718
+  proj 366 27,31 -> nibbler#35401#0 27,31 [51,146,16,64,172,0] @1720
+t555
+  varbit 4117 0 @1734
+  run player 32,41 -> 32,39 @1736
+  walk nibbler#35400#0 27,30 -> 27,29 @1739
+t556
+  run player 32,39 -> 32,37 @1746
+  walk nibbler#35400#0 27,29 -> 27,28 @1748
+t557
+  run player 32,37 -> 32,35 @1752
+  walk nibbler#35400#0 27,28 -> 27,27 @1754
+t558
+  walk nibbler#35400#0 27,27 -> 27,26 @1763
+t559
+  varbit 5656 3 @1771
+  seq player 10092 @1779
+  hit pillar#34278#0 17 3 @1782
+  hit nibbler#35396#0 16 10 @1785
+  dead nibbler#35396#0 @1786
+  hit nibbler#35397#0 16 10 @1788
+  dead nibbler#35397#0 @1789
+  hit nibbler#35398#0 16 10 @1791
+  dead nibbler#35398#0 @1792
+  hit nibbler#35399#0 16 9 @1794
+  seq nibbler#35400#0 7575 @1797
+  gfx nibbler#35400#0 363 @1798
+  hit nibbler#35401#0 16 5 @1801
+  proj 366 27,26 -> nibbler#35400#0 27,26 [51,136,16,64,172,0] @1804
+t560
+  seq nibbler#35396#0 7576 @1823
+  seq nibbler#35397#0 7576 @1825
+  seq nibbler#35398#0 7576 @1827
+t562
+  del nibbler#35396#0 27,32 @1837
+  del nibbler#35397#0 27,30 @1838
+  del nibbler#35398#0 27,30 @1839
+t563
+  hit pillar#34278#0 13 0 @1852
+  seq nibbler#35400#0 7574 @1855
+t564
+  seq player 11057 @1877
+  seq nibbler#35399#0 7575 @1880
+  hit nibbler#35400#0 16 10 @1882
+  dead nibbler#35400#0 @1883
+t565
+  seq nibbler#35400#0 7576 @1899
+t567
+  seq player 11057 @1911
+  hit nibbler#35399#0 16 1 @1914
+  dead nibbler#35399#0 @1915
+  del nibbler#35400#0 27,26 @1916
+  seq nibbler#35401#0 7575 @1918
+t568
+  seq nibbler#35399#0 7576 @1932
+t569
+  walk player 32,35 -> 32,36 @1937
+t570
+  walk player 32,36 -> 32,37 @1943
+  del nibbler#35399#0 27,31 @1945
+  hit nibbler#35401#0 16 5 @1947
+  dead nibbler#35401#0 @1948
+t571
+  walk player 32,37 -> 32,38 @1955
+  seq nibbler#35401#0 7576 @1958
+t572
+  walk player 32,38 -> 32,39 @1963
+t573
+  walk player 32,39 -> 32,40 @1968
+  del nibbler#35401#0 27,31 @1970
+t579
+  varbit 4117 1 @2008
+  wave 4 @2009
+  add nibbler#35694#0 25,33 @2013
+  add nibbler#35695#0 26,33 @2014
+  add nibbler#35696#0 26,34 @2015
+  add blob#35693#0 32,18 @2016
+t580
+  walk nibbler#35694#0 25,33 -> 24,34 @2022
+  walk nibbler#35695#0 26,33 -> 25,34 @2024
+  walk nibbler#35696#0 26,34 -> 25,35 @2026
+  walk blob#35693#0 32,18 -> 32,19 @2028
+t581
+  seq player 10092 @2042
+  walk nibbler#35694#0 24,34 -> 23,35 @2044
+  seq nibbler#35694#0 7575 @2045
+  gfx nibbler#35694#0 363 @2046
+  walk nibbler#35695#0 25,34 -> 24,35 @2047
+  seq nibbler#35695#0 7575 @2048
+  gfx nibbler#35695#0 363 @2049
+  walk nibbler#35696#0 25,35 -> 24,36 @2050
+  seq nibbler#35696#0 7575 @2051
+  gfx nibbler#35696#0 363 @2052
+  walk blob#35693#0 32,19 -> 32,20 @2053
+  proj 366 24,35 -> nibbler#35695#0 24,35 [51,126,16,64,172,0] @2055
+t582
+  walk blob#35693#0 32,20 -> 32,21 @2068
+t583
+  run player 32,40 -> 30,40 @2073
+  walk blob#35693#0 32,21 -> 32,22 @2076
+t584
+  varbit 4117 0 @2081
+  varbit 4116 1 @2083
+  run player 30,40 -> 28,39 @2085
+  walk blob#35693#0 32,22 -> 31,23 @2087
+t585
+  run player 28,39 -> 29,37 @2095
+t586
+  hit nibbler#35694#0 16 1 @2111
+  hit nibbler#35695#0 16 8 @2114
+  hit nibbler#35696#0 16 10 @2117
+  dead nibbler#35696#0 @2118
+t587
+  varbit 4116 0 @2127
+  varbit 4117 1 @2129
+  seq nibbler#35696#0 7576 @2137
+  seq blob#35693#0 7583 @2139
+  proj 1378 32,24 -> player 29,37 [10,136,16,32,160,124] @2140
+t588
+  run player 29,37 -> 30,35 @2150
+t589
+  seq player 10092 @2163
+  seq nibbler#35694#0 7575 @2166
+  gfx nibbler#35694#0 363 @2167
+  seq nibbler#35695#0 7575 @2169
+  gfx nibbler#35695#0 363 @2170
+  del nibbler#35696#0 24,36 @2171
+  proj 366 24,35 -> nibbler#35695#0 24,35 [51,106,16,64,172,0] @2174
+t591
+  hit player 12 0 @2189
+t592
+  varbit 4117 0 @2196
+  varbit 4116 1 @2198
+  run player 30,35 -> 28,35 @2200
+t593
+  walk player 28,35 -> 27,35 @2214
+  hit nibbler#35694#0 16 2 @2218
+  hit nibbler#35695#0 16 2 @2221
+  dead nibbler#35695#0 @2222
+  seq blob#35693#0 7581 @2224
+  proj 1380 32,24 -> player 28,35 [28,116,16,32,160,124] @2226
+t594
+  seq player 11057 @2254
+  seq nibbler#35694#0 7575 @2257
+  seq nibbler#35695#0 7576 @2259
+t595
+  run player 27,35 -> 29,33 @2272
+t596
+  run player 29,33 -> 29,31 @2279
+  hit player 12 0 @2280
+  del nibbler#35695#0 24,35 @2284
+t597
+  seq player 11057 @2296
+  hit nibbler#35694#0 16 7 @2299
+  dead nibbler#35694#0 @2300
+  seq blob#35693#0 7585 @2302
+t598
+  varbit 4116 0 @2314
+  varbit 4117 1 @2316
+  seq nibbler#35694#0 7576 @2322
+t599
+  seq blob#35693#0 7583 @2335
+  proj 1378 32,24 -> player 29,31 [10,88,16,32,160,124] @2336
+t600
+  varbit 4117 0 @2343
+  varbit 4117 1 @2345
+  seq player 11057 @2351
+  del nibbler#35694#0 23,35 @2353
+  hit blob#35693#0 16 10 @2355
+  hit blob#35693#0 74 1 @2356
+  seq blob#35693#0 7585 @2359
+t601
+  varbit 4117 0 @2387
+  varbit 4117 1 @2389
+  hit player 12 0 @2392
+t602
+  varbit 4117 0 @2402
+  varbit 4117 1 @2404
+t603
+  varbit 4117 0 @2414
+  varbit 4116 1 @2416
+  seq player 11057 @2420
+  hit blob#35693#0 43 25 @2423
+  seq blob#35693#0 7585 @2425
+t604
+  varbit 4116 0 @2440
+  varbit 4116 1 @2442
+  hit blob#35693#0 74 1 @2448
+t605
+  varbit 4116 0 @2458
+  varbit 4116 1 @2460
+  run player 29,31 -> 29,29 @2462
+  seq blob#35693#0 7581 @2467
+  proj 1380 32,24 -> player 29,31 [28,84,16,32,160,124] @2468
+t606
+  run player 29,29 -> 29,27 @2482
+  hit blob#35693#0 16 3 @2485
+  dead blob#35693#0 @2486
+t607
+  varbit 4116 0 @2492
+  run player 29,27 -> 30,25 @2495
+  hit player 12 0 @2496
+  seq blob#35693#0 7584 @2500
+t609
+  varbit 4116 1 @2530
+  del blob#35693#0 31,23 @2534
+  add blob_melee#35956#0 30,24 @2535
+  add blob_range#35955#0 32,24 @2537
+  add blob_mage#35957#0 33,25 @2539
+t610
+  seq player 10092 @2556
+  seq blob_range#35955#0 7585 @2559
+  gfx blob_range#35955#0 363 @2560
+  seq blob_mage#35957#0 7585 @2562
+  gfx blob_mage#35957#0 85 delay 66 @2563
+  proj 366 32,24 -> blob_range#35955#0 32,24 [51,66,16,64,172,0] @2564
+t611
+  run player 30,25 -> 32,25 @2576
+t612
+  walk player 32,25 -> 33,24 @2581
+  hit player 12 0 @2582
+  walk blob_melee#35956#0 30,24 -> 31,25 @2586
+  seq blob_melee#35956#0 7582 @2587
+  seq blob_range#35955#0 7583 @2590
+  seq blob_mage#35957#0 7581 @2593
+  proj 1379 32,24 -> player 32,25 [10,40,16,32,80,124] @2594
+  proj 1381 33,25 -> player 32,25 [28,36,16,32,80,124] @2597
+t613
+  walk player 33,24 -> 34,25 @2610
+  hit player 16 6 @2611
+  hit player 12 0 @2612
+  walk blob_melee#35956#0 31,25 -> 32,24 @2616
+  hit blob_range#35955#0 16 9 @2618
+t614
+  walk blob_melee#35956#0 32,24 -> 33,25 @2630
+t615
+  seq player 10092 @2648
+  seq blob_melee#35956#0 7585 @2651
+  seq blob_range#35955#0 7585 @2654
+  gfx blob_range#35955#0 85 delay 66 @2655
+  seq blob_mage#35957#0 7585 @2657
+t616
+  hit player 16 5 @2676
+  seq blob_melee#35956#0 7582 @2681
+  seq blob_range#35955#0 7583 @2683
+  seq blob_mage#35957#0 7581 @2685
+  proj 1379 32,24 -> player 34,25 [10,48,16,32,80,124] @2686
+  proj 1381 33,25 -> player 34,25 [28,36,16,32,80,124] @2689
+t617
+  hit player 16 13 @2705
+  hit player 12 0 @2706
+t618
+  hit blob_melee#35956#0 16 7 @2718
+  hit blob_mage#35957#0 16 3 @2721
+t620
+  hit player 16 10 @2744
+  seq player 10092 @2746
+  seq blob_melee#35956#0 7585 @2749
+  seq blob_range#35955#0 7585 @2752
+  seq blob_mage#35957#0 7585 @2755
+  proj 1379 32,24 -> player 34,25 [10,48,16,32,80,124] @2757
+  proj 1381 33,25 -> player 34,25 [28,36,16,32,80,124] @2760
+t621
+  hit player 12 0 @2785
+  hit player 12 0 @2786
+t622
+  hit blob_melee#35956#0 16 7 @2800
+  hit blob_range#35955#0 16 6 @2803
+  dead blob_range#35955#0 @2804
+  hit blob_mage#35957#0 16 12 @2806
+  dead blob_mage#35957#0 @2807
+t623
+  seq blob_range#35955#0 7584 @2817
+  seq blob_mage#35957#0 7584 @2820
+t624
+  hit player 12 0 @2829
+  seq blob_melee#35956#0 7582 @2834
+t625
+  seq player 10092 @2847
+  seq blob_melee#35956#0 7585 @2850
+  del blob_range#35955#0 32,24 @2852
+  del blob_mage#35957#0 33,25 @2853
+t627
+  varbit 4116 0 @2874
+  varbit 4118 1 @2876
+  run player 34,25 -> 34,27 @2879
+  hit blob_melee#35956#0 16 1 @2883
+  dead blob_melee#35956#0 @2884
+t628
+  varbit 4118 0 @2891
+  run player 34,27 -> 34,29 @2894
+  seq blob_melee#35956#0 7584 @2897
+t629
+  run player 34,29 -> 34,31 @2905
+t630
+  run player 34,31 -> 34,33 @2914
+t631
+  run player 34,33 -> 33,35 @2935
+  del blob_melee#35956#0 33,25 @2937
+t632
+  walk player 33,35 -> 32,36 @2950
+t634
+  walk player 32,36 -> 31,36 @2965
+t635
+  walk player 31,36 -> 31,37 @2969
+t637
+  wave 5 @2975
+  add bat#36286#0 39,41 @2977
+  add nibbler#36287#0 27,34 @2978
+  add nibbler#36288#0 27,35 @2979
+  add nibbler#36289#0 27,34 @2980
+  add blob#36285#0 22,23 @2981
+t638
+  varbit 4117 1 @2985
+  walk bat#36286#0 39,41 -> 38,40 @2989
+  walk nibbler#36287#0 27,34 -> 26,35 @2991
+  walk nibbler#36288#0 27,35 -> 26,36 @2993
+  walk nibbler#36289#0 27,34 -> 26,35 @2995
+t639
+  seq player 10092 @3013
+  walk bat#36286#0 38,40 -> 37,39 @3015
+  walk nibbler#36287#0 26,35 -> 25,36 @3017
+  seq nibbler#36287#0 7575 @3018
+  gfx nibbler#36287#0 363 @3019
+  walk nibbler#36288#0 26,36 -> 25,37 @3020
+  seq nibbler#36288#0 7575 @3021
+  gfx nibbler#36288#0 363 @3022
+  walk nibbler#36289#0 26,35 -> 25,36 @3023
+  seq nibbler#36289#0 7575 @3024
+  gfx nibbler#36289#0 363 @3025
+  proj 366 25,37 -> nibbler#36288#0 25,37 [51,106,16,64,172,0] @3026
+t640
+  run player 31,37 -> 29,38 @3039
+  walk bat#36286#0 37,39 -> 37,38 @3042
+t641
+  varbit 4117 0 @3048
+  varbit 4116 1 @3050
+  run player 29,38 -> 27,40 @3052
+  seq blob#36285#0 7581 @3058
+  proj 1380 23,24 -> player 29,38 [28,140,16,32,160,124] @3060
+t642
+  run player 27,40 -> 29,42 @3070
+  walk bat#36286#0 37,38 -> 37,39 @3072
+t643
+  run player 29,42 -> 31,42 @3082
+  walk bat#36286#0 37,39 -> 37,40 @3084
+  hit nibbler#36287#0 16 10 @3087
+  dead nibbler#36287#0 @3088
+  hit nibbler#36288#0 16 10 @3090
+  dead nibbler#36288#0 @3091
+  hit nibbler#36289#0 16 10 @3093
+  dead nibbler#36289#0 @3094
+  walk blob#36285#0 22,23 -> 23,24 @3095
+t644
+  run player 31,42 -> 33,42 @3106
+  walk bat#36286#0 37,40 -> 37,41 @3108
+  seq nibbler#36287#0 7576 @3111
+  seq nibbler#36288#0 7576 @3113
+  seq nibbler#36289#0 7576 @3115
+  walk blob#36285#0 23,24 -> 24,25 @3116
+t645
+  varbit 4116 0 @3125
+  varbit 4117 1 @3127
+  walk player 33,42 -> 34,43 @3129
+  hit player 12 0 @3130
+  seq bat#36286#0 7578 @3135
+  proj 1382 37,41 -> player 33,42 [10,64,16,128,200,124] @3139
+t646
+  del nibbler#36287#0 25,36 @3160
+  del nibbler#36288#0 25,37 @3161
+  del nibbler#36289#0 25,36 @3162
+  walk blob#36285#0 24,25 -> 25,26 @3163
+t647
+  hit player 12 0 @3181
+  seq player 11057 @3185
+  seq bat#36286#0 7579 @3188
+  walk blob#36285#0 25,26 -> 26,27 @3189
+  seq blob#36285#0 7583 @3190
+  proj 1378 26,27 -> player 34,43 [10,160,16,32,160,124] @3195
+t648
+  seq bat#36286#0 7578 @3213
+  walk blob#36285#0 26,27 -> 27,28 @3214
+  proj 1382 37,41 -> player 34,43 [10,56,16,128,200,124] @3216
+t649
+  walk player 34,43 -> 34,42 @3223
+  hit player 12 0 @3224
+  walk blob#36285#0 27,28 -> 28,29 @3228
+t650
+  seq player 11057 @3241
+  hit bat#36286#0 16 13 @3244
+  hit bat#36286#0 74 1 @3245
+  seq bat#36286#0 7579 @3248
+  walk blob#36285#0 28,29 -> 29,30 @3250
+t651
+  seq bat#36286#0 7578 @3271
+  walk blob#36285#0 29,30 -> 30,31 @3272
+  proj 1382 37,41 -> player 34,42 [10,56,16,128,200,124] @3274
+t652
+  hit player 12 0 @3283
+  hit player 12 0 @3284
+  walk blob#36285#0 30,31 -> 31,32 @3288
+t653
+  run player 34,42 -> 33,41 @3299
+  seq player 11057 @3301
+  hit bat#36286#0 16 11 @3304
+  dead bat#36286#0 @3305
+  walk blob#36285#0 31,32 -> 32,33 @3306
+  seq blob#36285#0 7585 @3307
+t654
+  varbit 4117 0 @3321
+  varbit 4117 1 @3323
+  seq bat#36286#0 7580 @3329
+t655
+  varbit 4117 0 @3341
+  varbit 4117 1 @3343
+t656
+  varbit 4117 0 @3354
+  varbit 4116 1 @3356
+  seq player 11057 @3361
+  del bat#36286#0 37,41 @3363
+  hit blob#36285#0 16 9 @3365
+  seq blob#36285#0 7585 @3367
+t657
+  varbit 4116 0 @3382
+  varbit 4116 1 @3384
+  seq blob#36285#0 7581 @3390
+  proj 1380 33,34 -> player 33,41 [28,84,16,32,160,124] @3391
+t658
+  varbit 4116 0 @3403
+  varbit 4116 1 @3405
+t659
+  varbit 4116 0 @3415
+  varbit 4116 1 @3417
+  hit player 12 0 @3422
+  seq player 11057 @3424
+  hit blob#36285#0 16 5 @3427
+  seq blob#36285#0 7585 @3429
+t660
+  varbit 4116 0 @3445
+  varbit 4116 1 @3447
+t661
+  varbit 4116 0 @3458
+  varbit 4117 1 @3460
+t662
+  varbit 4117 0 @3470
+  varbit 4117 1 @3472
+  seq player 11057 @3477
+  hit blob#36285#0 16 13 @3480
+  seq blob#36285#0 7585 @3482
+t663
+  varbit 4117 0 @3497
+  varbit 4117 1 @3499
+  seq blob#36285#0 7583 @3505
+  proj 1378 33,34 -> player 33,41 [10,88,16,32,160,124] @3506
+t664
+  varbit 4117 0 @3517
+  varbit 4117 1 @3519
+  run player 33,41 -> 34,42 @3521
+t665
+  walk player 34,42 -> 34,43 @3531
+  hit player 12 0 @3532
+  walk blob#36285#0 32,33 -> 33,34 @3535
+  hit blob#36285#0 16 13 @3536
+  dead blob#36285#0 @3537
+t666
+  varbit 4117 0 @3544
+t668
+  seq blob#36285#0 7584 @3571
+t670
+  varbit 4117 1 @3587
+  del blob#36285#0 33,34 @3591
+  add blob_range#36741#0 34,36 @3592
+  add blob_melee#36742#0 34,35 @3594
+  add blob_mage#36743#0 35,37 @3596
+t671
+  walk player 34,43 -> 33,43 @3604
+  walk blob_range#36741#0 34,36 -> 34,37 @3606
+  walk blob_melee#36742#0 34,35 -> 34,36 @3607
+  walk blob_mage#36743#0 35,37 -> 35,38 @3608
+t672
+  seq player 10092 @3622
+  walk blob_range#36741#0 34,37 -> 33,38 @3624
+  seq blob_range#36741#0 7585 @3625
+  walk blob_melee#36742#0 34,36 -> 33,37 @3627
+  seq blob_melee#36742#0 7585 @3628
+  walk blob_mage#36743#0 35,38 -> 34,38 @3630
+  seq blob_mage#36743#0 7585 @3631
+t673
+  run player 33,43 -> 33,45 @3642
+  seq blob_range#36741#0 7583 @3647
+  proj 1379 33,38 -> player 33,43 [10,72,16,32,80,124] @3648
+t674
+  walk player 33,45 -> 33,46 @3655
+t675
+  hit player 12 0 @3664
+t676
+  hit blob_range#36741#0 16 15 @3684
+  dead blob_range#36741#0 @3685
+  hit blob_melee#36742#0 16 2 @3687
+  hit blob_mage#36743#0 16 15 @3690
+  dead blob_mage#36743#0 @3691
+t677
+  seq blob_range#36741#0 7584 @3704
+  seq blob_mage#36743#0 7584 @3707
+t679
+  seq player 10092 @3733
+  del blob_range#36741#0 33,38 @3735
+  walk blob_melee#36742#0 33,37 -> 33,38 @3736
+  seq blob_melee#36742#0 7585 @3737
+  del blob_mage#36743#0 34,38 @3739
+t680
+  varbit 4117 0 @3747
+  walk blob_melee#36742#0 33,38 -> 33,39 @3751
+t681
+  walk blob_melee#36742#0 33,39 -> 33,40 @3758
+t682
+  walk blob_melee#36742#0 33,40 -> 33,41 @3770
+t683
+  walk blob_melee#36742#0 33,41 -> 33,42 @3787
+t684
+  varbit 4118 1 @3794
+  seq player 11057 @3799
+  walk blob_melee#36742#0 33,42 -> 33,43 @3801
+  hit blob_melee#36742#0 16 7 @3802
+  seq blob_melee#36742#0 7585 @3804
+t685
+  varbit 4118 0 @3817
+  varbit 4118 1 @3819
+  walk blob_melee#36742#0 33,43 -> 33,44 @3823
+t686
+  varbit 4118 0 @3832
+  varbit 4118 1 @3834
+  hit player 12 0 @3837
+  walk blob_melee#36742#0 33,44 -> 33,45 @3841
+  seq blob_melee#36742#0 7582 @3842
+t687
+  varbit 4118 0 @3852
+  varbit 4118 1 @3854
+  seq player 11057 @3859
+  hit blob_melee#36742#0 16 1 @3862
+  seq blob_melee#36742#0 7585 @3864
+t688
+  varbit 4118 0 @3877
+  varbit 4118 1 @3879
+t689
+  varbit 4118 0 @3889
+  varbit 4118 1 @3891
+  hit blob_melee#36742#0 12 0 @3896
+t690
+  varbit 4118 0 @3906
+  varbit 4118 1 @3908
+  hit player 12 0 @3911
+  seq player 11057 @3913
+  seq blob_melee#36742#0 7585 @3916
+t691
+  varbit 4118 0 @3933
+  varbit 4118 1 @3935
+t692
+  varbit 4118 0 @3945
+  varbit 4118 1 @3947
+  hit blob_melee#36742#0 16 5 @3953
+  dead blob_melee#36742#0 @3954
+t693
+  varbit 4118 0 @3963
+  varbit 4118 1 @3965
+  seq blob_melee#36742#0 7584 @3972
+t694
+  varbit 4118 0 @3982
+t695
+  run player 33,46 -> 33,44 @3990
+t696
+  walk player 33,44 -> 34,43 @4002
+  del blob_melee#36742#0 33,45 @4004
+t702
+  varbit 4117 1 @4046
+  wave 6 @4047
+  add bat#37155#0 40,34 @4051
+  add nibbler#37156#0 25,34 @4052
+  add nibbler#37157#0 25,33 @4053
+  add nibbler#37158#0 27,34 @4054
+  add bat#37154#0 20,35 @4055
+  add blob#37153#0 32,18 @4056
+t703
+  seq player 10092 @4070
+  walk bat#37155#0 40,34 -> 39,35 @4072
+  walk nibbler#37156#0 25,34 -> 24,35 @4074
+  seq nibbler#37156#0 7575 @4075
+  gfx nibbler#37156#0 363 @4076
+  walk nibbler#37157#0 25,33 -> 24,34 @4078
+  seq nibbler#37157#0 7575 @4079
+  gfx nibbler#37157#0 363 @4080
+  walk nibbler#37158#0 27,34 -> 26,35 @4082
+  walk bat#37154#0 20,35 -> 21,36 @4084
+  walk blob#37153#0 32,18 -> 33,19 @4086
+  proj 366 24,35 -> nibbler#37156#0 24,35 [51,146,16,64,172,0] @4088
+t704
+  walk bat#37155#0 39,35 -> 38,36 @4099
+  walk nibbler#37158#0 26,35 -> 25,36 @4101
+  walk bat#37154#0 21,36 -> 22,37 @4102
+  walk blob#37153#0 33,19 -> 34,20 @4104
+t705
+  walk player 34,43 -> 33,42 @4111
+  walk bat#37155#0 38,36 -> 37,37 @4114
+  walk nibbler#37158#0 25,36 -> 24,37 @4116
+  walk bat#37154#0 22,37 -> 23,38 @4117
+  walk blob#37153#0 34,20 -> 34,21 @4119
+t706
+  walk bat#37155#0 37,37 -> 36,37 @4125
+  walk nibbler#37158#0 24,37 -> 23,37 @4127
+  walk bat#37154#0 23,38 -> 24,39 @4128
+  walk blob#37153#0 34,21 -> 33,22 @4130
+t707
+  run player 33,42 -> 31,42 @4136
+  walk bat#37155#0 36,37 -> 35,37 @4139
+  walk nibbler#37158#0 23,37 -> 22,37 @4141
+  walk bat#37154#0 24,39 -> 25,40 @4142
+  walk blob#37153#0 33,22 -> 33,23 @4144
+t708
+  seq player 10092 @4154
+  walk bat#37155#0 35,37 -> 34,37 @4156
+  seq bat#37155#0 7578 @4157
+  hit nibbler#37156#0 16 10 @4160
+  dead nibbler#37156#0 @4161
+  hit nibbler#37157#0 16 10 @4163
+  dead nibbler#37157#0 @4164
+  walk nibbler#37158#0 22,37 -> 21,37 @4165
+  seq nibbler#37158#0 7575 @4166
+  gfx nibbler#37158#0 363 @4167
+  walk bat#37154#0 25,40 -> 26,41 @4168
+  seq bat#37154#0 7578 @4169
+  walk blob#37153#0 33,23 -> 32,24 @4171
+  proj 1382 34,37 -> player 31,42 [10,72,16,128,200,124] @4173
+  proj 1382 26,41 -> player 31,42 [10,72,16,128,200,124] @4176
+  proj 366 21,37 -> nibbler#37158#0 21,37 [51,146,16,64,172,0] @4179
+t709
+  run player 31,42 -> 33,42 @4195
+  seq nibbler#37156#0 7576 @4199
+  seq nibbler#37157#0 7576 @4201
+  walk blob#37153#0 32,24 -> 31,25 @4202
+t710
+  run player 33,42 -> 35,42 @4214
+  hit player 12 0 @4215
+  hit player 12 0 @4216
+  walk bat#37155#0 34,37 -> 33,37 @4220
+  walk bat#37154#0 26,41 -> 27,42 @4222
+t711
+  walk bat#37155#0 33,37 -> 34,37 @4245
+  del nibbler#37156#0 24,35 @4247
+  del nibbler#37157#0 24,34 @4248
+  walk bat#37154#0 27,42 -> 28,42 @4249
+  walk blob#37153#0 31,25 -> 32,26 @4251
+t712
+  varbit 4117 0 @4260
+  varbit 4116 1 @4262
+  walk bat#37155#0 34,37 -> 35,37 @4267
+  walk bat#37154#0 28,42 -> 29,42 @4269
+  walk blob#37153#0 32,26 -> 33,27 @4271
+  seq blob#37153#0 7581 @4272
+  proj 1380 33,27 -> player 35,42 [28,148,16,32,160,124] @4274
+t713
+  varbit 4116 0 @4284
+  varbit 4117 1 @4286
+  seq player 11057 @4291
+  hit nibbler#37158#0 16 3 @4294
+  walk bat#37154#0 29,42 -> 30,42 @4296
+  seq bat#37154#0 7579 @4297
+  walk blob#37153#0 33,27 -> 34,28 @4299
+  proj 1382 30,42 -> player 35,42 [10,72,16,128,200,124] @4304
+t714
+  walk blob#37153#0 34,28 -> 35,29 @4315
+t715
+  walk player 35,42 -> 34,43 @4320
+  hit player 12 0 @4321
+  walk blob#37153#0 35,29 -> 35,30 @4325
+t716
+  hit player 12 0 @4336
+  seq player 11057 @4339
+  walk bat#37155#0 35,37 -> 34,37 @4341
+  hit bat#37154#0 12 0 @4344
+  seq bat#37154#0 7579 @4346
+  walk blob#37153#0 35,30 -> 34,31 @4348
+  proj 1382 30,42 -> player 34,43 [10,64,16,128,200,124] @4352
+t717
+  varbit 4117 0 @4364
+  varbit 4117 1 @4366
+  walk blob#37153#0 34,31 -> 34,32 @4370
+t718
+  varbit 4117 0 @4379
+  varbit 4117 1 @4381
+  hit player 12 0 @4384
+  walk blob#37153#0 34,32 -> 34,33 @4387
+t719
+  varbit 4117 0 @4397
+  varbit 4117 1 @4399
+  seq player 11057 @4403
+  hit bat#37154#0 16 8 @4406
+  seq bat#37154#0 7579 @4408
+  walk blob#37153#0 34,33 -> 34,34 @4409
+  proj 1382 30,42 -> player 34,43 [10,64,16,128,200,124] @4414
+t720
+  varbit 4117 0 @4427
+  varbit 4117 1 @4429
+t721
+  varbit 4117 0 @4440
+  varbit 4117 1 @4442
+  hit player 12 0 @4445
+t722
+  varbit 4117 0 @4455
+  varbit 4117 1 @4457
+  seq player 11057 @4461
+  hit bat#37154#0 12 0 @4464
+  seq bat#37154#0 7579 @4466
+  proj 1382 30,42 -> player 34,43 [10,64,16,128,200,124] @4470
+t723
+  varbit 4117 0 @4485
+  varbit 4117 1 @4487
+t724
+  varbit 4117 0 @4497
+  varbit 4117 1 @4499
+  hit player 12 0 @4502
+t725
+  varbit 4117 0 @4512
+  varbit 4117 1 @4514
+  seq player 11057 @4519
+  walk nibbler#37158#0 21,37 -> 20,37 @4521
+  hit bat#37154#0 16 12 @4523
+  seq bat#37154#0 7579 @4525
+  proj 1382 30,42 -> player 34,43 [10,64,16,128,200,124] @4529
+t726
+  varbit 4117 0 @4547
+  varbit 4117 1 @4549
+  varbit 5655 1 @4550
+  hit pillar#34277#0 17 1 @4555
+  seq nibbler#37158#0 7574 @4558
+t727
+  varbit 4117 0 @4568
+  varbit 4117 1 @4570
+  hit player 12 0 @4573
+t728
+  hit bat#37154#0 16 5 @4594
+  dead bat#37154#0 @4595
+  seq bat#37154#0 7578 @4596
+  proj 1382 30,42 -> player 34,43 [10,64,16,128,200,124] @4597
+t729
+  run player 34,43 -> 32,43 @4619
+  seq bat#37154#0 7580 @4623
+t730
+  varbit 5655 4 @4631
+  run player 32,43 -> 30,43 @4636
+  hit player 12 0 @4637
+  seq player 10092 @4639
+  hit pillar#34277#0 17 3 @4642
+  walk bat#37155#0 34,37 -> 33,37 @4644
+  seq nibbler#37158#0 7575 @4647
+  gfx nibbler#37158#0 363 @4648
+  proj 366 20,37 -> nibbler#37158#0 20,37 [51,146,16,64,172,0] @4653
+t731
+  run player 30,43 -> 32,43 @4665
+  walk bat#37155#0 33,37 -> 32,38 @4669
+  seq bat#37155#0 7578 @4670
+  del bat#37154#0 30,42 @4672
+  proj 1382 32,38 -> player 30,43 [10,72,16,128,200,124] @4675
+t732
+  walk player 32,43 -> 33,43 @4682
+t733
+  varbit 4117 0 @4691
+  varbit 4116 1 @4693
+  run player 33,43 -> 31,43 @4695
+  hit player 12 0 @4696
+  walk blob#37153#0 34,34 -> 33,35 @4702
+  seq blob#37153#0 7581 @4703
+  proj 1380 35,35 -> player 33,43 [28,92,16,32,160,124] @4705
+t734
+  varbit 5655 7 @4716
+  run player 31,43 -> 29,43 @4718
+  hit pillar#34277#0 17 3 @4723
+  seq bat#37155#0 7578 @4726
+  seq nibbler#37158#0 7574 @4729
+  proj 1382 32,38 -> player 31,43 [10,72,16,128,200,124] @4733
+t735
+  seq player 10092 @4758
+  hit nibbler#37158#0 16 1 @4763
+  seq nibbler#37158#0 7575 @4765
+  gfx nibbler#37158#0 363 @4766
+  proj 366 20,37 -> nibbler#37158#0 20,37 [51,136,16,64,172,0] @4769
+t736
+  run player 29,43 -> 31,43 @4782
+  hit player 12 0 @4783
+  hit player 16 14 @4784
+t737
+  run player 31,43 -> 33,43 @4795
+  seq bat#37155#0 7578 @4799
+  proj 1382 32,38 -> player 31,43 [10,72,16,128,200,124] @4803
+t738
+  walk player 33,43 -> 34,43 @4810
+  hit pillar#34277#0 13 0 @4813
+  seq nibbler#37158#0 7574 @4818
+t739
+  varbit 4116 0 @4826
+  varbit 4117 1 @4828
+  hit player 12 0 @4836
+  walk bat#37155#0 32,38 -> 32,39 @4840
+  walk blob#37153#0 33,35 -> 34,36 @4842
+  seq blob#37153#0 7583 @4843
+  proj 1378 34,36 -> player 34,43 [10,88,16,32,160,124] @4845
+t740
+  seq player 11057 @4865
+  walk bat#37155#0 32,39 -> 32,40 @4867
+  seq bat#37155#0 7579 @4868
+  hit nibbler#37158#0 16 6 @4871
+  dead nibbler#37158#0 @4872
+  proj 1382 32,40 -> player 34,43 [10,56,16,128,200,124] @4873
+t741
+  run player 34,43 -> 36,42 @4897
+  hit player 12 0 @4898
+  hit player 12 0 @4899
+  seq nibbler#37158#0 7576 @4905
+t742
+  walk bat#37155#0 32,40 -> 32,41 @4917
+  hit bat#37155#0 16 8 @4918
+  hit bat#37155#0 74 1 @4919
+  walk blob#37153#0 34,36 -> 35,36 @4923
+t743
+  varbit 4117 0 @4930
+  varbit 4117 1 @4932
+  seq player 11057 @4937
+  seq bat#37155#0 7579 @4940
+  del nibbler#37158#0 20,37 @4941
+  walk blob#37153#0 35,36 -> 36,36 @4942
+  proj 1382 32,41 -> player 36,42 [10,64,16,128,200,124] @4944
+t744
+  varbit 4117 0 @4961
+  varbit 4117 1 @4963
+t745
+  varbit 4117 0 @4973
+  varbit 4117 1 @4975
+  hit player 12 0 @4978
+t746
+  varbit 4117 0 @4989
+  varbit 4117 1 @4991
+  seq player 11057 @4997
+  hit bat#37155#0 16 4 @5000
+  hit bat#37155#0 74 1 @5001
+  seq bat#37155#0 7579 @5004
+  proj 1382 32,41 -> player 36,42 [10,64,16,128,200,124] @5005
+t747
+  varbit 4117 0 @5022
+  varbit 4117 1 @5024
+t748
+  varbit 4117 0 @5034
+  varbit 4117 1 @5036
+  hit player 12 0 @5039
+t749
+  varbit 4117 0 @5049
+  varbit 4117 1 @5051
+  seq player 11057 @5055
+  hit bat#37155#0 12 0 @5058
+  seq bat#37155#0 7579 @5060
+  proj 1382 32,41 -> player 36,42 [10,64,16,128,200,124] @5061
+t750
+  varbit 4117 0 @5079
+  varbit 4117 1 @5081
+  hit bat#37155#0 74 1 @5088
+t751
+  varbit 4117 0 @5102
+  varbit 4117 1 @5104
+  hit player 12 0 @5107
+t752
+  varbit 4117 0 @5117
+  varbit 4117 1 @5119
+  seq player 11057 @5123
+  hit bat#37155#0 16 3 @5126
+  seq bat#37155#0 7579 @5128
+  proj 1382 32,41 -> player 36,42 [10,64,16,128,200,124] @5129
+t753
+  varbit 4117 0 @5147
+  varbit 4117 1 @5149
+t754
+  varbit 4117 0 @5159
+  varbit 4117 1 @5161
+  hit player 12 0 @5165
+  hit bat#37155#0 74 2 @5169
+t755
+  varbit 4117 0 @5180
+  varbit 4117 1 @5182
+  hit bat#37155#0 16 6 @5189
+  dead bat#37155#0 @5190
+  seq bat#37155#0 7578 @5191
+  proj 1382 32,41 -> player 36,42 [10,64,16,128,200,124] @5192
+t756
+  varbit 4117 0 @5205
+  varbit 4117 1 @5207
+  varbit 4117 0 @5209
+  seq bat#37155#0 7580 @5216
+t757
+  run player 36,42 -> 34,42 @5228
+  hit player 12 0 @5229
+t758
+  walk player 34,42 -> 33,42 @5236
+  del bat#37155#0 32,41 @5238
+  walk blob#37153#0 36,36 -> 35,36 @5239
+t759
+  varbit 4117 1 @5245
+  run player 33,42 -> 33,40 @5247
+  walk blob#37153#0 35,36 -> 34,36 @5250
+t760
+  seq player 11057 @5259
+  walk blob#37153#0 34,36 -> 33,36 @5261
+  seq blob#37153#0 7585 @5262
+t762
+  varbit 4117 0 @5278
+  varbit 4116 1 @5280
+  hit blob#37153#0 16 9 @5286
+t763
+  varbit 4116 0 @5294
+  varbit 4116 1 @5296
+  seq player 11057 @5300
+  seq blob#37153#0 7585 @5303
+  proj 1380 34,37 -> player 33,40 [28,52,16,32,160,124] @5304
+t764
+  varbit 4116 0 @5322
+  varbit 4116 1 @5324
+  hit player 12 0 @5327
+t765
+  varbit 4116 0 @5337
+  varbit 4116 1 @5339
+  hit blob#37153#0 16 20 @5345
+t766
+  varbit 4116 0 @5356
+  varbit 4116 1 @5358
+  seq player 11057 @5361
+  seq blob#37153#0 7585 @5364
+t767
+  varbit 4116 0 @5376
+  varbit 4116 1 @5378
+t768
+  varbit 4116 0 @5388
+  varbit 4117 1 @5390
+  hit blob#37153#0 12 0 @5395
+t769
+  varbit 4117 0 @5405
+  varbit 4117 1 @5407
+  seq player 11057 @5411
+  seq blob#37153#0 7585 @5414
+  proj 1378 34,37 -> player 33,40 [10,56,16,32,160,124] @5415
+t770
+  varbit 4117 0 @5432
+  varbit 4117 1 @5434
+  hit player 12 0 @5437
+t771
+  varbit 4117 0 @5448
+  varbit 4117 1 @5450
+  hit blob#37153#0 16 11 @5456
+  dead blob#37153#0 @5457
+t772
+  varbit 4117 0 @5466
+  run player 33,40 -> 33,42 @5469
+  seq blob#37153#0 7584 @5473
+t773
+  run player 33,42 -> 33,44 @5486
+t774
+  varbit 4117 1 @5493
+  run player 33,44 -> 33,46 @5495
+  del blob#37153#0 33,36 @5497
+  add blob_range#37899#0 33,38 @5498
+  add blob_melee#37900#0 33,37 @5500
+  add blob_mage#37901#0 34,38 @5502
+t776
+  seq player 10092 @5538
+  seq blob_range#37899#0 7585 @5541
+  seq blob_melee#37900#0 7585 @5544
+  seq blob_mage#37901#0 7585 @5547
+t777
+  seq blob_range#37899#0 7583 @5562
+  proj 1379 33,38 -> player 33,46 [10,96,16,32,80,124] @5563
+t780
+  hit player 12 0 @5576
+t781
+  seq player 10092 @5595
+  hit blob_range#37899#0 16 15 @5598
+  dead blob_range#37899#0 @5599
+  seq blob_range#37899#0 7585 @5600
+  hit blob_melee#37900#0 16 1 @5603
+  seq blob_melee#37900#0 7585 @5605
+  hit blob_mage#37901#0 16 15 @5608
+  dead blob_mage#37901#0 @5609
+  seq blob_mage#37901#0 7585 @5610
+  proj 1379 33,38 -> player 33,46 [10,96,16,32,80,124] @5612
+t782
+  seq blob_range#37899#0 7584 @5636
+  seq blob_mage#37901#0 7584 @5639
+t784
+  hit player 12 0 @5655
+  del blob_range#37899#0 33,38 @5659
+  walk blob_melee#37900#0 33,37 -> 33,38 @5660
+  del blob_mage#37901#0 34,38 @5661
+t785
+  varbit 4117 0 @5666
+  walk blob_melee#37900#0 33,38 -> 33,39 @5670
+t786
+  seq player 10092 @5684
+  walk blob_melee#37900#0 33,39 -> 33,40 @5686
+  hit blob_melee#37900#0 16 14 @5687
+  dead blob_melee#37900#0 @5688
+  seq blob_melee#37900#0 7585 @5689
+t789
+  walk player 33,46 -> 34,45 @5710
+  seq blob_melee#37900#0 7584 @5714
+t791
+  run player 34,45 -> 34,43 @5741
+t792
+  del blob_melee#37900#0 33,40 @5753
+t795
+  walk player 34,43 -> 33,43 @5775
+t796
+  walk player 33,43 -> 32,42 @5780
+t797
+  varbit 4117 1 @5784
+t798
+  wave 7 @5791
+  add nibbler#38132#0 27,33 @5793
+  add nibbler#38133#0 25,33 @5794
+  add nibbler#38134#0 25,33 @5795
+  add blob#38131#0 20,35 @5796
+  add blob#38130#0 40,21 @5797
+t799
+  varbit 4117 0 @5801
+  varbit 4117 1 @5803
+  walk nibbler#38132#0 27,33 -> 28,34 @5807
+  walk nibbler#38133#0 25,33 -> 26,34 @5809
+  walk nibbler#38134#0 25,33 -> 26,34 @5811
+  walk blob#38130#0 40,21 -> 39,22 @5815
+t800
+  seq player 10092 @5830
+  walk nibbler#38132#0 28,34 -> 29,35 @5832
+  seq nibbler#38132#0 7575 @5833
+  gfx nibbler#38132#0 363 @5834
+  walk nibbler#38133#0 26,34 -> 27,35 @5835
+  walk nibbler#38134#0 26,34 -> 27,35 @5836
+  walk blob#38130#0 39,22 -> 38,23 @5837
+  proj 366 29,35 -> nibbler#38132#0 29,35 [51,116,16,64,172,0] @5839
+t801
+  varbit 4117 0 @5864
+  varbit 4116 1 @5866
+  run player 32,42 -> 34,43 @5868
+  walk nibbler#38133#0 27,35 -> 28,36 @5871
+  walk nibbler#38134#0 27,35 -> 28,36 @5872
+  walk blob#38130#0 38,23 -> 37,24 @5873
+t802
+  walk nibbler#38133#0 28,36 -> 29,37 @5883
+  walk nibbler#38134#0 28,36 -> 29,37 @5884
+  seq blob#38131#0 7581 @5886
+  walk blob#38130#0 37,24 -> 36,25 @5888
+  proj 1380 21,36 -> player 34,43 [28,132,16,32,160,124] @5890
+t803
+  run player 34,43 -> 34,45 @5898
+  walk nibbler#38133#0 29,37 -> 30,38 @5900
+  walk nibbler#38134#0 29,37 -> 30,38 @5901
+  walk blob#38130#0 36,25 -> 35,26 @5902
+t804
+  walk player 34,45 -> 34,46 @5908
+  hit nibbler#38132#0 16 1 @5911
+  walk nibbler#38133#0 30,38 -> 31,39 @5913
+  walk nibbler#38134#0 30,38 -> 31,39 @5914
+  walk blob#38130#0 35,26 -> 34,27 @5917
+t805
+  seq player 10092 @5929
+  walk nibbler#38133#0 31,39 -> 32,39 @5931
+  seq nibbler#38133#0 7575 @5932
+  gfx nibbler#38133#0 363 @5933
+  walk nibbler#38134#0 31,39 -> 32,39 @5934
+  seq nibbler#38134#0 7575 @5935
+  gfx nibbler#38134#0 363 @5936
+  walk blob#38130#0 34,27 -> 34,28 @5939
+  proj 366 32,39 -> nibbler#38134#0 32,39 [51,116,16,64,172,0] @5940
+t806
+  hit player 12 0 @5953
+  walk blob#38130#0 34,28 -> 34,29 @5956
+t807
+  varbit 4116 0 @5962
+  varbit 4117 1 @5964
+  walk blob#38130#0 34,29 -> 34,30 @5968
+t808
+  varbit 4117 0 @5976
+  varbit 4117 1 @5978
+  seq blob#38131#0 7583 @5984
+  walk blob#38130#0 34,30 -> 34,31 @5985
+  proj 1378 21,36 -> player 34,46 [10,136,16,32,160,124] @5987
+t809
+  varbit 4117 0 @5998
+  varbit 4117 1 @6000
+  hit nibbler#38133#0 16 1 @6007
+  hit nibbler#38134#0 16 7 @6010
+  walk blob#38130#0 34,31 -> 34,32 @6012
+t810
+  varbit 4117 0 @6023
+  varbit 4117 1 @6025
+  seq player 10092 @6031
+  seq nibbler#38133#0 7575 @6034
+  gfx nibbler#38133#0 363 @6035
+  seq nibbler#38134#0 7575 @6037
+  gfx nibbler#38134#0 363 @6038
+  walk blob#38130#0 34,32 -> 34,33 @6039
+  proj 366 32,39 -> nibbler#38134#0 32,39 [51,116,16,64,172,0] @6041
+t811
+  varbit 4117 0 @6057
+  varbit 4117 1 @6059
+  walk blob#38130#0 34,33 -> 34,34 @6063
+t812
+  varbit 4117 0 @6072
+  varbit 4117 1 @6074
+  hit player 12 0 @6077
+  walk blob#38130#0 34,34 -> 34,35 @6080
+t813
+  varbit 4117 0 @6090
+  varbit 4117 1 @6092
+  walk blob#38130#0 34,35 -> 34,36 @6096
+t814
+  varbit 4117 0 @6105
+  varbit 4116 1 @6107
+  hit nibbler#38133#0 16 9 @6115
+  dead nibbler#38133#0 @6116
+  hit nibbler#38134#0 16 1 @6118
+  seq blob#38131#0 7581 @6121
+  proj 1380 21,36 -> player 34,46 [28,132,16,32,160,124] @6122
+t815
+  seq player 10092 @6142
+  seq nibbler#38133#0 7576 @6145
+  seq nibbler#38134#0 7575 @6147
+  gfx nibbler#38134#0 363 @6148
+  proj 366 32,39 -> nibbler#38134#0 32,39 [51,116,16,64,172,0] @6149
+t817
+  walk nibbler#38132#0 29,35 -> 30,36 @6163
+  del nibbler#38133#0 32,39 @6164
+t818
+  hit player 12 0 @6170
+  walk nibbler#38132#0 30,36 -> 31,37 @6174
+t819
+  walk nibbler#38132#0 31,37 -> 32,38 @6180
+  hit nibbler#38134#0 16 2 @6182
+  dead nibbler#38134#0 @6183
+t820
+  varbit 4116 0 @6188
+  varbit 4117 1 @6190
+  seq player 10092 @6196
+  walk nibbler#38132#0 32,38 -> 33,39 @6198
+  seq nibbler#38132#0 7575 @6199
+  gfx nibbler#38132#0 363 @6200
+  seq nibbler#38134#0 7576 @6202
+  seq blob#38131#0 7583 @6204
+  proj 366 33,39 -> nibbler#38132#0 33,39 [51,116,16,64,172,0] @6205
+  proj 1378 21,36 -> player 34,46 [10,136,16,32,160,124] @6209
+t821
+  varbit 4117 0 @6223
+  varbit 4117 1 @6225
+  varbit 5657 8 @6226
+  hit pillar#34279#0 17 4 @6231
+  seq nibbler#38132#0 7574 @6234
+t822
+  varbit 4117 0 @6244
+  varbit 4117 1 @6246
+  del nibbler#38134#0 32,39 @6250
+t824
+  run player 34,46 -> 34,44 @6283
+  hit player 12 0 @6284
+  hit nibbler#38132#0 16 1 @6289
+t825
+  varbit 5657 11 @6297
+  run player 34,44 -> 33,42 @6300
+  seq player 11057 @6301
+  hit pillar#34279#0 17 3 @6304
+  seq nibbler#38132#0 7575 @6307
+t826
+  varbit 4117 0 @6326
+  varbit 4116 1 @6328
+  seq blob#38131#0 7581 @6334
+  walk blob#38130#0 34,36 -> 33,36 @6336
+  proj 1380 21,36 -> player 33,42 [28,124,16,32,160,124] @6338
+t827
+  run player 33,42 -> 35,42 @6348
+t828
+  varbit 4116 0 @6353
+  varbit 4117 1 @6355
+  hit nibbler#38132#0 16 8 @6361
+  dead nibbler#38132#0 @6362
+  walk blob#38130#0 33,36 -> 34,36 @6365
+t829
+  seq nibbler#38132#0 7576 @6378
+  walk blob#38130#0 34,36 -> 35,36 @6379
+  seq blob#38130#0 7583 @6380
+  proj 1378 35,37 -> player 35,42 [10,72,16,32,160,124] @6382
+t830
+  walk player 35,42 -> 36,42 @6390
+  hit player 12 0 @6391
+t831
+  hit player 12 0 @6399
+  del nibbler#38132#0 33,39 @6402
+  walk blob#38131#0 20,35 -> 21,36 @6403
+  walk blob#38130#0 35,36 -> 36,36 @6405
+t832
+  varbit 4117 0 @6412
+  varbit 4116 1 @6414
+  run player 36,42 -> 37,41 @6417
+  seq player 11057 @6419
+  walk blob#38131#0 21,36 -> 22,37 @6421
+  seq blob#38131#0 7581 @6422
+  seq blob#38130#0 7585 @6425
+  proj 1380 22,37 -> player 36,42 [28,140,16,32,160,124] @6429
+t833
+  walk blob#38131#0 22,37 -> 23,38 @6442
+t834
+  varbit 4116 0 @6449
+  varbit 4117 1 @6451
+  walk blob#38131#0 23,38 -> 24,39 @6455
+t835
+  seq player 11057 @6465
+  walk blob#38131#0 24,39 -> 25,40 @6467
+  hit blob#38130#0 16 12 @6470
+  seq blob#38130#0 7585 @6472
+t836
+  varbit 4117 0 @6482
+  varbit 4117 1 @6484
+  hit player 12 0 @6487
+  walk blob#38131#0 25,40 -> 26,41 @6491
+  seq blob#38130#0 7583 @6494
+  proj 1378 37,37 -> player 37,41 [10,64,16,32,160,124] @6495
+t837
+  varbit 4117 0 @6507
+  varbit 4117 1 @6509
+  walk blob#38131#0 26,41 -> 27,41 @6513
+t838
+  varbit 4117 0 @6522
+  varbit 4117 1 @6524
+  hit player 12 0 @6528
+  seq player 11057 @6531
+  walk blob#38131#0 27,41 -> 28,41 @6533
+  hit blob#38130#0 12 0 @6536
+  seq blob#38130#0 7585 @6538
+t839
+  varbit 4117 0 @6554
+  varbit 4117 1 @6556
+  walk blob#38131#0 28,41 -> 29,41 @6560
+t840
+  varbit 4117 0 @6569
+  varbit 4116 1 @6571
+  walk blob#38131#0 29,41 -> 30,41 @6575
+t841
+  varbit 4116 0 @6583
+  varbit 4116 1 @6585
+  seq player 11057 @6591
+  walk blob#38131#0 30,41 -> 31,41 @6593
+  hit blob#38130#0 16 7 @6596
+  hit blob#38130#0 74 1 @6597
+  seq blob#38130#0 7585 @6600
+t842
+  varbit 4116 0 @6616
+  varbit 4116 1 @6618
+  seq blob#38130#0 7581 @6624
+  proj 1380 37,37 -> player 37,41 [28,60,16,32,160,124] @6625
+t843
+  varbit 4116 0 @6637
+  varbit 4116 1 @6639
+t844
+  varbit 4116 0 @6649
+  varbit 4116 1 @6651
+  hit player 12 0 @6656
+  seq player 11057 @6658
+  hit blob#38130#0 16 16 @6661
+  seq blob#38130#0 7585 @6663
+t845
+  varbit 4116 0 @6679
+  varbit 4116 1 @6681
+  hit blob#38130#0 74 1 @6687
+t846
+  varbit 4116 0 @6698
+  varbit 4116 1 @6700
+t847
+  varbit 4116 0 @6711
+  varbit 4117 1 @6713
+  hit blob#38130#0 16 3 @6720
+  dead blob#38130#0 @6721
+  seq blob#38130#0 7584 @6722
+t848
+  run player 37,41 -> 37,39 @6738
+t849
+  walk blob#38131#0 31,41 -> 31,40 @6748
+  del blob#38130#0 36,36 @6750
+  add blob_range#38753#0 37,37 @6751
+  add blob_melee#38754#0 37,37 @6753
+  add blob_mage#38755#0 38,38 @6755
+t850
+  seq player 10092 @6780
+  walk blob#38131#0 31,40 -> 31,39 @6782
+  seq blob_range#38753#0 7585 @6785
+  walk blob_melee#38754#0 37,37 -> 37,38 @6787
+  seq blob_melee#38754#0 7585 @6788
+  gfx blob_melee#38754#0 85 delay 66 @6789
+  seq blob_mage#38755#0 7585 @6791
+t852
+  hit player 12 0 @6809
+  seq blob_range#38753#0 7583 @6814
+  seq blob_melee#38754#0 7582 @6816
+  seq blob_mage#38755#0 7581 @6818
+  proj 1379 37,37 -> player 37,39 [10,48,16,32,80,124] @6819
+  proj 1381 38,38 -> player 37,39 [28,36,16,32,80,124] @6822
+t853
+  hit player 12 0 @6837
+  hit player 16 3 @6838
+  hit blob_range#38753#0 16 15 @6843
+  dead blob_range#38753#0 @6844
+  hit blob_mage#38755#0 16 15 @6846
+  dead blob_mage#38755#0 @6847
+t854
+  seq blob_range#38753#0 7584 @6863
+  seq blob_mage#38755#0 7584 @6866
+t855
+  varbit 4117 0 @6873
+  varbit 4118 1 @6875
+  seq player 10092 @6883
+  seq blob_melee#38754#0 7585 @6886
+t856
+  hit player 12 0 @6899
+  del blob_range#38753#0 37,37 @6903
+  seq blob_melee#38754#0 7582 @6905
+  del blob_mage#38755#0 38,38 @6906
+t857
+  hit blob_melee#38754#0 16 13 @6916
+t859
+  varbit 4118 0 @6944
+  varbit 4118 1 @6946
+t860
+  varbit 4118 0 @6956
+  varbit 4118 1 @6958
+  hit player 12 0 @6961
+  seq blob_melee#38754#0 7582 @6966
+t861
+  varbit 4118 0 @6977
+  varbit 4118 1 @6979
+t862
+  seq player 11057 @6992
+  seq blob_melee#38754#0 7585 @6995
+t864
+  hit blob_melee#38754#0 16 2 @7017
+  dead blob_melee#38754#0 @7018
+  seq blob_melee#38754#0 7582 @7019
+t865
+  varbit 4118 0 @7028
+  varbit 4117 1 @7030
+  run player 37,39 -> 36,38 @7033
+  seq blob_melee#38754#0 7584 @7037
+t866
+  seq player 11057 @7051
+  walk blob#38131#0 31,39 -> 31,38 @7053
+  seq blob#38131#0 7585 @7054
+t868
+  varbit 4117 0 @7069
+  varbit 4116 1 @7071
+  del blob_melee#38754#0 37,38 @7075
+t869
+  varbit 4116 0 @7081
+  seq player 11057 @7086
+  hit blob#38131#0 16 8 @7089
+  hit blob#38131#0 74 1 @7090
+  seq blob#38131#0 7585 @7093
+  proj 1380 32,39 -> player 36,38 [28,60,16,32,160,124] @7094
+t870
+  varbit 4116 1 @7112
+  varbit 4116 0 @7114
+  varbit 4116 1 @7116
+t871
+  hit player 12 0 @7130
+t872
+  seq player 11057 @7139
+  hit blob#38131#0 16 1 @7142
+  seq blob#38131#0 7585 @7144
+t873
+  varbit 4116 0 @7153
+  hit blob#38131#0 74 1 @7159
+t874
+  varbit 4116 1 @7167
+  varbit 4116 0 @7169
+  varbit 4117 1 @7171
+t875
+  varbit 4117 0 @7181
+  varbit 4117 1 @7183
+  seq player 11057 @7186
+  hit blob#38131#0 12 0 @7189
+  seq blob#38131#0 7585 @7191
+  proj 1378 32,39 -> player 36,38 [10,64,16,32,160,124] @7192
+t876
+  varbit 4117 0 @7211
+  varbit 4117 1 @7213
+t877
+  varbit 4117 0 @7225
+  varbit 4117 1 @7227
+  hit player 12 0 @7231
+  hit blob#38131#0 74 1 @7235
+t878
+  varbit 4117 0 @7246
+  varbit 4117 1 @7248
+  seq player 11057 @7252
+  hit blob#38131#0 12 0 @7255
+  seq blob#38131#0 7585 @7257
+t879
+  varbit 4117 0 @7272
+  varbit 4117 1 @7274
+t880
+  varbit 4117 0 @7284
+  varbit 4116 1 @7286
+t881
+  varbit 4116 0 @7297
+  varbit 4116 1 @7299
+  seq player 11057 @7304
+  hit blob#38131#0 16 24 @7307
+  hit blob#38131#0 74 1 @7308
+  seq blob#38131#0 7585 @7311
+  proj 1380 32,39 -> player 36,38 [28,60,16,32,160,124] @7312
+t882
+  varbit 4116 0 @7332
+  varbit 4116 1 @7334
+t883
+  varbit 4116 0 @7344
+  varbit 4116 1 @7346
+  hit player 12 0 @7349
+t884
+  varbit 4116 0 @7359
+  varbit 4117 1 @7361
+  run player 36,38 -> 38,38 @7364
+  hit blob#38131#0 16 3 @7368
+  dead blob#38131#0 @7369
+t885
+  run player 38,38 -> 40,38 @7382
+  seq blob#38131#0 7584 @7385
+t886
+  walk player 40,38 -> 41,38 @7398
+t887
+  del blob#38131#0 31,38 @7408
+  add blob_range#39110#0 33,38 @7409
+  add blob_melee#39111#0 32,38 @7411
+  add blob_mage#39112#0 33,39 @7413
+t888
+  seq player 10092 @7428
+  seq blob_range#39110#0 7585 @7431
+  seq blob_melee#39111#0 7585 @7434
+  seq blob_mage#39112#0 7585 @7437
+  gfx blob_mage#39112#0 85 delay 126 @7438
+t890
+  seq blob_range#39110#0 7583 @7455
+  proj 1379 33,38 -> player 41,38 [10,96,16,32,80,124] @7456
+t893
+  hit player 12 0 @7480
+  seq player 10092 @7482
+  hit blob_range#39110#0 16 4 @7485
+  seq blob_range#39110#0 7585 @7487
+  hit blob_melee#39111#0 16 15 @7490
+  dead blob_melee#39111#0 @7491
+  seq blob_melee#39111#0 7585 @7492
+  seq blob_mage#39112#0 7585 @7495
+t894
+  seq blob_range#39110#0 7583 @7520
+  seq blob_melee#39111#0 7584 @7522
+  proj 1379 33,38 -> player 41,38 [10,96,16,32,80,124] @7524
+t895
+  run player 41,38 -> 39,38 @7534
+t897
+  run player 39,38 -> 39,40 @7545
+  hit player 12 0 @7546
+  del blob_melee#39111#0 32,38 @7549
+t898
+  walk player 39,40 -> 38,41 @7556
+  walk blob_range#39110#0 33,38 -> 34,38 @7558
+  hit blob_range#39110#0 16 11 @7559
+  dead blob_range#39110#0 @7560
+  walk blob_mage#39112#0 33,39 -> 33,40 @7562
+  hit blob_mage#39112#0 16 15 @7563
+  dead blob_mage#39112#0 @7564
+t899
+  varbit 4117 0 @7571
+  run player 38,41 -> 36,42 @7573
+t900
+  run player 36,42 -> 34,43 @7585
+t901
+  seq blob_range#39110#0 7584 @7606
+  seq blob_mage#39112#0 7584 @7608
+t903
+  run player 34,43 -> 32,41 @7617
+  del blob_range#39110#0 34,38 @7619
+  del blob_mage#39112#0 33,40 @7620
+t906
+  walk player 32,41 -> 32,40 @7629
+t909
+  wave 8 @7636
+  add nibbler#39357#0 26,34 @7638
+  add nibbler#39358#0 25,35 @7639
+  add nibbler#39359#0 26,34 @7640
+  add nibbler#39360#0 25,34 @7641
+  add nibbler#39361#0 27,34 @7642
+  add nibbler#39362#0 26,35 @7643
+t910
+  seq player 10092 @7658
+  walk nibbler#39357#0 26,34 -> 27,33 @7660
+  seq nibbler#39357#0 7575 @7661
+  gfx nibbler#39357#0 363 @7662
+  walk nibbler#39358#0 25,35 -> 26,34 @7664
+  seq nibbler#39358#0 7575 @7665
+  gfx nibbler#39358#0 363 @7666
+  walk nibbler#39359#0 26,34 -> 27,33 @7668
+  seq nibbler#39359#0 7575 @7669
+  gfx nibbler#39359#0 363 @7670
+  walk nibbler#39360#0 25,34 -> 26,33 @7672
+  seq nibbler#39360#0 7575 @7673
+  gfx nibbler#39360#0 363 @7674
+  walk nibbler#39361#0 27,34 -> 27,33 @7676
+  seq nibbler#39361#0 7575 @7677
+  gfx nibbler#39361#0 363 @7678
+  walk nibbler#39362#0 26,35 -> 27,34 @7680
+  seq nibbler#39362#0 7575 @7681
+  gfx nibbler#39362#0 363 @7682
+  proj 366 27,33 -> nibbler#39357#0 27,33 [51,116,16,64,172,0] @7684
+t914
+  hit nibbler#39357#0 16 10 @7716
+  dead nibbler#39357#0 @7717
+  hit nibbler#39358#0 16 1 @7719
+  hit nibbler#39359#0 16 10 @7722
+  dead nibbler#39359#0 @7723
+  hit nibbler#39360#0 16 10 @7725
+  dead nibbler#39360#0 @7726
+  hit nibbler#39361#0 16 2 @7728
+  hit nibbler#39362#0 16 10 @7731
+  dead nibbler#39362#0 @7732
+t915
+  seq nibbler#39357#0 7576 @7750
+  seq nibbler#39359#0 7576 @7752
+  seq nibbler#39360#0 7576 @7754
+  seq nibbler#39362#0 7576 @7756
+t916
+  seq player 10092 @7773
+  seq nibbler#39358#0 7575 @7776
+  gfx nibbler#39358#0 363 @7777
+  seq nibbler#39361#0 7575 @7779
+  gfx nibbler#39361#0 363 @7780
+  proj 366 26,34 -> nibbler#39358#0 26,34 [51,106,16,64,172,0] @7781
+t917
+  del nibbler#39357#0 27,33 @7792
+  del nibbler#39359#0 27,33 @7793
+  del nibbler#39360#0 26,33 @7794
+  del nibbler#39362#0 27,34 @7795
+t919
+  walk player 32,40 -> 32,41 @7801
+t920
+  walk player 32,41 -> 33,42 @7808
+  hit nibbler#39358#0 16 9 @7811
+  dead nibbler#39358#0 @7812
+  hit nibbler#39361#0 16 8 @7814
+  dead nibbler#39361#0 @7815
+t921
+  walk player 33,42 -> 34,43 @7824
+  seq nibbler#39358#0 7576 @7827
+  seq nibbler#39361#0 7576 @7829
+t923
+  del nibbler#39358#0 26,34 @7838
+  del nibbler#39361#0 27,33 @7839
+t925
+  walk player 34,43 -> 33,42 @7847
+t926
+  walk player 33,42 -> 32,41 @7854
+t929
+  wave 9 @7861
+  add nibbler#39536#0 25,33 @7863
+  add nibbler#39537#0 27,34 @7864
+  add nibbler#39538#0 27,35 @7865
+  add meleer#39535#0 22,23 @7866
+t930
+  seq player 10092 @7876
+  walk nibbler#39536#0 25,33 -> 24,34 @7878
+  walk nibbler#39537#0 27,34 -> 26,35 @7880
+  seq nibbler#39537#0 7575 @7881
+  gfx nibbler#39537#0 363 @7882
+  walk nibbler#39538#0 27,35 -> 26,36 @7884
+  seq nibbler#39538#0 7575 @7885
+  gfx nibbler#39538#0 363 @7886
+  walk meleer#39535#0 22,23 -> 23,24 @7888
+  proj 366 26,35 -> nibbler#39537#0 26,35 [51,106,16,64,172,0] @7890
+t931
+  walk nibbler#39536#0 24,34 -> 23,35 @7902
+  walk meleer#39535#0 23,24 -> 23,25 @7903
+t932
+  run player 32,41 -> 30,42 @7909
+  walk nibbler#39536#0 23,35 -> 22,36 @7912
+  walk meleer#39535#0 23,25 -> 24,26 @7913
+t933
+  walk nibbler#39536#0 22,36 -> 21,37 @7918
+  walk meleer#39535#0 24,26 -> 25,27 @7919
+t934
+  walk nibbler#39536#0 21,37 -> 20,37 @7933
+  hit nibbler#39537#0 16 7 @7935
+  hit nibbler#39538#0 16 10 @7938
+  dead nibbler#39538#0 @7939
+  walk meleer#39535#0 25,27 -> 26,28 @7940
+t935
+  run player 30,42 -> 28,42 @7960
+  hit pillar#34277#0 13 0 @7963
+  seq nibbler#39536#0 7574 @7966
+  seq nibbler#39538#0 7576 @7969
+  walk meleer#39535#0 26,28 -> 27,29 @7970
+t936
+  run player 28,42 -> 26,42 @7983
+  seq player 11057 @7985
+  seq nibbler#39536#0 7575 @7988
+  walk meleer#39535#0 27,29 -> 28,30 @7989
+t937
+  del nibbler#39538#0 26,36 @8003
+  walk meleer#39535#0 28,30 -> 27,31 @8004
+t938
+  walk meleer#39535#0 27,31 -> 26,32 @8009
+t939
+  varbit 5655 8 @8014
+  seq player 11057 @8018
+  hit pillar#34277#0 17 1 @8021
+  hit nibbler#39536#0 16 6 @8024
+  seq nibbler#39536#0 7575 @8026
+  walk meleer#39535#0 26,32 -> 26,33 @8028
+t940
+  walk meleer#39535#0 26,33 -> 26,34 @8041
+t941
+  walk meleer#39535#0 26,34 -> 26,35 @8048
+t942
+  run player 26,42 -> 26,40 @8056
+  seq player 11057 @8058
+  hit nibbler#39536#0 16 4 @8061
+  dead nibbler#39536#0 @8062
+  seq nibbler#39537#0 7575 @8064
+  walk meleer#39535#0 26,35 -> 26,36 @8065
+t943
+  varbit 4118 1 @8077
+  hit player 12 0 @8081
+  seq nibbler#39536#0 7576 @8086
+  seq meleer#39535#0 7597 @8088
+t945
+  varbit 4118 0 @8104
+  varbit 4118 1 @8106
+  seq player 11057 @8112
+  del nibbler#39536#0 20,37 @8114
+  hit nibbler#39537#0 16 3 @8116
+  dead nibbler#39537#0 @8117
+  seq meleer#39535#0 7598 @8119
+t946
+  varbit 4118 0 @8135
+  varbit 4118 1 @8137
+  seq nibbler#39537#0 7576 @8144
+t947
+  varbit 4118 0 @8153
+  varbit 4118 1 @8155
+  hit player 12 0 @8159
+  hit meleer#39535#0 16 7 @8164
+  seq meleer#39535#0 7597 @8166
+t948
+  varbit 4118 0 @8177
+  varbit 4118 1 @8179
+  seq player 11057 @8184
+  del nibbler#39537#0 26,35 @8186
+  seq meleer#39535#0 7598 @8188
+t949
+  varbit 4118 0 @8203
+  varbit 4118 1 @8205
+t950
+  varbit 4118 0 @8215
+  varbit 4118 1 @8217
+  hit meleer#39535#0 16 22 @8224
+t951
+  varbit 4118 0 @8238
+  varbit 4118 1 @8240
+  hit player 12 0 @8244
+  seq player 11057 @8246
+  seq meleer#39535#0 7597 @8249
+t952
+  varbit 4118 0 @8265
+  varbit 4118 1 @8267
+t953
+  varbit 4118 0 @8277
+  varbit 4118 1 @8279
+  hit meleer#39535#0 16 20 @8285
+t954
+  varbit 4118 0 @8295
+  varbit 4118 1 @8297
+  seq player 11057 @8301
+  seq meleer#39535#0 7598 @8304
+t955
+  varbit 4118 0 @8318
+  varbit 4118 1 @8320
+  hit player 12 0 @8323
+  seq meleer#39535#0 7597 @8328
+t956
+  varbit 4118 0 @8339
+  varbit 4118 1 @8341
+  hit meleer#39535#0 16 6 @8347
+t957
+  varbit 4118 0 @8357
+  varbit 4118 1 @8359
+  seq player 11057 @8363
+  seq meleer#39535#0 7598 @8366
+t958
+  varbit 4118 0 @8380
+  varbit 4118 1 @8382
+t959
+  varbit 4118 0 @8392
+  varbit 4118 1 @8394
+  hit meleer#39535#0 16 20 @8401
+  dead meleer#39535#0 @8402
+  seq meleer#39535#0 7597 @8403
+t960
+  varbit 4118 0 @8413
+  varbit 4118 1 @8415
+  seq meleer#39535#0 7599 @8423
+t961
+  varbit 4118 0 @8435
+  run player 26,40 -> 28,40 @8437
+t962
+  run player 28,40 -> 30,40 @8444
+t963
+  walk player 30,40 -> 31,40 @8448
+t965
+  walk player 31,40 -> 32,40 @8455
+  del meleer#39535#0 26,36 @8457
+t971
+  varbit 4117 1 @8494
+  wave 10 @8495
+  add nibbler#39969#0 26,35 @8499
+  add nibbler#39970#0 27,35 @8500
+  add nibbler#39971#0 26,33 @8501
+  add bat#39968#0 20,35 @8502
+  add meleer#39967#0 40,21 @8503
+t972
+  seq player 10092 @8518
+  walk nibbler#39969#0 26,35 -> 27,36 @8520
+  seq nibbler#39969#0 7575 @8521
+  gfx nibbler#39969#0 363 @8522
+  walk nibbler#39970#0 27,35 -> 28,36 @8524
+  seq nibbler#39970#0 7575 @8525
+  gfx nibbler#39970#0 363 @8526
+  walk nibbler#39971#0 26,33 -> 27,34 @8528
+  walk bat#39968#0 20,35 -> 21,36 @8530
+  walk meleer#39967#0 40,21 -> 39,22 @8532
+  proj 366 27,36 -> nibbler#39969#0 27,36 [51,96,16,64,172,0] @8534
+t973
+  walk nibbler#39971#0 27,34 -> 28,35 @8546
+  walk bat#39968#0 21,36 -> 22,37 @8547
+  walk meleer#39967#0 39,22 -> 38,23 @8549
+t974
+  walk player 32,40 -> 33,41 @8555
+  walk nibbler#39971#0 28,35 -> 29,36 @8558
+  walk bat#39968#0 22,37 -> 23,38 @8559
+  walk meleer#39967#0 38,23 -> 37,24 @8561
+t975
+  varbit 4117 0 @8566
+  walk nibbler#39971#0 29,36 -> 30,37 @8570
+  walk bat#39968#0 23,38 -> 24,39 @8571
+  walk meleer#39967#0 37,24 -> 36,25 @8572
+t976
+  hit nibbler#39969#0 16 10 @8589
+  dead nibbler#39969#0 @8590
+  hit nibbler#39970#0 16 10 @8592
+  dead nibbler#39970#0 @8593
+  walk nibbler#39971#0 30,37 -> 31,38 @8594
+  walk bat#39968#0 24,39 -> 25,40 @8595
+  walk meleer#39967#0 36,25 -> 35,26 @8597
+t977
+  seq player 10092 @8611
+  seq nibbler#39969#0 7576 @8614
+  seq nibbler#39970#0 7576 @8616
+  walk nibbler#39971#0 31,38 -> 32,39 @8617
+  seq nibbler#39971#0 7575 @8618
+  gfx nibbler#39971#0 363 @8619
+  walk bat#39968#0 25,40 -> 26,41 @8620
+  walk meleer#39967#0 35,26 -> 34,27 @8622
+  proj 366 32,39 -> nibbler#39971#0 32,39 [51,66,16,64,172,0] @8624
+t978
+  varbit 4117 1 @8636
+  walk bat#39968#0 26,41 -> 27,41 @8640
+  walk meleer#39967#0 34,27 -> 33,28 @8642
+t979
+  del nibbler#39969#0 27,36 @8658
+  del nibbler#39970#0 28,36 @8659
+  walk bat#39968#0 27,41 -> 28,41 @8660
+  seq bat#39968#0 7578 @8661
+  walk meleer#39967#0 33,28 -> 33,29 @8663
+  proj 1382 28,41 -> player 33,41 [10,72,16,128,200,124] @8665
+t980
+  run player 33,41 -> 34,43 @8679
+  hit nibbler#39971#0 16 10 @8683
+  dead nibbler#39971#0 @8684
+  walk meleer#39967#0 33,29 -> 33,30 @8685
+t981
+  hit player 12 0 @8697
+  seq nibbler#39971#0 7576 @8701
+  walk bat#39968#0 28,41 -> 29,42 @8702
+  walk meleer#39967#0 33,30 -> 34,31 @8704
+t982
+  seq player 11057 @8718
+  seq bat#39968#0 7579 @8721
+  walk meleer#39967#0 34,31 -> 34,32 @8722
+  proj 1382 29,42 -> player 34,43 [10,72,16,128,200,124] @8727
+t983
+  varbit 4117 0 @8735
+  varbit 4117 1 @8737
+  del nibbler#39971#0 32,39 @8741
+  walk meleer#39967#0 34,32 -> 34,33 @8742
+t984
+  varbit 4117 0 @8751
+  varbit 4117 1 @8753
+  hit player 12 0 @8757
+  walk meleer#39967#0 34,33 -> 34,34 @8760
+t985
+  varbit 4117 0 @8771
+  varbit 4117 1 @8773
+  seq player 11057 @8777
+  hit bat#39968#0 12 0 @8780
+  seq bat#39968#0 7579 @8782
+  walk meleer#39967#0 34,34 -> 34,35 @8783
+  proj 1382 29,42 -> player 34,43 [10,72,16,128,200,124] @8788
+t986
+  varbit 4117 0 @8804
+  varbit 4117 1 @8806
+t987
+  varbit 4117 0 @8816
+  varbit 4117 1 @8818
+  hit player 12 0 @8821
+t988
+  varbit 4117 0 @8831
+  varbit 4117 1 @8833
+  seq player 11057 @8839
+  hit bat#39968#0 16 15 @8842
+  seq bat#39968#0 7579 @8844
+  proj 1382 29,42 -> player 34,43 [10,72,16,128,200,124] @8848
+t989
+  varbit 4117 0 @8863
+  varbit 4117 1 @8865
+t990
+  varbit 4117 0 @8875
+  varbit 4117 1 @8877
+  hit player 12 0 @8880
+t991
+  varbit 4117 0 @8891
+  varbit 4117 1 @8893
+  hit bat#39968#0 16 10 @8900
+  dead bat#39968#0 @8901
+  seq bat#39968#0 7578 @8902
+  proj 1382 29,42 -> player 34,43 [10,72,16,128,200,124] @8903
+t992
+  run player 34,43 -> 33,41 @8918
+  seq bat#39968#0 7580 @8922
+t993
+  hit player 12 0 @8932
+  seq player 11057 @8935
+  walk meleer#39967#0 34,35 -> 33,35 @8937
+  seq meleer#39967#0 7598 @8938
+t994
+  varbit 4117 0 @8950
+  del bat#39968#0 29,42 @8954
+t996
+  seq player 11057 @8967
+  hit meleer#39967#0 16 10 @8970
+  hit meleer#39967#0 74 1 @8971
+  seq meleer#39967#0 7598 @8974
+t999
+  seq player 11057 @8994
+  hit meleer#39967#0 12 0 @8997
+  seq meleer#39967#0 7598 @8999
+t1000
+  hit meleer#39967#0 74 1 @9017
+t1002
+  seq player 11057 @9046
+  hit meleer#39967#0 16 12 @9049
+  seq meleer#39967#0 7598 @9051
+t1004
+  hit meleer#39967#0 74 1 @9073
+t1005
+  seq player 11057 @9085
+  hit meleer#39967#0 16 11 @9088
+  seq meleer#39967#0 7598 @9090
+t1008
+  seq player 11057 @9121
+  hit meleer#39967#0 16 5 @9124
+  hit meleer#39967#0 74 1 @9125
+  seq meleer#39967#0 7598 @9128
+t1011
+  seq player 11057 @9160
+  hit meleer#39967#0 16 1 @9163
+  seq meleer#39967#0 7598 @9165
+t1012
+  hit meleer#39967#0 74 2 @9183
+t1014
+  seq player 11057 @9197
+  hit meleer#39967#0 16 21 @9200
+  seq meleer#39967#0 7598 @9202
+t1016
+  hit meleer#39967#0 74 2 @9218
+t1017
+  hit meleer#39967#0 16 7 @9226
+  dead meleer#39967#0 @9227
+t1018
+  seq meleer#39967#0 7599 @9237
+t1021
+  walk player 33,41 -> 33,40 @9250
+t1023
+  run player 33,40 -> 33,42 @9274
+  del meleer#39967#0 33,35 @9276

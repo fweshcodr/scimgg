@@ -1,0 +1,404 @@
+/* Inferno's start-wave and pillar choices. Drawn on the opaque encounter rail and the opaque
+   Practice pane, so every fill here is an opaque token and nothing carries an outer shadow.
+
+   The rail form follows the configurer's own vocabulary (EncounterConfigurer.css): the section
+   label's face and ink for the control labels, and the card's single-choice chip recipe for the
+   landmarks. The Practice form follows the pane's ramp (PracticePanel.css): Plain 11 labels and
+   its inset segments. Native em throughout; apparent size is picked by face, never by scaling. */
+
+.inferno-setup {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+/* ---- Start wave: the section's label and its value on one row ---------------------------- */
+
+.inferno-setup__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 12px;
+  min-width: 0;
+}
+
+.inferno-setup__title {
+  display: flex;
+  align-items: center;
+  /* Letterspacing between a word and its footnote mark, not separation between controls. */
+  gap: 2px;
+  min-width: 0;
+  color: var(--color-secondary);
+  font:
+    16px / 20px "RuneScape Bold 12",
+    sans-serif;
+}
+
+/* The word and its footnote mark stay one unit: broken across lines the mark reads as a stray
+   glyph on the second one. */
+.inferno-setup__title > label {
+  white-space: nowrap;
+}
+
+.inferno-setup__title label {
+  cursor: pointer;
+}
+
+.inferno-setup__input .num-input__field {
+  /* The one editable number in this control, and the size below which iOS Safari zooms the whole
+     panel on focus. */
+  font-size: 16px;
+}
+
+/* `.num-input` stretches its field to the 44px a coarse pointer gives it, and the field's own
+   min-height and padding are content-box, so left in they stack on top of that into a 60px box. */
+@media (max-width: 720px), (pointer: coarse) {
+  .inferno-setup__input .num-input__field {
+    min-height: 0;
+    padding-block: 0;
+    /* The value has to stay against its bound; the primitive centers it here, which reopens the
+       gap between them. */
+    text-align: right;
+  }
+}
+
+.inferno-setup__command {
+  display: contents;
+}
+
+/* ---- Wave shortcuts: monster firsts, practice checkpoints, and Zuk ------------------------ */
+
+.inferno-setup__jumps {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.inferno-setup__jumps[hidden] {
+  display: none;
+}
+
+/* Ten ordered destinations: complete rows of two on narrow surfaces, or five on a wide rail.
+   Measure the rail itself rather than assuming that a wide viewport gives it enough room. */
+.inferno-setup--rail {
+  --inferno-form-label: 104px;
+  container: inferno-wave-rail / inline-size;
+  gap: 8px;
+}
+
+.encounter-panel-card .encounter-panel-rail:has(.inferno-setup--rail) > .configurer-rail-head {
+  margin-bottom: 4px;
+}
+
+.inferno-setup--rail .inferno-setup__head {
+  display: grid;
+  grid-template-columns: var(--inferno-form-label) minmax(0, 1fr);
+  gap: 12px;
+  min-height: 44px;
+}
+
+.inferno-setup--rail .inferno-setup__command {
+  display: flex;
+}
+
+.inferno-setup--rail .inferno-setup__spawns {
+  min-width: 0;
+}
+
+.inferno-setup--rail .inferno-setup__shortcuts-toggle {
+  margin-top: 0;
+  min-height: 44px;
+}
+
+.inferno-setup__landmarks {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 4px;
+}
+
+@container inferno-wave-rail (min-width: 416px) {
+  .inferno-setup__landmarks {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}
+
+/* The card's single-choice chip: resting surface and hairline, structure edge on hover, the
+   accent well and edge once chosen (EncounterConfigurer.css, `.configurer-contract-options`). */
+.inferno-landmark {
+  box-sizing: border-box;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  min-width: 0;
+  min-height: 32px;
+  padding: 5px 8px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 2px;
+  color: var(--color-secondary);
+  font:
+    16px / 20px "RuneScape Plain 12",
+    sans-serif;
+  text-align: left;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease,
+    background-color 0.15s ease;
+}
+
+/* The wave number is what the press delivers, so it takes the bold face and the brighter ink. */
+.inferno-landmark__wave {
+  flex: none;
+  color: var(--color-text-body);
+  font-family: "RuneScape Bold 12", sans-serif;
+}
+
+.inferno-landmark__name {
+  min-width: 0;
+  white-space: normal;
+}
+
+.inferno-landmark:hover {
+  background: var(--color-surface-hover);
+  border-color: var(--color-primary-structure);
+  color: var(--color-text-body);
+}
+
+/* Selected survives hover. */
+.inferno-landmark.is-active,
+.inferno-landmark.is-active:hover {
+  background: var(--primary-dim);
+  border-color: var(--color-primary);
+  color: var(--color-accent-text);
+}
+
+.inferno-landmark.is-active .inferno-landmark__wave {
+  color: var(--color-accent-text);
+}
+
+/* ---- What the wave is ---------------------------------------------------------------------- */
+
+.inferno-setup__spawns {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  color: var(--color-text-body);
+  font:
+    16px / 20px "RuneScape Plain 12",
+    sans-serif;
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+
+.inferno-setup__continues {
+  color: var(--color-text-muted);
+}
+
+/* ---- Practice: the pane's tighter ramp ----------------------------------------------------- */
+
+.inferno-setup--practice {
+  gap: 4px;
+}
+
+.inferno-setup.inferno-setup--practice {
+  container: inferno-practice-wave / inline-size;
+  /* The wave command and spawn entry form one compact action group in Fixed 1×. */
+  gap: 0;
+}
+
+/* The native phone slot keeps the wave command visible before scrolling.
+   Keep its four-pixel inset horizontal rather than spending that space above the label. */
+.osm-tools__practice-content:has(.inferno-setup--practice) {
+  padding-block: 0;
+}
+
+/* The command pair never breaks apart. A narrow native host wraps the label above it. */
+.inferno-setup--practice .inferno-setup__head {
+  justify-content: space-between;
+  gap: 0 8px;
+}
+
+.inferno-setup--practice .inferno-setup__command {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+}
+
+/* With a mouse the pair takes the pane's own row height (its segments and wave shortcuts), not a
+   touch target; the touch block below gives both 44px. */
+.inferno-setup--practice .inferno-setup__input {
+  flex-shrink: 0;
+  min-height: 28px;
+  box-sizing: border-box;
+  box-shadow: none;
+}
+
+.inferno-setup--practice .num-input__field {
+  box-sizing: border-box;
+  min-height: 26px;
+  padding-block: 0;
+}
+
+.inferno-setup--practice .inferno-setup__go {
+  min-height: 28px;
+  padding: 0 8px;
+}
+
+@media (max-width: 720px), (pointer: coarse) {
+  .inferno-setup--practice .inferno-setup__input {
+    min-height: 44px;
+  }
+
+  .inferno-setup--practice .num-input__field {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .inferno-setup--practice .inferno-setup__go {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
+
+/* The Mobile layout is a touch layout whatever the pointer reports. */
+:root[data-mobile-ui] .inferno-setup--practice .inferno-setup__input {
+  min-height: 44px;
+}
+
+:root[data-mobile-ui] .inferno-setup--practice .num-input__field {
+  min-width: 44px;
+  min-height: 44px;
+}
+
+:root[data-mobile-ui] .inferno-setup--practice .inferno-setup__go {
+  min-width: 44px;
+}
+
+/* Only a mouse gets steppers (touch hides them above), so this measures the compact pair: about
+   120px with them, which Fixed 1×'s 138px Practice column still fits. On anything narrower, omit
+   the steppers before the number input's clipping box can squeeze them. */
+@container inferno-practice-wave (max-width: 124px) {
+  .inferno-setup__input .num-input__arrows {
+    display: none;
+  }
+}
+
+.inferno-setup__pending {
+  margin: 0;
+  color: var(--color-secondary);
+  font:
+    16px / 18px "RuneScape Plain 11",
+    sans-serif;
+}
+
+/* A matched pair of quiet rows, not another frame around the shortcuts. Scoped to this
+   encounter so the other Practice panes retain their existing rhythm. With a mouse they keep the
+   pane's 32px disclosure row; touch makes them targets. */
+.inferno-setup__shortcuts-toggle,
+.mechanics-settings--practice:has(.inferno-setup--practice) .practice-options__toggle {
+  font-family: "RuneScape Plain 11", sans-serif;
+}
+
+@media (max-width: 720px), (pointer: coarse) {
+  .mechanics-settings--practice:has(.inferno-setup--practice) .practice-options__toggle {
+    min-height: 44px;
+  }
+}
+
+.inferno-setup__shortcuts-toggle {
+  margin-top: 6px;
+}
+
+.mechanics-settings--practice:has(.inferno-setup--practice) .practice-options {
+  margin-top: 0;
+}
+
+.mechanics-settings--practice:has(.inferno-setup--practice) .practice-options__toggle:hover {
+  color: var(--color-accent-text);
+}
+
+.inferno-setup--practice .inferno-setup__title {
+  color: var(--hud-label, var(--color-secondary));
+  font:
+    16px / 16px "RuneScape Plain 11",
+    sans-serif;
+}
+
+.inferno-setup--practice .inferno-setup__jumps {
+  gap: 4px;
+}
+
+/* The pane's segment: inset well at rest, the practice accent tint when chosen. */
+.inferno-setup--practice .inferno-landmark {
+  min-height: 28px;
+  /* The Mobile Wave page has 140px for both tracks. Keep even "18 Ranger" whole. */
+  gap: 4px;
+  padding: 3px 4px;
+  background: var(--color-surface-inset);
+  font:
+    16px / 16px "RuneScape Plain 11",
+    sans-serif;
+}
+
+.inferno-setup--practice .inferno-landmark:hover {
+  background: var(--color-surface-hover);
+}
+
+.inferno-setup--practice .inferno-landmark.is-active,
+.inferno-setup--practice .inferno-landmark.is-active:hover {
+  background: color-mix(in srgb, var(--color-primary) 18%, var(--color-surface-inset));
+}
+
+.inferno-setup--practice .inferno-setup__spawns {
+  margin-block: 4px;
+  font:
+    16px / 18px "RuneScape Plain 11",
+    sans-serif;
+}
+
+/* ---- Touch: every target at 44px ------------------------------------------------------------ */
+
+@media (pointer: coarse) {
+  :is(.inferno-landmark, .inferno-setup__go) {
+    min-height: 44px;
+  }
+
+  .inferno-setup .inferno-landmark {
+    align-items: center;
+  }
+}
+
+/* The Mobile layout is a touch layout whatever the pointer reports, as the replay and session
+   bars already assume; so is the compact configurer. */
+:root[data-mobile-ui] :is(.inferno-landmark, .inferno-setup__go) {
+  min-height: 44px;
+}
+
+:root[data-mobile-ui] .inferno-landmark {
+  align-items: center;
+}
+
+/* Native mobile stays a touch surface in landscape, even above the primitive's 720px cutoff. */
+:root[data-mobile-ui] .inferno-setup--practice .num-input__arrows {
+  display: none;
+}
+
+@media (max-width: 720px), (max-height: 540px) {
+  .encounter-panel-card .inferno-landmark {
+    min-height: 44px;
+  }
+
+  .encounter-panel-card .inferno-landmark {
+    align-items: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .inferno-landmark {
+    transition: none;
+  }
+}

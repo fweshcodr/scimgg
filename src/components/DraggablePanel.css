@@ -1,0 +1,208 @@
+/*
+ * The affordance is always mounted; visibility is driven by [data-visible] so
+ * enter/exit can transition. Curves and durations mirror HintBar.css (180ms
+ * out-quint enter, 140ms in-quart exit) because both surfaces appear on the same
+ * Alt keypress and must read as one mode.
+ */
+
+/* The whole panel is one grab surface in Alt mode (mousedown is captured
+   before descendant controls), so the cursor must read "grab" uniformly —
+   including over buttons that set their own cursor. During an actual drag,
+   useRafDrag's injected :root:root:root:root rule (higher specificity,
+   also !important) takes over with "grabbing".
+
+   The last selector is load-bearing: the panel cursor policy in index.css sets
+   `cursor: default !important` on `.panel-surface *`, which ties `.dp-alt-move *`
+   on specificity and would win on source order. Naming the panel surface
+   explicitly puts Alt-to-move back on top. */
+.dp-alt-move,
+.dp-alt-move *,
+.dp-alt-move .panel-surface * {
+  /* biome-ignore lint/complexity/noImportantStyles: this rule exists to override
+     per-control cursors during Alt-to-move; that is only possible with !important. */
+  cursor: grab !important;
+}
+
+.dp-move-affordance {
+  position: absolute;
+  inset: -1px;
+  z-index: 1;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px dashed transparent;
+  border-radius: 2px;
+  background: transparent;
+  color: transparent;
+  visibility: hidden;
+  /*
+   * Fades by animating its OWN paint (border/background/text color), never `opacity`
+   * or `transform`. This box covers the whole panel, so compositing it drags the panel's
+   * pixel-art sprites into that layer and resamples them — every panel blurs for the
+   * length of the fade.
+   *
+   * The corner brackets ride `currentColor`; the nameplate carries its own colors and so
+   * repeats the transition below. `visibility` trails the fade out to keep the box out of
+   * the a11y tree at rest.
+   */
+  transition:
+    border-color 140ms cubic-bezier(0.4, 0, 1, 1),
+    background-color 140ms cubic-bezier(0.4, 0, 1, 1),
+    color 140ms cubic-bezier(0.4, 0, 1, 1),
+    visibility 0s linear 140ms;
+}
+
+/* No transform in any state, so the 1/2px strokes and the pixel-font label never
+   sit on fractional pixels. */
+.dp-move-affordance[data-visible] {
+  border-color: color-mix(in srgb, var(--color-secondary) 30%, transparent);
+  background: color-mix(in srgb, var(--color-bg-solid) 20%, transparent);
+  color: var(--color-secondary);
+  visibility: visible;
+  transition:
+    border-color 180ms cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 180ms cubic-bezier(0.22, 1, 0.36, 1),
+    color 180ms cubic-bezier(0.22, 1, 0.36, 1),
+    visibility 0s;
+}
+
+/* :hover matches the panel root while the pointer is over its content layer
+   (the root itself is pointer-events: none). Suppressed while any drag is
+   in flight (html[data-panel-dragging], set by notifyDragStart): as the
+   dragged panel passes over siblings the pointer hit-tests through to
+   them, and without the gate they would light up as if they were grab
+   candidates. */
+html:not([data-panel-dragging]) .dp-alt-move:hover .dp-move-affordance[data-visible] {
+  border-color: color-mix(in srgb, var(--color-text-body) 55%, transparent);
+  background: color-mix(in srgb, var(--color-bg-solid) 35%, transparent);
+  color: var(--color-text-body);
+}
+
+/* Active always wins over hover ("active must survive hover"): --active only
+   exists during a drag, and the drag gate above disables the hover tier for
+   the drag's entire lifetime. */
+.dp-move-affordance--active {
+  border: 1px solid color-mix(in srgb, var(--color-primary) 60%, transparent);
+  background: color-mix(in srgb, var(--color-primary) 8%, transparent);
+  color: var(--color-primary);
+  box-shadow: var(--shadow-glow);
+}
+
+/* Corner brackets: solid 2px L-marks in currentColor, so the state tiers
+   above recolor them for free. */
+.dp-move-affordance__corner {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+}
+
+.dp-move-affordance__corner::before,
+.dp-move-affordance__corner::after {
+  content: "";
+  position: absolute;
+  background: currentColor;
+}
+
+.dp-move-affordance__corner::before {
+  width: 12px;
+  height: 2px;
+}
+
+.dp-move-affordance__corner::after {
+  width: 2px;
+  height: 12px;
+}
+
+.dp-move-affordance__corner--tl {
+  top: 2px;
+  left: 2px;
+}
+
+.dp-move-affordance__corner--tl::before,
+.dp-move-affordance__corner--tl::after {
+  top: 0;
+  left: 0;
+}
+
+.dp-move-affordance__corner--tr {
+  top: 2px;
+  right: 2px;
+}
+
+.dp-move-affordance__corner--tr::before,
+.dp-move-affordance__corner--tr::after {
+  top: 0;
+  right: 0;
+}
+
+.dp-move-affordance__corner--bl {
+  bottom: 2px;
+  left: 2px;
+}
+
+.dp-move-affordance__corner--bl::before,
+.dp-move-affordance__corner--bl::after {
+  bottom: 0;
+  left: 0;
+}
+
+.dp-move-affordance__corner--br {
+  right: 2px;
+  bottom: 2px;
+}
+
+.dp-move-affordance__corner--br::before,
+.dp-move-affordance__corner--br::after {
+  right: 0;
+  bottom: 0;
+}
+
+/* 16px is the native pixel size of the RuneScape TTFs (unitsPerEm=16 — see
+   index.css): glyph edges land exactly on the pixel grid, so the nameplate
+   stays bilevel-crisp AND comfortably legible. No text-shadow needed — the
+   chip provides its own contrast surface. */
+.dp-move-affordance__label {
+  padding: 4px 8px;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  background: transparent;
+  color: transparent;
+  font-family: "RuneScape Plain 12", sans-serif;
+  font-size: 16px;
+  line-height: 1;
+  white-space: nowrap;
+  transition:
+    border-color 140ms cubic-bezier(0.4, 0, 1, 1),
+    background-color 140ms cubic-bezier(0.4, 0, 1, 1),
+    color 140ms cubic-bezier(0.4, 0, 1, 1);
+}
+
+.dp-move-affordance[data-visible] .dp-move-affordance__label {
+  border-color: var(--color-border-translucent);
+  background: var(--color-surface-translucent);
+  color: var(--color-text-body);
+  transition:
+    border-color 180ms cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 180ms cubic-bezier(0.22, 1, 0.36, 1),
+    color 180ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dp-move-affordance,
+  .dp-move-affordance__label {
+    transition:
+      border-color 60ms linear,
+      background-color 60ms linear,
+      color 60ms linear,
+      visibility 0s linear 60ms;
+  }
+
+  .dp-move-affordance[data-visible] {
+    transition:
+      border-color 60ms linear,
+      background-color 60ms linear,
+      color 60ms linear,
+      visibility 0s;
+  }
+}

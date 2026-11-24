@@ -1,0 +1,949 @@
+capture inferno-waves-(35ish)-to-68-packet-data.txt stream 1 ticks 4105-4315
+life pillar#60137#0 1 4752
+life mager#62894#0 4105 4217
+life blob#62897#0 4105 4119
+life nibbler#62899#0 4105 4114
+life nibbler#62900#0 4105 4114
+life nibbler#62901#0 4105 4114
+life ranger#62895#0 4105 4283
+life meleer#62896#0 4105 4166
+life blob#62898#0 4105 4300
+life blob_range#63133#0 4119 4136
+life blob_mage#63135#0 4119 4136
+life blob_melee#63134#0 4119 4180
+life blob_range#33786#1 4300 4310
+life blob_melee#33787#1 4300 4311
+life blob_mage#33788#1 4300 4315
+start 4104
+  player 34,43
+  npc pillar#60137#0 34,39
+  varbit 5655 255
+  varbit 5656 255
+  varbit 5657 65
+  varbit 4117 0
+  varbit 4116 1
+  varbit 4118 0
+t4105
+  wave 63 @86799
+  add mager#62894#0 40,34 @86801
+  add blob#62897#0 39,41 @86802
+  add nibbler#62899#0 26,34 @86803
+  add nibbler#62900#0 25,35 @86804
+  add nibbler#62901#0 26,35 @86805
+  add ranger#62895#0 33,29 @86806
+  add meleer#62896#0 20,35 @86807
+  add blob#62898#0 22,23 @86808
+t4106
+  seq player 7618 @86822
+  walk mager#62894#0 40,34 -> 39,35 @86824
+  walk nibbler#62899#0 26,34 -> 27,35 @86828
+  seq nibbler#62899#0 7575 @86829
+  walk nibbler#62900#0 25,35 -> 26,36 @86831
+  seq nibbler#62900#0 7575 @86832
+  walk nibbler#62901#0 26,35 -> 27,36 @86834
+  seq nibbler#62901#0 7575 @86836
+  walk ranger#62895#0 33,29 -> 34,30 @86838
+  walk meleer#62896#0 20,35 -> 21,36 @86840
+  walk blob#62898#0 22,23 -> 23,24 @86842
+t4107
+  run player 34,43 -> 36,42 @86854
+  walk mager#62894#0 39,35 -> 38,36 @86857
+  walk nibbler#62899#0 27,35 -> 28,36 @86858
+  walk nibbler#62900#0 26,36 -> 27,37 @86859
+  walk nibbler#62901#0 27,36 -> 28,37 @86860
+  walk ranger#62895#0 34,30 -> 34,31 @86861
+  walk meleer#62896#0 21,36 -> 22,37 @86863
+  walk blob#62898#0 23,24 -> 24,25 @86865
+t4108
+  varbit 4116 0 @86874
+  varbit 4117 1 @86876
+  walk mager#62894#0 38,36 -> 37,37 @86880
+  walk nibbler#62899#0 28,36 -> 29,37 @86884
+  walk nibbler#62900#0 27,37 -> 28,38 @86885
+  walk nibbler#62901#0 28,37 -> 29,38 @86886
+  walk ranger#62895#0 34,31 -> 35,32 @86887
+  walk meleer#62896#0 22,37 -> 23,38 @86889
+  walk blob#62898#0 24,25 -> 25,26 @86891
+t4109
+  seq blob#62897#0 7583 @86905
+  walk nibbler#62899#0 29,37 -> 30,38 @86906
+  hit nibbler#62899#0 16 10 @86907
+  dead nibbler#62899#0 @86908
+  walk nibbler#62900#0 28,38 -> 29,39 @86909
+  hit nibbler#62900#0 16 10 @86910
+  dead nibbler#62900#0 @86911
+  walk nibbler#62901#0 29,38 -> 30,39 @86912
+  hit nibbler#62901#0 16 10 @86913
+  dead nibbler#62901#0 @86914
+  walk ranger#62895#0 35,32 -> 36,33 @86915
+  walk meleer#62896#0 23,38 -> 24,39 @86917
+  walk blob#62898#0 25,26 -> 26,27 @86919
+  proj 1378 40,42 -> player 36,42 [10,64,16,32,160,124] @86921
+t4110
+  walk ranger#62895#0 36,33 -> 36,34 @86937
+  walk meleer#62896#0 24,39 -> 25,40 @86939
+  walk blob#62898#0 26,27 -> 27,28 @86941
+t4111
+  hit player 12 0 @86955
+  walk meleer#62896#0 25,40 -> 26,41 @86957
+  walk blob#62898#0 27,28 -> 28,29 @86959
+t4112
+  seq player 10656 @86975
+  seq blob#62897#0 7585 @86978
+  seq nibbler#62899#0 7576 @86980
+  seq nibbler#62900#0 7576 @86982
+  seq nibbler#62901#0 7576 @86984
+  walk meleer#62896#0 26,41 -> 27,42 @86985
+  walk blob#62898#0 28,29 -> 29,30 @86987
+t4113
+  varbit 4117 0 @87005
+  varbit 4116 1 @87007
+  walk meleer#62896#0 27,42 -> 28,42 @87011
+  walk blob#62898#0 29,30 -> 30,31 @87013
+t4114
+  seq player 10656 @87026
+  seq blob#62897#0 7585 @87029
+  hit blob#62897#0 16 20 @87030
+  del nibbler#62899#0 30,38 @87032
+  del nibbler#62900#0 29,39 @87033
+  del nibbler#62901#0 30,39 @87034
+  walk meleer#62896#0 28,42 -> 29,42 @87035
+  walk blob#62898#0 30,31 -> 31,32 @87037
+t4115
+  seq blob#62897#0 7581 @87055
+  walk meleer#62896#0 29,42 -> 30,42 @87056
+  walk blob#62898#0 31,32 -> 32,33 @87058
+  proj 1380 40,42 -> player 36,42 [28,60,16,32,160,124] @87060
+t4116
+  varbit 4116 0 @87070
+  varbit 4118 1 @87072
+  seq player 10656 @87077
+  hit blob#62897#0 16 20 @87080
+  dead blob#62897#0 @87081
+  walk meleer#62896#0 30,42 -> 31,42 @87082
+  seq meleer#62896#0 7598 @87083
+  walk blob#62898#0 32,33 -> 33,34 @87085
+t4117
+  hit player 12 0 @87104
+  hit player 12 0 @87105
+  seq blob#62897#0 7584 @87109
+  walk meleer#62896#0 31,42 -> 32,42 @87111
+  seq meleer#62896#0 7597 @87112
+  walk blob#62898#0 33,34 -> 33,35 @87114
+t4118
+  seq player 10656 @87125
+  seq meleer#62896#0 7598 @87128
+  hit meleer#62896#0 12 0 @87129
+  walk blob#62898#0 33,35 -> 33,36 @87131
+t4119
+  varbit 4118 0 @87141
+  varbit 4116 1 @87143
+  del blob#62897#0 39,41 @87147
+  add blob_range#63133#0 40,42 @87148
+  add blob_mage#63135#0 41,43 @87150
+  add blob_melee#63134#0 38,42 @87152
+t4120
+  seq player 10656 @87162
+  walk mager#62894#0 37,37 -> 37,38 @87164
+  walk ranger#62895#0 36,34 -> 36,35 @87166
+  seq meleer#62896#0 7598 @87169
+  hit meleer#62896#0 12 0 @87170
+  walk blob_melee#63134#0 38,42 -> 37,42 @87172
+t4121
+  hit player 12 0 @87184
+  seq meleer#62896#0 7597 @87188
+t4122
+  hit player 12 0 @87197
+  seq player 10656 @87198
+  seq meleer#62896#0 7598 @87201
+  hit meleer#62896#0 12 0 @87202
+  seq blob_range#63133#0 7583 @87205
+  seq blob_mage#63135#0 7581 @87207
+  seq blob_melee#63134#0 7582 @87209
+  proj 1379 40,42 -> player 36,42 [10,64,16,32,80,124] @87210
+  proj 1381 41,43 -> player 36,42 [28,68,16,32,80,124] @87213
+t4124
+  hit player 12 0 @87242
+  hit player 12 0 @87243
+  hit meleer#62896#0 16 3 @87246
+t4125
+  hit player 12 0 @87267
+  seq player 7618 @87268
+  seq meleer#62896#0 7597 @87271
+  seq blob_range#63133#0 7585 @87274
+  seq blob_mage#63135#0 7585 @87276
+t4126
+  hit player 12 0 @87299
+  seq blob_range#63133#0 7583 @87303
+  seq blob_mage#63135#0 7581 @87305
+  seq blob_melee#63134#0 7582 @87307
+  proj 1379 40,42 -> player 36,42 [10,64,16,32,80,124] @87308
+  proj 1381 41,43 -> player 36,42 [28,68,16,32,80,124] @87311
+t4127
+  hit blob_range#63133#0 12 0 @87330
+  hit blob_mage#63135#0 12 0 @87333
+t4128
+  varbit 4116 0 @87343
+  varbit 4118 1 @87345
+  hit player 16 16 @87354
+  hit player 12 0 @87355
+  seq player 7618 @87356
+  seq blob_range#63133#0 7585 @87360
+  seq blob_mage#63135#0 7585 @87362
+t4129
+  hit player 12 0 @87381
+  seq meleer#62896#0 7597 @87385
+t4130
+  varbit 4118 0 @87392
+  varbit 4116 1 @87394
+  hit player 16 15 @87401
+  seq blob_range#63133#0 7583 @87405
+  hit blob_range#63133#0 16 6 @87406
+  seq blob_mage#63135#0 7581 @87409
+  hit blob_mage#63135#0 16 14 @87410
+  seq blob_melee#63134#0 7582 @87413
+  proj 1379 40,42 -> player 36,42 [10,64,16,32,80,124] @87414
+  proj 1381 41,43 -> player 36,42 [28,68,16,32,80,124] @87417
+t4131
+  seq player 7618 @87439
+  seq blob_range#63133#0 7585 @87443
+  seq blob_mage#63135#0 7585 @87445
+t4132
+  hit player 12 0 @87465
+  hit player 12 0 @87466
+t4133
+  hit player 16 10 @87477
+  seq meleer#62896#0 7597 @87481
+  hit blob_range#63133#0 16 9 @87483
+  dead blob_range#63133#0 @87484
+  hit blob_mage#63135#0 16 1 @87486
+  dead blob_mage#63135#0 @87487
+t4134
+  hit player 12 0 @87501
+  seq blob_range#63133#0 7584 @87505
+  seq blob_mage#63135#0 7584 @87508
+  seq blob_melee#63134#0 7582 @87511
+t4135
+  varbit 4116 0 @87521
+  varbit 4118 1 @87523
+t4136
+  del blob_range#63133#0 40,42 @87532
+  del blob_mage#63135#0 41,43 @87533
+t4137
+  hit player 12 0 @87543
+  seq player 7618 @87544
+  seq meleer#62896#0 7597 @87547
+  seq blob_melee#63134#0 7585 @87550
+t4138
+  hit player 12 0 @87568
+  seq blob_melee#63134#0 7582 @87572
+t4139
+  hit blob_melee#63134#0 16 1 @87585
+t4141
+  hit player 12 0 @87603
+  seq meleer#62896#0 7597 @87607
+t4142
+  hit player 12 0 @87615
+  seq blob_melee#63134#0 7582 @87619
+t4145
+  hit player 12 0 @87656
+  seq player 8056 @87657
+  seq meleer#62896#0 7597 @87660
+t4146
+  hit player 12 0 @87675
+  hit meleer#62896#0 16 22 @87679
+  hit meleer#62896#0 16 14 @87680
+  hit meleer#62896#0 12 0 @87681
+  seq blob_melee#63134#0 7582 @87686
+t4147
+  varbit 4118 0 @87698
+  varbit 4118 1 @87701
+t4148
+  varbit 4118 0 @87711
+  varbit 4118 1 @87713
+t4149
+  varbit 4118 0 @87723
+  varbit 4118 1 @87725
+  hit player 12 0 @87729
+  seq meleer#62896#0 7597 @87733
+t4150
+  varbit 4118 0 @87745
+  varbit 4118 1 @87747
+  hit player 12 0 @87751
+  seq player 8056 @87752
+  seq meleer#62896#0 7598 @87755
+  seq blob_melee#63134#0 7582 @87757
+t4151
+  varbit 4118 0 @87772
+  varbit 4118 1 @87774
+  hit meleer#62896#0 12 0 @87779
+  hit meleer#62896#0 12 0 @87780
+  hit meleer#62896#0 12 0 @87781
+t4152
+  varbit 4118 0 @87795
+  varbit 4118 1 @87797
+t4153
+  varbit 4118 0 @87809
+  varbit 4118 1 @87811
+  hit player 12 0 @87815
+  seq meleer#62896#0 7597 @87819
+t4154
+  varbit 4118 0 @87829
+  varbit 4118 1 @87831
+  hit player 12 0 @87835
+  seq blob_melee#63134#0 7582 @87839
+t4155
+  varbit 4118 0 @87849
+  varbit 4118 1 @87851
+  seq player 8056 @87855
+  seq meleer#62896#0 7598 @87858
+t4156
+  varbit 4118 0 @87873
+  varbit 4118 1 @87875
+  hit meleer#62896#0 16 20 @87882
+  hit meleer#62896#0 16 5 @87883
+  hit meleer#62896#0 12 0 @87884
+t4157
+  varbit 4118 0 @87898
+  varbit 4118 1 @87900
+  hit player 12 0 @87905
+  seq meleer#62896#0 7597 @87909
+t4158
+  varbit 4118 0 @87919
+  varbit 4118 1 @87921
+  hit player 12 0 @87925
+  seq blob_melee#63134#0 7582 @87929
+t4159
+  varbit 4118 0 @87941
+  varbit 4118 1 @87943
+t4160
+  varbit 4118 0 @87953
+  varbit 4118 1 @87955
+  seq player 8056 @87960
+  seq meleer#62896#0 7598 @87963
+t4161
+  varbit 4118 0 @87976
+  varbit 4118 1 @87978
+  seq meleer#62896#0 7599 @87986
+  hit meleer#62896#0 16 11 @87987
+  hit meleer#62896#0 12 0 @87988
+  hit meleer#62896#0 12 0 @87989
+  dead meleer#62896#0 @87991
+  dead meleer#62896#0 @87992
+  dead meleer#62896#0 @87993
+t4162
+  varbit 4118 0 @88008
+  varbit 4118 1 @88010
+  hit player 12 0 @88016
+  seq blob_melee#63134#0 7582 @88020
+t4163
+  varbit 4118 0 @88030
+  varbit 4118 1 @88032
+t4165
+  varbit 4118 0 @88051
+  varbit 4118 1 @88053
+  seq player 8056 @88057
+  seq mager#62894#0 7609 @88060
+  seq blob_melee#63134#0 7585 @88062
+t4166
+  varbit 4118 0 @88075
+  varbit 4118 1 @88077
+  hit player 12 0 @88082
+  hit mager#62894#0 43 18 @88086
+  del meleer#62896#0 32,42 @88088
+  seq blob_melee#63134#0 7582 @88090
+  hit blob_melee#63134#0 12 0 @88091
+t4167
+  varbit 4118 0 @88104
+  varbit 4118 1 @88106
+t4168
+  varbit 4118 0 @88119
+  varbit 4118 1 @88121
+t4169
+  varbit 4118 0 @88131
+  varbit 4118 1 @88133
+t4170
+  varbit 4118 0 @88143
+  varbit 4118 1 @88145
+  hit player 12 0 @88151
+  seq player 8056 @88152
+  seq mager#62894#0 7609 @88155
+  seq blob_melee#63134#0 7585 @88157
+t4171
+  varbit 4118 0 @88174
+  varbit 4118 1 @88176
+  hit mager#62894#0 16 7 @88183
+  hit blob_melee#63134#0 16 6 @88186
+t4172
+  varbit 4118 0 @88197
+  varbit 4118 1 @88199
+t4173
+  varbit 4118 0 @88209
+  varbit 4118 1 @88211
+t4174
+  varbit 4118 0 @88223
+  varbit 4118 1 @88225
+  hit player 12 0 @88229
+  seq blob_melee#63134#0 7582 @88233
+t4175
+  varbit 4118 0 @88243
+  varbit 4118 1 @88245
+  seq player 8056 @88249
+  seq mager#62894#0 7609 @88252
+  seq blob_melee#63134#0 7585 @88255
+t4176
+  varbit 4118 0 @88277
+  varbit 4118 1 @88279
+  hit mager#62894#0 12 0 @88285
+  hit blob_melee#63134#0 16 8 @88288
+  dead blob_melee#63134#0 @88289
+t4177
+  varbit 4118 0 @88301
+  varbit 4118 1 @88303
+  seq blob_melee#63134#0 7584 @88310
+t4178
+  varbit 4118 0 @88320
+  varbit 4116 1 @88322
+  walk player 36,42 -> 35,43 @88324
+t4180
+  del blob_melee#63134#0 37,42 @88343
+t4181
+  walk mager#62894#0 37,38 -> 37,39 @88359
+  seq mager#62894#0 7610 @88360
+  walk ranger#62895#0 36,35 -> 36,36 @88362
+  proj 1376 39,41 -> player 35,43 [28,60,0,32,400,124] @88364
+t4182
+  seq player 426 @88383
+  seq mager#62894#0 7609 @88386
+t4183
+  varbit 4116 0 @88398
+  varbit 4116 1 @88400
+  hit player 12 0 @88404
+t4184
+  varbit 4116 0 @88413
+  varbit 4116 1 @88415
+  hit mager#62894#0 16 33 @88421
+t4185
+  varbit 4116 0 @88431
+  varbit 4116 1 @88433
+  seq mager#62894#0 7610 @88440
+  proj 1376 39,41 -> player 35,43 [28,60,0,32,400,124] @88441
+t4186
+  varbit 4116 0 @88455
+  varbit 4116 1 @88457
+t4187
+  varbit 4116 0 @88467
+  varbit 4116 1 @88469
+  hit player 12 0 @88476
+  seq player 426 @88477
+  seq mager#62894#0 7609 @88480
+t4188
+  varbit 4116 0 @88495
+  varbit 4116 1 @88497
+t4189
+  varbit 4116 0 @88509
+  varbit 4116 1 @88511
+  seq mager#62894#0 7610 @88519
+  hit mager#62894#0 16 12 @88520
+  proj 1376 39,41 -> player 35,43 [28,60,0,32,400,124] @88522
+t4191
+  varbit 4116 0 @88544
+  varbit 4116 1 @88549
+  hit player 12 0 @88555
+t4192
+  varbit 4116 0 @88568
+  varbit 4116 1 @88573
+  seq player 426 @88581
+  seq mager#62894#0 7609 @88584
+t4193
+  varbit 4116 0 @88599
+  varbit 4116 1 @88604
+  seq mager#62894#0 7610 @88613
+  proj 1376 39,41 -> player 35,43 [28,60,0,32,400,124] @88614
+t4194
+  varbit 4116 0 @88626
+  varbit 4116 1 @88631
+  hit mager#62894#0 16 5 @88639
+t4195
+  varbit 4116 0 @88653
+  varbit 4116 1 @88658
+  hit player 12 0 @88664
+t4196
+  varbit 4116 0 @88675
+  varbit 4116 1 @88680
+t4197
+  varbit 4116 0 @88693
+  varbit 4116 1 @88698
+  seq player 426 @88706
+  seq mager#62894#0 7610 @88709
+  proj 1376 39,41 -> player 35,43 [28,60,0,32,400,124] @88710
+t4198
+  varbit 4116 0 @88731
+  varbit 4116 1 @88736
+t4199
+  varbit 4116 0 @88749
+  varbit 4116 1 @88754
+  hit player 12 0 @88761
+  hit mager#62894#0 16 59 @88764
+t4200
+  varbit 4116 0 @88776
+  varbit 4116 1 @88781
+t4201
+  varbit 4116 0 @88801
+  varbit 4116 1 @88806
+  seq mager#62894#0 7610 @88815
+  proj 1376 39,41 -> player 35,43 [28,60,0,32,400,124] @88816
+t4202
+  varbit 4116 0 @88828
+  varbit 4116 1 @88833
+  seq player 426 @88840
+  seq mager#62894#0 7609 @88843
+t4203
+  varbit 4116 0 @88858
+  varbit 4116 1 @88863
+  hit player 12 0 @88869
+t4204
+  varbit 4116 0 @88881
+  varbit 4116 1 @88886
+  hit mager#62894#0 16 6 @88894
+t4205
+  varbit 4116 0 @88905
+  varbit 4116 1 @88910
+  seq mager#62894#0 7610 @88919
+  proj 1376 39,41 -> player 35,43 [28,60,0,32,400,124] @88920
+t4206
+  varbit 4116 0 @88933
+  varbit 4116 1 @88938
+t4207
+  varbit 4116 0 @88953
+  varbit 4116 1 @88958
+  hit player 12 0 @88966
+  seq player 426 @88967
+  seq mager#62894#0 7609 @88970
+t4208
+  varbit 4116 0 @88986
+  varbit 4116 1 @88991
+t4209
+  varbit 4116 0 @89004
+  varbit 4116 1 @89009
+  seq mager#62894#0 7610 @89019
+  hit mager#62894#0 16 33 @89020
+  proj 1376 39,41 -> player 35,43 [28,60,0,32,400,124] @89022
+t4210
+  varbit 4116 0 @89038
+  varbit 4116 1 @89043
+t4211
+  varbit 4116 0 @89057
+  varbit 4116 1 @89062
+  hit player 12 0 @89069
+t4212
+  varbit 4116 0 @89080
+  varbit 4116 1 @89085
+  seq player 426 @89092
+  seq mager#62894#0 7609 @89095
+t4213
+  varbit 4116 0 @89113
+  varbit 4116 1 @89118
+  seq mager#62894#0 7610 @89127
+  proj 1376 39,41 -> player 35,43 [28,60,0,32,400,124] @89128
+t4214
+  varbit 4116 0 @89140
+  varbit 4116 1 @89145
+  hit mager#62894#0 16 48 @89153
+  dead mager#62894#0 @89154
+t4215
+  varbit 4116 0 @89164
+  varbit 4116 1 @89169
+  hit player 12 0 @89177
+  seq mager#62894#0 7613 @89180
+t4216
+  varbit 4116 0 @89195
+  varbit 4116 1 @89200
+t4217
+  varbit 4116 0 @89213
+  walk player 35,43 -> 36,42 @89218
+  del mager#62894#0 37,39 @89221
+t4220
+  varbit 4117 1 @89246
+  run player 36,42 -> 37,41 @89252
+  seq player 10656 @89254
+  seq ranger#62895#0 7607 @89257
+t4221
+  seq ranger#62895#0 7605 @89278
+  proj 1377 36,39 -> player 37,41 [60,78,16,0,256,124] @89282
+  proj 1377 38,39 -> player 37,41 [60,78,16,0,256,124] @89285
+t4222
+  seq player 10656 @89302
+  seq ranger#62895#0 7607 @89305
+  hit ranger#62895#0 16 20 @89306
+t4223
+  hit player 12 0 @89320
+t4224
+  seq player 10092 @89340
+  seq ranger#62895#0 7607 @89344
+  hit ranger#62895#0 16 24 @89345
+t4225
+  seq ranger#62895#0 7605 @89365
+  proj 1377 36,39 -> player 37,41 [60,78,16,0,256,124] @89366
+  proj 1377 38,39 -> player 37,41 [60,78,16,0,256,124] @89369
+t4226
+  varbit 4117 0 @89379
+  varbit 4117 1 @89381
+t4227
+  varbit 4117 0 @89391
+  varbit 4117 1 @89393
+  hit player 12 0 @89397
+t4228
+  varbit 4117 0 @89408
+  varbit 4117 1 @89410
+  hit ranger#62895#0 16 13 @89416
+t4229
+  varbit 4117 0 @89426
+  varbit 4117 1 @89428
+  seq player 10092 @89434
+  gfx ranger#62895#0 85 delay 96 @89437
+  seq ranger#62895#0 7605 @89438
+  proj 1377 36,39 -> player 37,41 [60,78,16,0,256,124] @89439
+  proj 1377 38,39 -> player 37,41 [60,78,16,0,256,124] @89442
+t4230
+  varbit 4117 0 @89456
+  varbit 4117 1 @89458
+t4231
+  varbit 4117 0 @89472
+  varbit 4117 1 @89474
+  hit player 12 0 @89478
+t4232
+  varbit 4117 0 @89487
+  varbit 4117 1 @89489
+t4233
+  varbit 4117 0 @89499
+  varbit 4117 1 @89501
+  seq ranger#62895#0 7605 @89507
+  proj 1377 36,39 -> player 37,41 [60,78,16,0,256,124] @89508
+  proj 1377 38,39 -> player 37,41 [60,78,16,0,256,124] @89511
+t4234
+  varbit 4117 0 @89525
+  varbit 4117 1 @89527
+  seq player 10092 @89533
+  gfx ranger#62895#0 85 delay 96 @89536
+  seq ranger#62895#0 7607 @89537
+t4235
+  varbit 4117 0 @89548
+  varbit 4117 1 @89550
+  hit player 12 0 @89554
+t4236
+  varbit 4117 0 @89564
+  varbit 4117 1 @89566
+t4237
+  varbit 4117 0 @89579
+  varbit 4117 1 @89581
+  seq ranger#62895#0 7605 @89587
+  proj 1377 36,39 -> player 37,41 [60,78,16,0,256,124] @89588
+  proj 1377 38,39 -> player 37,41 [60,78,16,0,256,124] @89591
+t4238
+  varbit 4117 0 @89602
+  varbit 4117 1 @89604
+t4239
+  varbit 4117 0 @89614
+  varbit 4117 1 @89616
+  hit player 12 0 @89625
+  seq player 10092 @89626
+  seq ranger#62895#0 7607 @89630
+t4240
+  varbit 4117 0 @89645
+  varbit 4117 1 @89647
+t4241
+  varbit 4117 0 @89658
+  varbit 4117 1 @89660
+  seq ranger#62895#0 7605 @89666
+  proj 1377 36,39 -> player 37,41 [60,78,16,0,256,124] @89667
+  proj 1377 38,39 -> player 37,41 [60,78,16,0,256,124] @89670
+t4242
+  varbit 4117 0 @89681
+  varbit 4117 1 @89683
+t4243
+  varbit 4117 0 @89695
+  varbit 4117 1 @89697
+  hit player 12 0 @89702
+  hit ranger#62895#0 16 26 @89705
+t4244
+  varbit 4117 0 @89716
+  varbit 4117 1 @89718
+  seq player 10092 @89724
+  gfx ranger#62895#0 85 delay 96 @89727
+  seq ranger#62895#0 7607 @89728
+t4245
+  varbit 4117 0 @89739
+  varbit 4117 1 @89741
+  seq ranger#62895#0 7605 @89747
+  proj 1377 36,39 -> player 37,41 [60,78,16,0,256,124] @89748
+  proj 1377 38,39 -> player 37,41 [60,78,16,0,256,124] @89751
+t4246
+  varbit 4117 0 @89765
+  varbit 4117 1 @89767
+t4247
+  varbit 4117 0 @89777
+  varbit 4117 1 @89779
+  hit player 12 0 @89784
+t4248
+  varbit 4117 0 @89793
+  varbit 4117 1 @89795
+t4249
+  varbit 4117 0 @89807
+  varbit 4117 1 @89809
+  seq player 10092 @89815
+  gfx ranger#62895#0 85 delay 96 @89818
+  seq ranger#62895#0 7605 @89819
+  proj 1377 36,39 -> player 37,41 [60,78,16,0,256,124] @89820
+  proj 1377 38,39 -> player 37,41 [60,78,16,0,256,124] @89823
+t4250
+  varbit 4117 0 @89837
+  varbit 4117 1 @89839
+t4251
+  varbit 4117 0 @89852
+  varbit 4117 1 @89854
+  hit player 12 0 @89858
+t4252
+  varbit 4117 0 @89869
+  varbit 4117 1 @89871
+t4253
+  varbit 4117 0 @89882
+  varbit 4117 1 @89884
+  seq ranger#62895#0 7605 @89890
+  proj 1377 36,39 -> player 37,41 [60,78,16,0,256,124] @89891
+  proj 1377 38,39 -> player 37,41 [60,78,16,0,256,124] @89894
+t4254
+  varbit 4117 0 @89905
+  varbit 4117 1 @89907
+  seq player 10092 @89913
+  gfx ranger#62895#0 85 delay 96 @89916
+  seq ranger#62895#0 7607 @89917
+t4255
+  varbit 4117 0 @89930
+  varbit 4117 1 @89932
+  hit player 12 0 @89936
+t4256
+  varbit 4117 0 @89946
+  varbit 4117 1 @89948
+t4257
+  varbit 4117 0 @89958
+  varbit 4117 1 @89960
+  seq ranger#62895#0 7605 @89966
+  proj 1377 36,39 -> player 37,41 [60,78,16,0,256,124] @89967
+  proj 1377 38,39 -> player 37,41 [60,78,16,0,256,124] @89970
+t4258
+  varbit 4117 0 @89983
+t4259
+  hit player 12 0 @89998
+  seq player 10092 @89999
+  seq ranger#62895#0 7607 @90003
+t4261
+  varbit 4117 1 @90018
+  seq ranger#62895#0 7605 @90025
+  proj 1377 36,39 -> player 37,41 [60,78,16,0,256,124] @90026
+  proj 1377 38,39 -> player 37,41 [60,78,16,0,256,124] @90029
+t4262
+  varbit 4117 0 @90039
+t4263
+  hit player 12 0 @90050
+  hit ranger#62895#0 16 21 @90053
+t4264
+  seq player 10092 @90063
+  gfx ranger#62895#0 85 delay 96 @90066
+  seq ranger#62895#0 7607 @90067
+t4265
+  varbit 4117 1 @90074
+  seq ranger#62895#0 7605 @90080
+  proj 1377 36,39 -> player 37,41 [60,78,16,0,256,124] @90081
+  proj 1377 38,39 -> player 37,41 [60,78,16,0,256,124] @90084
+t4266
+  varbit 4117 0 @90094
+t4267
+  hit player 12 0 @90107
+t4269
+  varbit 4117 1 @90114
+  seq player 10092 @90118
+  seq ranger#62895#0 7605 @90122
+  proj 1377 36,39 -> player 37,41 [60,78,16,0,256,124] @90123
+  proj 1377 38,39 -> player 37,41 [60,78,16,0,256,124] @90126
+t4270
+  varbit 4117 0 @90142
+t4271
+  hit player 12 0 @90153
+t4273
+  varbit 4117 1 @90162
+  seq ranger#62895#0 7605 @90169
+  hit ranger#62895#0 16 3 @90170
+  proj 1377 36,39 -> player 37,41 [60,78,16,0,256,124] @90172
+  proj 1377 38,39 -> player 37,41 [60,78,16,0,256,124] @90175
+t4274
+  varbit 4117 0 @90185
+  seq player 10092 @90193
+  seq ranger#62895#0 7607 @90197
+t4275
+  hit player 12 0 @90209
+t4277
+  varbit 4117 1 @90229
+  seq ranger#62895#0 7605 @90236
+  proj 1377 36,39 -> player 37,41 [60,78,16,0,256,124] @90237
+  proj 1377 38,39 -> player 37,41 [60,78,16,0,256,124] @90240
+t4278
+  varbit 4117 0 @90249
+  hit ranger#62895#0 16 18 @90255
+  dead ranger#62895#0 @90256
+t4279
+  hit player 12 0 @90269
+  seq ranger#62895#0 7606 @90272
+t4280
+  run player 37,41 -> 36,42 @90279
+t4281
+  walk player 36,42 -> 35,42 @90285
+t4282
+  walk player 35,42 -> 34,42 @90296
+t4283
+  varbit 4117 1 @90308
+  del ranger#62895#0 36,36 @90312
+  walk blob#62898#0 33,36 -> 34,36 @90313
+t4284
+  run player 34,42 -> 33,41 @90324
+t4285
+  seq player 10656 @90332
+  walk blob#62898#0 34,36 -> 33,36 @90334
+  seq blob#62898#0 7585 @90335
+t4287
+  varbit 4117 0 @90349
+  varbit 4116 1 @90351
+  seq player 10656 @90354
+  seq blob#62898#0 7585 @90357
+  hit blob#62898#0 12 0 @90358
+t4288
+  varbit 4116 0 @90374
+  varbit 4116 1 @90376
+  seq blob#62898#0 7581 @90382
+  proj 1380 34,37 -> player 33,41 [28,60,16,32,160,124] @90383
+t4289
+  varbit 4116 0 @90395
+  varbit 4116 1 @90397
+  seq player 10656 @90402
+  seq blob#62898#0 7585 @90405
+  hit blob#62898#0 16 1 @90406
+t4290
+  varbit 4116 0 @90422
+  varbit 4116 1 @90424
+  hit player 12 0 @90428
+t4291
+  varbit 4116 0 @90440
+  varbit 4116 1 @90442
+  seq player 10656 @90446
+  seq blob#62898#0 7585 @90449
+  hit blob#62898#0 16 14 @90450
+t4292
+  varbit 4116 0 @90466
+  varbit 4116 1 @90468
+t4293
+  varbit 4116 0 @90478
+  varbit 4117 1 @90480
+  seq player 10656 @90485
+  seq blob#62898#0 7585 @90488
+  hit blob#62898#0 16 1 @90489
+t4294
+  varbit 4117 0 @90507
+  varbit 4117 1 @90509
+  seq blob#62898#0 7583 @90515
+  proj 1378 34,37 -> player 33,41 [10,64,16,32,160,124] @90516
+t4295
+  varbit 4117 0 @90527
+  varbit 4117 1 @90529
+  seq player 10656 @90533
+  seq blob#62898#0 7585 @90536
+  hit blob#62898#0 16 18 @90537
+t4296
+  varbit 4117 0 @90554
+  varbit 4117 1 @90556
+  hit player 12 0 @90560
+t4297
+  varbit 4117 0 @90571
+  varbit 4117 1 @90573
+  hit blob#62898#0 16 6 @90579
+  dead blob#62898#0 @90580
+t4298
+  varbit 4117 0 @90589
+  varbit 4117 1 @90591
+  seq blob#62898#0 7584 @90598
+t4299
+  run player 33,41 -> 33,43 @90608
+t4300
+  run player 33,43 -> 33,45 @90616
+  del blob#62898#0 33,36 @90618
+  add blob_range#33786#1 34,37 @90619
+  add blob_melee#33787#1 33,36 @90620
+  add blob_mage#33788#1 35,38 @90621
+t4301
+  walk player 33,45 -> 33,46 @90635
+  walk blob_range#33786#1 34,37 -> 33,38 @90637
+  walk blob_melee#33787#1 33,36 -> 33,37 @90639
+  walk blob_mage#33788#1 35,38 -> 34,38 @90641
+t4302
+  seq player 10092 @90660
+  seq blob_range#33786#1 7585 @90664
+  seq blob_melee#33787#1 7585 @90667
+  seq blob_mage#33788#1 7585 @90670
+t4303
+  seq blob_range#33786#1 7583 @90687
+  proj 1379 33,38 -> player 33,46 [10,96,16,32,80,124] @90688
+t4304
+  varbit 4117 0 @90696
+  varbit 4117 1 @90698
+t4305
+  varbit 4117 0 @90708
+  varbit 4117 1 @90710
+t4306
+  hit player 12 0 @90727
+t4307
+  varbit 4117 0 @90732
+  varbit 4117 1 @90734
+  seq player 10092 @90746
+  seq blob_range#33786#1 7585 @90750
+  hit blob_range#33786#1 16 15 @90751
+  dead blob_range#33786#1 @90752
+  seq blob_melee#33787#1 7585 @90755
+  hit blob_melee#33787#1 16 15 @90756
+  dead blob_melee#33787#1 @90757
+  seq blob_mage#33788#1 7585 @90760
+  hit blob_mage#33788#1 16 10 @90761
+  proj 1379 33,38 -> player 33,46 [10,96,16,32,80,124] @90763
+t4308
+  varbit 4117 0 @90783
+  varbit 4117 1 @90785
+  seq blob_range#33786#1 7584 @90792
+  seq blob_melee#33787#1 7584 @90795
+t4309
+  varbit 4117 0 @90809
+  varbit 4117 1 @90811
+  varbit 4117 0 @90813
+  varbit 4116 1 @90815
+t4310
+  hit player 12 0 @90830
+  del blob_range#33786#1 33,38 @90833
+  walk blob_mage#33788#1 34,38 -> 33,38 @90834
+  seq blob_mage#33788#1 7581 @90835
+  proj 1381 33,38 -> player 33,46 [28,92,16,32,80,124] @90837
+t4311
+  del blob_melee#33787#1 33,37 @90848
+t4312
+  seq player 10092 @90864
+  gfx blob_mage#33788#1 85 delay 126 @90867
+  seq blob_mage#33788#1 7585 @90868
+  hit blob_mage#33788#1 16 5 @90869
+  dead blob_mage#33788#1 @90870
+t4313
+  varbit 4116 0 @90878
+  varbit 4116 1 @90880
+  hit player 12 0 @90885
+  seq blob_mage#33788#1 7584 @90888
+t4314
+  varbit 4116 0 @90899
+  varbit 4116 1 @90901
+t4315
+  varbit 4116 0 @90915
+  del blob_mage#33788#1 33,38 @90920

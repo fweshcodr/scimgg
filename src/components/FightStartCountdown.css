@@ -1,0 +1,113 @@
+/* In-flow sibling of the arrival title. Its reserved title slot owns placement
+   through entry, restart and GO; this component never guesses scene geometry. */
+.fight-start-countdown {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  pointer-events: none;
+  z-index: 41;
+}
+
+.fight-start-countdown-status {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.fight-start-countdown-content {
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.fight-start-countdown-beats {
+  margin-top: 12px;
+}
+
+/* Keep the protective ink opaque over arena detail. The current beat supplies
+   the emphasis; fading future tokens also fades their rim. Tutorial styling
+   remains owned by the shared CountdownBeats stylesheet. */
+.fight-start-countdown-beats .countdown-beats-tick.is-pending {
+  opacity: 1;
+}
+
+.fight-start-countdown-beats .countdown-beats-tick.is-active {
+  color: var(--color-heading);
+}
+
+.fight-start-countdown-beats .countdown-beats-tick.is-go.is-active {
+  color: var(--color-accent-text);
+}
+
+.fight-start-countdown-beats .countdown-beats-dot {
+  color: var(--color-text-muted);
+  text-shadow: var(--crest-rim), var(--crest-shadow-sm);
+}
+
+/* Let GO and the traveling row highlight register before clearing the group.
+   The 200ms confirmation plus 400ms fade must match FIGHT_COUNTDOWN_EXIT_MS. */
+.fight-start-countdown-content--exiting {
+  animation: fight-start-countdown-exit 400ms ease-in-out 200ms both;
+}
+
+.fight-start-countdown-name {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(100% + 12px);
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 16px;
+  line-height: 20px;
+  letter-spacing: 2px;
+  padding-left: 2px;
+  text-transform: uppercase;
+  text-align: center;
+  overflow-wrap: anywhere;
+  color: var(--color-heading);
+  text-shadow: var(--crest-rim), var(--crest-shadow-sm);
+}
+
+/* Crest display numeral at 3x the native em, with the 3x hard offset. All motion
+   is opacity-only, including under reduced motion, so the anchor never moves. */
+.fight-start-countdown-numeral {
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 48px;
+  line-height: 48px;
+  letter-spacing: 3px;
+  /* Center the tracked run: letter-spacing trails the last glyph. */
+  padding-left: 3px;
+  color: var(--color-heading);
+  text-shadow: var(--crest-rim), var(--crest-shadow-lg);
+  animation: fight-start-countdown-fade 120ms ease backwards;
+}
+
+.fight-start-countdown-numeral.is-go {
+  color: var(--color-accent-text);
+  animation: none;
+}
+
+@keyframes fight-start-countdown-exit {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes fight-start-countdown-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

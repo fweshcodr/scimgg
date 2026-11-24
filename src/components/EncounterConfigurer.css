@@ -1,0 +1,1432 @@
+/* Preparation workbench. Existing editor primitives retain their input ownership. */
+.encounter-panel-card {
+  width: min(920px, calc(100vw - 48px));
+  height: min(800px, calc(100vh - 48px));
+  /* biome-ignore lint/suspicious/noDuplicateProperties: dvh enhancement over the vh fallback. */
+  height: min(800px, calc(100dvh - 48px));
+  max-height: min(800px, calc(100vh - 48px));
+  max-height: min(800px, calc(100dvh - 48px));
+  animation: none;
+}
+
+.encounter-panel-header {
+  align-items: center;
+  position: relative;
+  padding-left: 136px;
+}
+.encounter-panel-header-info {
+  flex: 1;
+}
+.encounter-panel-header h2 {
+  font-size: 32px;
+  line-height: 36px;
+  color: var(--color-heading);
+  white-space: normal;
+}
+
+/* The header bounds the model vertically. Text starts beyond this text-free region;
+   the live viewport measures it rather than clipping the NPC into an inset square. */
+.configurer-portrait {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 120px;
+  background: transparent;
+  border: 0;
+}
+/*
+ * The fade is PAINTED, not masked. `mask-image` here composites the portrait's layer, and the
+ * two-browser differential showed that layer dropping all 27 labels in the setup rail to
+ * grayscale AA once the loadout column was expanded and scrolled (63/63 pass without it,
+ * 36/63 with). The backdrop is a known flat color, so a gradient in that color over the art
+ * is pixel-equivalent and promotes nothing. The overlay carries no text.
+ *
+ * The live canvas only needs its base dissolved: it already paints the header's color, so it
+ * has no edges to lose. The thumbnail is a rectangular picture with its own dark backing baked
+ * in, so it needs all four edges taken, the way the picker vignettes the same art
+ * (`.picker-hero-art`).
+ */
+.configurer-portrait::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(to bottom, transparent 72%, var(--color-bg-elevated) 100%);
+}
+.configurer-portrait[data-portrait="thumb"]::after {
+  width: 56px;
+  height: 56px;
+  margin: auto;
+  background: radial-gradient(circle farthest-side at 50% 46%, transparent 58%, var(--color-bg-elevated) 100%);
+}
+.configurer-portrait[data-portrait="thumb"] img {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  max-width: 56px;
+  max-height: 56px;
+}
+.encounter-panel-body {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  overflow: visible;
+  scrollbar-gutter: auto;
+  padding: 0;
+  gap: 0;
+}
+.encounter-panel-body[hidden],
+:root[data-mobile-ui] .encounter-panel-body[hidden] {
+  display: none;
+}
+.encounter-panel-main,
+.encounter-panel-rail {
+  min-height: 0;
+  overflow-y: auto;
+  background: var(--color-surface);
+  scrollbar-gutter: stable;
+  padding: 16px;
+  /* Room for the last element to end on. Without it a framed box's own edge lands a pixel or
+     two off the footer's rule and the two read as one broken double line. The fill is opaque,
+     so the scroller keeps its text's subpixel antialiasing. */
+  padding-bottom: 16px;
+}
+.encounter-panel-rail {
+  border-left: 1px solid var(--color-border);
+  background: var(--color-bg-solid);
+  /* Keep this opaque rail out of the loadout canvases' overlapping paint layer. */
+  isolation: isolate;
+}
+/*
+ * Load-bearing for LCD text in Chromium. `scrollbar-gutter: stable` makes Blink paint a scroller's
+ * fill outside its scrolling contents, so the rail scrolls uncomposited and, once an SVG, input or
+ * other separately clipped element scrolls out above its top, the labels below lose LCD text. An
+ * always-present scrollbar reserves the same 8px without that, so nothing reflows when the rail
+ * starts or stops overflowing; with nothing to scroll its track takes the rail fill, matching the
+ * empty stable gutter it replaces. Scoped to engines with styleable scrollbars: elsewhere an
+ * always-on native scrollbar would show, and the stable gutter stays. The landscape block below
+ * repeats the pair.
+ */
+@supports selector(::-webkit-scrollbar) {
+  .encounter-panel-rail {
+    overflow-y: scroll;
+    scrollbar-gutter: auto;
+  }
+}
+.encounter-panel-rail::-webkit-scrollbar-track:disabled {
+  background: var(--color-bg-solid);
+}
+.encounter-panel-main .loadout-section {
+  min-height: min-content;
+}
+.encounter-panel-card .section-label {
+  letter-spacing: 0;
+  text-transform: none;
+  font-size: 16px;
+  color: var(--color-secondary);
+  line-height: 20px;
+}
+.encounter-panel-card .rail-section {
+  padding: 12px 0 0;
+  margin-top: 12px;
+}
+.encounter-panel-card .rail-section:first-of-type {
+  padding-top: 0;
+  margin-top: 0;
+}
+/*
+ * Two heading levels, the same two in both columns.
+ *
+ * Column heading ("Loadout", "Fight setup") in heading ink; section heading ("Contract",
+ * "Modifiers", "Preparation", "Mechanics", "Practice aids") in label ink one step below it.
+ * A tiny muted "Fight setup" eyebrow above "Contract" would be a third level, the least legible
+ * text in the card, and would leave the two columns opening differently.
+ */
+.encounter-panel-card .configurer-rail-heading,
+.encounter-panel-card .loadout-bar-heading > .section-label {
+  margin: 0;
+  color: var(--color-heading);
+  font:
+    16px / 20px "RuneScape Bold 12",
+    sans-serif;
+  letter-spacing: 0;
+  text-transform: none;
+}
+/* The heading's row: its 20px line sets the height; the reset beside it gives back its extra. */
+.encounter-panel-card .configurer-rail-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.encounter-panel-card .configurer-rail-heading {
+  min-width: 0;
+}
+.configurer-contracts h3,
+.configurer-section-head h3,
+.configurer-subhead h3 {
+  font-size: 16px;
+  line-height: 20px;
+  font-weight: normal;
+  color: var(--color-secondary);
+  margin: 0;
+}
+/* A subview's title uses heading ink, distinct from its supporting note. */
+.configurer-subhead h3 {
+  color: var(--color-heading);
+}
+/* How many are on, not part of the heading's name. */
+.configurer-section-head h3 > span {
+  font-family: "RuneScape Plain 12", sans-serif;
+  color: var(--color-text-muted);
+}
+/* Control labels and their choices at the native em, like the checkbox labels they sit
+   between. At a 14px step the pixel faces land off-grid, and "Practice As" would read
+   softer than "Auto-Prepot" directly above it. */
+.encounter-panel-card .mechanics-choice-label,
+.encounter-panel-card .mechanics-choice-segment,
+.encounter-panel-card .loadout-io-btn,
+.encounter-panel-card .spellbook-option,
+.encounter-panel-card .starthp-label {
+  font-size: 16px;
+  line-height: 20px;
+}
+/* Setup-only unlock rows have no modified indicator or reset to position.
+   Keep their labels in the opaque scroller's paint flow for LCD text. */
+.loadout-unlocks-disclosure .setting-row {
+  position: static;
+}
+/*
+ * One left edge down the rail. `SettingRow` carries a 6px inset for the sidebars' reset
+ * gutter, which this card does not draw, so every switch, picker and field sat 6px inside the
+ * headings above them.
+ */
+.encounter-panel-card .rail-section .setting-row {
+  padding-left: 0;
+}
+/* A short label and a 3-character field: on two lines they spent a whole row to say
+   "Starting Hitpoints 10 / 99". */
+.encounter-panel-card .starthp-field {
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+/* Intrinsic tracks, not a fixed pair: the rail is ~400px on a desktop card but the whole
+   viewport width in landscape, where two tracks spent 410px on a two-word label. */
+.configurer-contract-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 4px;
+  margin: 8px 0;
+  border: 0;
+}
+.configurer-contract-options[hidden] {
+  display: none;
+}
+.configurer-contract-current {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  min-height: 44px;
+  margin: 8px 0;
+  padding: 8px;
+  box-sizing: border-box;
+  border: 1px solid var(--color-primary-structure);
+  border-radius: 2px;
+  background: var(--primary-dim);
+  color: var(--color-heading);
+  text-align: left;
+  font:
+    16px / 20px "RuneScape Bold 12",
+    sans-serif;
+  cursor: pointer;
+}
+.configurer-contract-current:hover,
+.configurer-contract-current[aria-expanded="true"],
+.configurer-contract-current[aria-expanded="true"]:hover {
+  border-color: var(--color-primary);
+  background: var(--primary-dim);
+  color: var(--color-heading);
+}
+.configurer-contract-action {
+  flex-shrink: 0;
+  color: var(--color-secondary);
+  font-family: "RuneScape Plain 12", sans-serif;
+}
+/*
+ * One idiom for every single-choice group in this card: contracts, Practice As, Fireball
+ * Orientation, Attack Style, Starting Shield Direction. Each option is a chip that carries its
+ * own resting surface and hairline, so a group reads as a set of choices before anything is
+ * selected; the chosen one takes the accent edge and ink. Contracts and pickers share this
+ * recipe, so the same question is not asked two ways in one rail.
+ *
+ * The recipe is the system's own interaction rhythm (DESIGN.md): surface + border at rest,
+ * raised surface + structure edge on hover, inset well + accent on active.
+ */
+.configurer-contract-options button,
+.encounter-panel-card .mechanics-choice-segment,
+.loadout-phone-summary button {
+  box-sizing: border-box;
+  font:
+    16px / 20px "RuneScape Plain 12",
+    sans-serif;
+  padding: 5px 8px;
+  min-height: 32px;
+  border: 1px solid var(--color-border);
+  border-radius: 2px;
+  background: var(--color-surface);
+  color: var(--color-secondary);
+  cursor: pointer;
+}
+.configurer-contract-options button {
+  border-color: var(--color-border);
+  border-radius: 2px;
+}
+.configurer-contract-options button,
+.loadout-phone-summary button {
+  text-align: left;
+}
+.configurer-contract-options button:hover,
+.encounter-panel-card .mechanics-choice-segment:hover {
+  background: var(--color-surface-hover);
+  border-color: var(--color-primary-structure);
+  color: var(--color-text-body);
+}
+/* Selected survives hover. */
+.configurer-contract-options button[aria-pressed="true"],
+.configurer-contract-options button[aria-pressed="true"]:hover,
+.encounter-panel-card .mechanics-choice-segment.is-active,
+.encounter-panel-card .mechanics-choice-segment.is-active:hover {
+  background: var(--primary-dim);
+  border-color: var(--color-primary);
+  color: var(--color-accent-text);
+}
+/* The track was a frame around a frame. The chips are the control now, so the group is just
+   their layout: equal columns, one gap, no well underneath. */
+.encounter-panel-card .mechanics-choice-segmented {
+  gap: 0;
+  padding: 0;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 2px;
+}
+.encounter-panel-card .mechanics-choice-segment {
+  border-color: transparent;
+  border-radius: 0;
+}
+/* Icon beside the label rather than stacked above it: stacked, Fireball Orientation stood 59px
+   tall next to 36px contract chips asking the same kind of question. */
+.encounter-panel-card .mechanics-choice-segmented.has-icons .mechanics-choice-segment {
+  flex-direction: row;
+  gap: 6px;
+  min-height: 32px;
+}
+.configurer-contract-terms {
+  font:
+    16px / 24px "RuneScape Plain 12",
+    sans-serif;
+  color: var(--color-text-body);
+  /* No bottom padding: the section seam below already carries the separation, and stacked they
+     put 56px of nothing between the contract list and Preparation. */
+  padding: 4px 0 0;
+}
+/* The contracts and modifiers blocks are the rail's first section, so they need the same seam
+   every later section draws. Without it the rail's only break was a gap, and the gap had to be
+   large enough to do a rule's job. */
+.encounter-panel-card :is(.configurer-contracts, .configurer-modifiers, .configurer-encounter-setup) + .rail-section {
+  padding-top: 16px;
+  margin-top: 0;
+  border-top: 1px solid var(--color-border);
+}
+.configurer-contract-terms summary {
+  color: var(--color-secondary);
+  cursor: pointer;
+}
+.configurer-contract-terms[open] {
+  padding-bottom: 12px;
+}
+.configurer-contract-terms[open] summary {
+  color: var(--color-heading);
+}
+/* The label reads as a label, not as the first word of the reward. */
+.encounter-panel-card .variant-detail-reward-label {
+  margin-right: 8px;
+  color: var(--color-text-muted);
+}
+.configurer-contract-terms ul {
+  padding-left: 20px;
+  margin: 8px 0;
+}
+.configurer-section-head,
+.configurer-subhead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+.configurer-subhead {
+  padding: 8px 16px;
+  border-bottom: 1px solid var(--color-border);
+  gap: 16px;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+.configurer-subhead-note {
+  margin: 0;
+  color: var(--color-text-body);
+  font:
+    16px / 20px "RuneScape Plain 11",
+    sans-serif;
+}
+/* Subviews name the task here; their sole return action stays in the pinned footer. */
+.configurer-subhead h3 {
+  margin-right: auto;
+}
+.configurer-modifier-count {
+  margin: 0 auto 0 0;
+  color: var(--color-secondary);
+  font:
+    16px / 20px "RuneScape Plain 12",
+    sans-serif;
+}
+.configurer-return-btn {
+  min-width: 208px;
+}
+/* The subhead already names this view, and the checked tile below already names the set, so
+   neither is repeated in the bar: the same rule the wide layout follows. */
+.encounter-panel-card--loadout .loadout-bar-heading > .section-label,
+.encounter-panel-card--loadout .loadout-bar-value {
+  display: none;
+}
+.configurer-modifiers {
+  margin-bottom: 0;
+}
+.configurer-modifier-editor {
+  overflow-y: auto;
+  min-height: 0;
+  background: var(--color-bg-solid);
+  padding: 16px;
+  flex: 1;
+}
+.configurer-modifier-editor .modifier-grid {
+  /* All rows share the widest tier track, including the narrower Off/I choices. */
+  grid-template-columns: 40px minmax(100px, 0.7fr) minmax(0, 1.5fr) max-content;
+  gap: 0 16px;
+}
+.configurer-modifier-editor .modifier-row {
+  grid-column: 1 / -1;
+  grid-template-columns: subgrid;
+  grid-template-rows: auto;
+  gap: 16px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--color-border);
+}
+.configurer-modifier-editor .modifier-slot {
+  grid-row: 1;
+}
+.configurer-modifier-editor .modifier-name {
+  grid-column: 2;
+}
+.configurer-modifier-editor .modifier-tiers {
+  grid-column: 4;
+  grid-row: 1;
+  justify-self: end;
+}
+.configurer-modifier-editor .modifier-effect {
+  grid-column: 3;
+  grid-row: 1;
+}
+/* Compact identities, not a second editor. Keep the tier next to its name rather
+   than at the far edge of a column; the same artwork connects review to editing. */
+.configurer-modifier-overview {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 16px;
+  list-style: none;
+  margin: 8px 0 12px;
+  padding: 0;
+  background: var(--color-bg-solid);
+  color: var(--color-secondary);
+  font:
+    16px / 20px "RuneScape Plain 12",
+    sans-serif;
+}
+.configurer-modifier-overview li {
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr);
+  align-items: start;
+  column-gap: 8px;
+  padding-block: 4px;
+  min-width: 0;
+}
+.configurer-modifier-label {
+  grid-column: 2;
+  grid-row: 1;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  min-width: 0;
+  background: var(--color-bg-solid);
+}
+.configurer-modifier-name {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.configurer-modifier-icon {
+  grid-column: 1;
+  grid-row: 1;
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  contain: paint;
+}
+.configurer-modifier-tier {
+  flex-shrink: 0;
+  color: var(--color-accent-text);
+  font-family: "RuneScape Bold 12", sans-serif;
+}
+.configurer-modifier-empty {
+  margin: 8px 0 12px;
+  color: var(--color-text-body);
+  font:
+    16px / 20px "RuneScape Plain 12",
+    sans-serif;
+}
+.configurer-modifier-editor .modifier-effect > :first-child.modifier-effect-spacer {
+  display: none;
+}
+.encounter-panel-card .modifier-tiers {
+  grid-template-columns: repeat(var(--modifier-tier-count, 4), 36px);
+}
+.encounter-panel-card .modifier-tier {
+  font-size: 16px;
+  line-height: 20px;
+  height: 28px;
+}
+/* Off is the resting position of every modifier the player left alone, so in a full grid it is
+   also the most repeated fill. At the hover surface's full value those nine identical blocks
+   outweighed the one tier actually chosen, which is a thin accent outline. */
+.encounter-panel-card .modifier-tier--selected {
+  background: color-mix(in srgb, var(--color-surface-hover) 55%, var(--color-surface-inset));
+}
+.encounter-panel-card .modifier-row--active .modifier-tier--selected,
+.encounter-panel-card .modifier-row--active .modifier-tier--selected:hover {
+  border-color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 18%, var(--color-surface-inset));
+  color: var(--color-primary);
+}
+.encounter-panel-card .modifier-name {
+  font-size: 16px;
+  line-height: 20px;
+  white-space: normal;
+  color: var(--color-secondary);
+}
+.encounter-panel-card .modifier-effect > p {
+  font-size: 16px;
+  line-height: 20px;
+}
+.encounter-panel-header .encounter-description {
+  font-size: 16px;
+  line-height: 20px;
+  margin: 0;
+}
+.encounter-panel-rail {
+  gap: 8px;
+}
+/* Every switch group in the rail flows the same way, Preparation included: a single-column
+   group would leave landscape showing two checkboxes in an 820px-wide, 390px-tall viewport. Wrapping rather than a fixed track count, because the
+   rail is 390px inside a desktop card and the whole viewport width in landscape.
+
+   Rules, keybinding editors and the pickers are full-width members of the same wrap. */
+.encounter-panel-card .rail-section .mechanics-toggles {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+}
+/* Capped, not free-growing: two switches on an 820px landscape row would otherwise take 404px
+   each and sit 280px apart, reading as unrelated rather than as a pair. */
+.encounter-panel-card .rail-section .mechanics-toggles > * {
+  flex: 1 1 176px;
+  max-width: 280px;
+  min-width: 0;
+}
+.encounter-panel-card .rail-section .mechanics-toggles > :is(.mechanics-group-rule, .mechanics-feature-keybindings),
+.encounter-panel-card .rail-section .mechanics-toggles > :is(.mechanics-choice, .starthp-field),
+.encounter-panel-card .rail-section .mechanics-toggles > :has(.mechanics-choice, .starthp-field) {
+  flex-basis: 100%;
+  max-width: none;
+}
+.encounter-panel-card .loadout-list {
+  margin-top: 0;
+}
+.encounter-panel-card .loadout-tile {
+  justify-content: flex-start;
+}
+.encounter-panel-card .loadout-bar {
+  gap: 6px;
+}
+.encounter-panel-card .loadout-editor-guidance {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  margin: 4px 0 0;
+  font:
+    16px / 20px "RuneScape Plain 11",
+    sans-serif;
+  color: var(--color-text-muted);
+}
+.encounter-panel-card .loadout-equipment-column {
+  grid-column: 1;
+  grid-row: 1;
+}
+.encounter-panel-card .loadout-inventory-column {
+  grid-column: 2;
+  grid-row: 1;
+}
+.encounter-panel-card .loadout-supplies .section-label {
+  font:
+    16px / 18px "RuneScape Plain 11",
+    sans-serif;
+}
+.configurer-start-summary {
+  margin-left: auto;
+  display: flex;
+  flex-direction: column;
+  text-align: right;
+  min-width: 0;
+  color: var(--color-secondary);
+  font:
+    16px / 20px "RuneScape Plain 12",
+    sans-serif;
+}
+.configurer-start-summary strong {
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-weight: normal;
+}
+/* Back and Start Tutorial anchor the footer's left; the summary and the one action that commits
+   keep the right, so the summary reads against the button it describes. The free space falls
+   after whichever of the two left-hand actions is last, so they stay a pair. */
+.encounter-panel-footer .encounter-tutorial-btn,
+.encounter-panel-footer:not(:has(.encounter-tutorial-btn)) .encounter-back-btn {
+  margin-right: auto;
+}
+/* One accent on one action. The primary is also the widest control in the footer, so the
+   hierarchy survives a squint with no color at all. */
+.encounter-panel-card .encounter-start-btn {
+  min-width: 208px;
+  font-size: 16px;
+}
+/* The state the loadout name's line carries while nothing has saved it. Warning ink, the same
+   voice the column uses for a set the stats will not allow, and only on that line: the fight
+   context above it is unaffected by whether the gear has a name. */
+/* One fact, one tone, wherever it is stated: beside the actions that answer it in the loadout
+   bar, and beside the action that commits in the footer. */
+.encounter-panel-footer .configurer-start-summary--draft > span,
+.encounter-panel-card .loadout-current-state {
+  color: var(--color-text-body);
+}
+.encounter-panel-card .loadout-grid-tiles {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 4px;
+}
+.encounter-panel-card .loadout-tile:not(.loadout-tile--blocked) {
+  flex-direction: row;
+  min-height: 40px;
+  padding: 4px 8px;
+  gap: 8px;
+  text-align: left;
+}
+.encounter-panel-card .loadout-tile:not(.loadout-tile--selected):not(:hover) {
+  border-color: var(--color-border);
+  background: var(--color-surface);
+}
+.encounter-panel-card .loadout-tile-icon {
+  border: 0;
+  background: none;
+}
+.encounter-panel-card .loadout-tile-icons {
+  flex: 0 0 auto;
+}
+/* Keep accelerated item canvases from promoting neighboring labels into their layers. */
+.encounter-panel-card :is(.loadout-tile-icon, .equip-slot, .inventory-slot) {
+  contain: paint;
+}
+.encounter-panel-card .loadout-tile-name {
+  font-size: 16px;
+  line-height: 20px;
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+}
+.loadout-tile-check {
+  flex: 0 0 auto;
+  margin-left: auto;
+  color: var(--color-primary);
+}
+.encounter-panel-card .loadout-current {
+  white-space: normal;
+}
+.encounter-panel-card .loadout-bar {
+  min-height: 32px;
+  justify-content: center;
+  padding: 4px 0;
+  border: none;
+}
+.encounter-panel-card .loadout-body {
+  padding-top: 0;
+}
+.encounter-panel-card .loadout-body > .loadout-group-heading {
+  margin: 8px 0;
+  font:
+    16px / 20px "RuneScape Bold 12",
+    sans-serif;
+  color: var(--color-heading);
+  text-transform: none;
+  letter-spacing: 0;
+}
+.encounter-panel-card .loadout-editor {
+  margin-top: 4px;
+  border: 0;
+  background: var(--color-surface);
+}
+.encounter-panel-card .loadout-frame {
+  padding: 8px 0;
+  row-gap: 4px;
+  background: var(--color-surface);
+}
+.encounter-panel-card .loadout-supplies {
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 8px 0;
+  background: var(--color-surface);
+}
+/* Spellbook and packed runes form the kit's lower shelf, rather than two unrelated
+   rows. Intrinsic widths still wrap on a narrower editor without shrinking targets. */
+.encounter-panel-card .loadout-supplies :is(.spellbook-row, .rune-pouch-bar) {
+  flex: 1 0 auto;
+  flex-direction: column;
+  gap: 4px;
+  margin-right: 0;
+}
+.encounter-panel-card .loadout-editor :is(.equip-slot, .inventory-slot) {
+  background: var(--color-surface-inset);
+}
+.encounter-panel-card .loadout-editor :is(.equip-slot, .inventory-slot):hover {
+  background: var(--color-surface-hover);
+}
+.encounter-panel-card .loadout-editor :is(.equip-slot, .inventory-slot)[aria-pressed="true"] {
+  background: var(--primary-dim);
+  border-color: var(--color-primary);
+}
+.loadout-stats-disclosure {
+  margin-top: 12px;
+  border-top: 1px solid var(--color-border);
+  color: var(--color-secondary);
+}
+/* In the expanded/scrolled state Blink promotes these wrappers above the sprite
+   layers. Their own opaque fill is required; the scroller's fill is not inherited. */
+.loadout-stats-disclosure,
+.loadout-unlocks-disclosure,
+.encounter-panel-card .combat-stats__header,
+.encounter-panel-card .combat-stats__actions {
+  isolation: isolate;
+  background: var(--color-surface);
+}
+.encounter-panel-card .combat-stats__grid {
+  isolation: isolate;
+}
+.encounter-panel-card .combat-stats__tile-name {
+  background: var(--color-bg-elevated);
+}
+.loadout-unlocks-disclosure {
+  margin-top: 0;
+  border-top: 1px solid var(--color-border);
+  color: var(--color-secondary);
+}
+.loadout-unlocks-disclosure > summary {
+  min-height: 32px;
+  padding: 8px 0;
+  box-sizing: border-box;
+  cursor: pointer;
+  font:
+    16px / 20px "RuneScape Bold 12",
+    sans-serif;
+}
+.encounter-panel-card .combat-stats__grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.encounter-panel-card .combat-stats__tile {
+  contain: paint;
+}
+.encounter-panel-card .num-input:focus-within {
+  box-shadow: none;
+}
+.loadout-stats-disclosure > summary {
+  padding: 8px 0;
+  cursor: pointer;
+  font:
+    16px / 20px "RuneScape Bold 12",
+    sans-serif;
+}
+.loadout-stats-disclosure > summary span {
+  font-family: "RuneScape Plain 12", sans-serif;
+  /* With the chevron the summary is a flex row: its 6px gap stands in for the word space. */
+  margin-left: 6px;
+}
+.loadout-phone-summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--color-border);
+}
+.loadout-summary-icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  flex: 0 0 40px;
+  contain: paint;
+}
+.loadout-phone-summary > div {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0 12px;
+  flex: 1;
+  min-width: 0;
+  color: var(--color-secondary);
+  font:
+    16px / 20px "RuneScape Plain 12",
+    sans-serif;
+}
+.loadout-phone-summary strong {
+  color: var(--color-heading);
+  font:
+    16px / 20px "RuneScape Bold 12",
+    sans-serif;
+  overflow-wrap: anywhere;
+}
+.loadout-phone-summary > div > span:last-child {
+  grid-column: 2;
+}
+.loadout-phone-summary .loadout-summary-edit {
+  display: none;
+}
+.loadout-phone-summary button[aria-expanded="true"],
+.loadout-phone-summary button[aria-expanded="true"]:hover {
+  background: var(--primary-dim);
+  border-color: var(--color-primary);
+  color: var(--color-accent-text);
+}
+.loadout-phone-summary button:hover {
+  background: var(--color-surface-hover);
+  color: var(--color-heading);
+}
+.loadout-phone-unsaved {
+  color: var(--color-text-body);
+}
+/* One identity and one list. Folding alternatives does not hide Save/Update/Revert or status. */
+.encounter-panel-card .loadout-bar-heading > .section-label,
+.encounter-panel-card .loadout-bar-value,
+.encounter-panel-card .loadout-current-state,
+.encounter-panel-card .loadout-body[hidden],
+.encounter-panel-card .loadout-io[hidden] {
+  display: none;
+}
+.encounter-panel-card .loadout-bar-heading:has(.loadout-io[hidden]) {
+  display: none;
+}
+.loadout-section--drafting:not(.loadout-section--presets-open) .loadout-bar-heading {
+  display: none;
+}
+.loadout-section--presets-open > .loadout-picker {
+  padding-bottom: 12px;
+}
+.encounter-panel-card .loadout-bar:has(.loadout-bar-actions),
+.loadout-section--presets-open .loadout-bar {
+  padding-top: 4px;
+}
+.encounter-panel-card .loadout-bar-actions {
+  width: 100%;
+  margin-top: 0;
+}
+.encounter-panel-card .loadout-bar-draft {
+  gap: 8px;
+}
+.encounter-panel-card .loadout-bar-action {
+  min-height: 32px;
+}
+.encounter-panel-card .loadout-bar-commit {
+  gap: 6px;
+}
+.encounter-panel-card .loadout-name-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: var(--color-secondary);
+  font:
+    16px / 20px "RuneScape Plain 12",
+    sans-serif;
+}
+.encounter-panel-card .loadout-draft-name {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 32px;
+  padding: 5px 8px;
+  font-size: 16px;
+  line-height: 20px;
+}
+/* Change leads with the choices, with clipboard transfer following them. Draft actions
+   keep their existing place so opening comparisons does not bury the pending name. */
+.loadout-section--presets-open:not(.loadout-section--editing):not(.loadout-section--drafting) > .loadout-picker
+  > .loadout-body {
+  order: -1;
+  margin-top: 12px;
+}
+.loadout-section--presets-open:not(.loadout-section--editing):not(.loadout-section--drafting)
+  > .loadout-picker
+  > .loadout-bar {
+  padding-top: 12px;
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+.encounter-panel-card .loadout-status {
+  animation: none;
+}
+.encounter-panel-card .rune-pouch-caption .section-label {
+  font:
+    16px / 20px "RuneScape Plain 11",
+    sans-serif;
+}
+.encounter-panel-card .combat-stats {
+  border-top: 0;
+  padding-top: 0;
+  background: var(--color-surface);
+}
+.encounter-panel-card .encounter-fight-controls {
+  padding-top: 12px;
+  margin-top: 4px;
+}
+.encounter-panel-card .encounter-assists {
+  margin-top: 12px;
+}
+/* A named section's head carries the deferral its members share, at the far end. */
+.encounter-panel-card .encounter-fight-controls > .configurer-section-head {
+  margin-bottom: 8px;
+}
+.encounter-panel-footer {
+  border-top-color: var(--color-border);
+}
+/* The value takes the room the tools leave, so a long set name ellipsizes inside the row
+   instead of pushing the clipboard pair off the end. */
+.encounter-panel-card .loadout-bar-value {
+  margin-right: auto;
+}
+
+/* The qualifier belongs to the name, so it sits closer to it than the status chip and the
+   reference link that follow. One run of equal 14px gaps made all four read as a list. */
+.encounter-panel-title-row {
+  flex-wrap: wrap;
+  gap: 4px 10px;
+}
+/* Beside the name, on its baseline: a qualifier, not a second title. Label ink rather than the
+   muted structural tone, which is the system's quietest step and was being asked to carry
+   "which fight is this" next to a 32px title. Same face and size as before. */
+.configurer-compact-context {
+  margin: 0 6px 0 0;
+  color: var(--color-secondary);
+  font:
+    16px / 20px "RuneScape Plain 12",
+    sans-serif;
+}
+/* The reference link reads at the same step as the qualifier it follows. */
+.encounter-panel-card .encounter-panel-title-row .wiki-link {
+  color: var(--color-secondary);
+}
+.encounter-panel-card .encounter-panel-header-badges:empty {
+  display: none;
+}
+/* The tutorial chip takes no accent fill or edge, which would put the header's loudest
+   element on a fact the footer's own Start Tutorial button already states. It is also the
+   longest string in the title row, so a framed box would make it outweigh the name. Quiet
+   annotation instead; the accent in this card belongs to the choices. */
+.encounter-panel-card .encounter-badge--tutorial {
+  color: var(--color-text-muted);
+  background: transparent;
+  border-color: transparent;
+  padding-left: 0;
+}
+.encounter-panel-card--loadout .encounter-panel-rail {
+  display: none;
+}
+.encounter-panel-card--loadout .encounter-panel-body {
+  grid-template-columns: 1fr;
+}
+
+@media (max-width: 720px), (max-height: 540px) {
+  .encounter-panel-overlay {
+    padding: 0;
+  }
+  .encounter-panel-card {
+    width: 100%;
+    max-height: 100vh;
+    /* biome-ignore lint/suspicious/noDuplicateProperties: dvh enhancement over the vh fallback. */
+    max-height: 100dvh;
+    height: 100vh;
+    height: 100dvh;
+  }
+  .encounter-panel-header {
+    padding: 8px 12px 8px 80px;
+    gap: 12px;
+  }
+  :root[data-mobile-ui] .encounter-panel-header[data-msheet="head"] {
+    padding-left: 80px;
+  }
+  .configurer-portrait {
+    width: 68px;
+  }
+  .configurer-portrait[data-portrait="thumb"]::after {
+    width: 44px;
+    height: 44px;
+  }
+  .configurer-portrait[data-portrait="thumb"] img {
+    max-width: 44px;
+    max-height: 44px;
+  }
+  .encounter-panel-header h2 {
+    font-size: 32px;
+    line-height: 32px;
+  }
+  .encounter-panel-card .close-button {
+    min-width: 44px;
+    min-height: 44px;
+  }
+  .encounter-panel-body {
+    display: block;
+    overflow-y: auto;
+    background: var(--color-bg-solid);
+  }
+  .loadout-section--presets-open > :is(.loadout-editor, .loadout-stats-disclosure, .loadout-unlocks-disclosure) {
+    display: none;
+  }
+  .encounter-panel-main,
+  .encounter-panel-rail {
+    overflow: visible;
+    padding: 12px;
+    scrollbar-gutter: auto;
+  }
+  .encounter-panel-rail {
+    border-left: 0;
+    border-top: 1px solid var(--color-border);
+  }
+  .loadout-phone-summary {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-bottom: 0;
+    border-bottom: 0;
+  }
+  .loadout-summary-icon {
+    display: none;
+  }
+  .loadout-phone-summary .loadout-summary-edit {
+    display: inline-flex;
+    align-items: center;
+  }
+  .loadout-phone-summary > div {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    font:
+      16px / 20px "RuneScape Plain 12",
+      sans-serif;
+    color: var(--color-secondary);
+  }
+  /* Landscape is short, not narrow: stacked, this band spent 95px of a 390px-tall viewport
+     saying three short things that fit on one 820px line. */
+  @media (min-width: 721px) {
+    .encounter-panel-header-info {
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0 24px;
+    }
+    .loadout-phone-summary > div {
+      flex-direction: row;
+      align-items: baseline;
+      gap: 4px 12px;
+    }
+    .loadout-phone-summary > div > .section-label {
+      flex: 0 0 auto;
+    }
+  }
+  .loadout-phone-summary strong {
+    font:
+      16px / 20px "RuneScape Bold 12",
+      sans-serif;
+    color: var(--color-heading);
+  }
+  /* Change opens the set list and is the compact summary's own action, so it carries a resting
+     frame; Edit hands over to the full editor and stays quiet beside it. Neither can rely on
+     hover to announce itself on a touch screen. */
+  .loadout-phone-summary button {
+    min-width: 44px;
+    min-height: 44px;
+    text-align: center;
+  }
+  .loadout-phone-summary button[aria-expanded] {
+    background: var(--color-surface);
+    border-color: var(--color-border);
+  }
+  .loadout-phone-summary button[aria-expanded="true"] {
+    background: var(--color-surface-inset);
+    border-color: var(--color-primary);
+    color: var(--color-accent-text);
+  }
+  /* A two-word choice does not need the whole landscape viewport. */
+  .encounter-panel-card .mechanics-choice-segmented,
+  .encounter-panel-card .starthp-field {
+    max-width: 420px;
+  }
+  .loadout-section:not(.loadout-section--editing) > .loadout-editor,
+  .loadout-section:not(.loadout-section--editing) > .loadout-stats-disclosure,
+  .loadout-section:not(.loadout-section--editing) > .loadout-unlocks-disclosure,
+  .loadout-section:not(.loadout-section--editing):not(.loadout-section--presets-open):not(.loadout-section--drafting)
+    > .loadout-picker {
+    display: none;
+  }
+  .loadout-section--editing > .loadout-phone-summary {
+    display: flex;
+  }
+  .loadout-section--editing .loadout-summary-edit,
+  .loadout-section--editing .loadout-phone-summary .section-label {
+    display: none;
+  }
+  .encounter-panel-card .loadout-tile:not(.loadout-tile--blocked),
+  .encounter-panel-card .osrs-btn,
+  .configurer-contract-options button,
+  .encounter-panel-card .modifier-tier,
+  .encounter-panel-card .mechanics-choice-segment,
+  .encounter-panel-card .osrs-checkbox {
+    min-height: 44px;
+  }
+  :root[data-mobile-ui] .encounter-panel-card[data-msheet="card"] :is(.osrs-checkbox, .osrs-btn) {
+    min-height: 44px;
+  }
+  .encounter-panel-footer {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: 4px;
+    padding: 8px 12px;
+  }
+  .encounter-panel-footer .osrs-btn {
+    width: auto;
+    padding-inline: 8px;
+  }
+  .encounter-panel-footer .osrs-btn:last-child {
+    min-width: 0;
+  }
+  /* The compact footer cannot wrap (MobileSheet pins it to one row), so the start summary
+     stands down here and the state rides the loadout's own line above instead. */
+  .configurer-start-summary {
+    display: none;
+  }
+  .loadout-phone-unsaved {
+    color: var(--color-text-body);
+  }
+  /* The compact summary states it a few rows above, so the bar's copy would be the same two
+     words twice on one screen. Revert and Save loadout say what they do on their own faces. */
+  .loadout-section .loadout-current-state {
+    display: none;
+  }
+  /* The compact footer is one row by MobileSheet's own rule: a landscape phone has no rows to
+     spend on a stack of full-width bars. So the weight does the separating. Start Tutorial
+     drops its frame here and joins Back as a quiet text action, leaving the primary's warm
+     fill and brass edge as the only filled control on the row. */
+  .encounter-panel-footer .encounter-tutorial-btn,
+  .encounter-panel-footer:not(:has(.encounter-tutorial-btn)) .encounter-back-btn {
+    margin-right: 0;
+  }
+  .encounter-panel-footer .encounter-tutorial-btn {
+    background: transparent;
+    border-color: transparent;
+    color: var(--color-secondary);
+  }
+  .encounter-panel-footer .encounter-tutorial-btn:hover:not(:disabled) {
+    background: var(--color-surface-hover);
+    border-color: var(--color-border);
+  }
+  /* The one control that takes the row's slack, so it is the longest as well as the only
+     filled one. `flex-basis: 0` rather than a grow weight: with every sibling at content
+     width there is no slack for a weight to divide. */
+  :root[data-mobile-ui] .encounter-panel-footer[data-msheet="foot"] .encounter-start-btn,
+  .encounter-panel-footer .encounter-start-btn {
+    flex: 1 1 0;
+    min-width: 42%;
+  }
+  /* The icon pickers keep the touch height; the row layout is what shortened them. */
+  .encounter-panel-card .mechanics-choice-segmented.has-icons .mechanics-choice-segment {
+    min-height: 44px;
+  }
+  .encounter-panel-card .loadout-editor {
+    --loadout-slot-size: 44px;
+  }
+  .encounter-panel-card .loadout-section {
+    --loadout-action-height: 44px;
+  }
+  /* The cross and inventory have unequal intrinsic widths (148px and 190px).
+     Wrap at their combined minimum, not an arbitrary viewport breakpoint. */
+  .encounter-panel-card .loadout-frame {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 8px;
+    column-gap: 4px;
+  }
+  .encounter-panel-card :is(.loadout-equipment-column, .loadout-inventory-column) {
+    flex: 1 0 auto;
+    min-width: max-content;
+  }
+  /* The compact summary above is the loadout's identity here, so the picker's own heading,
+     value and Edit stand down; the name field and the unsaved note still show. */
+  .loadout-section:not(.loadout-section--editing) .loadout-bar-heading > .section-label,
+  .loadout-section:not(.loadout-section--editing) .loadout-bar-value {
+    display: none;
+  }
+  .configurer-compact-context:empty {
+    display: none;
+  }
+  .configurer-modifier-editor .modifier-grid {
+    grid-template-columns: 1fr;
+  }
+  .encounter-panel-card--loadout .encounter-panel-body {
+    display: block;
+  }
+  :root[data-mobile-ui] .encounter-panel-body {
+    padding: 0;
+  }
+  :root[data-mobile-ui] .encounter-panel-header-info {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  :root[data-mobile-ui] .encounter-panel-header h2 {
+    font-size: 32px;
+  }
+  :root[data-mobile-ui] .encounter-panel-rail {
+    padding: 12px;
+    border-left: 0;
+    border-top: 1px solid var(--color-border);
+  }
+  .encounter-panel-header-badges {
+    display: flex;
+  }
+  .encounter-panel-header .encounter-description {
+    display: none;
+  }
+
+  .encounter-panel-card .modifier-tiers {
+    grid-template-columns: repeat(var(--modifier-tier-count, 4), 44px);
+  }
+  .encounter-panel-card .starthp-input .num-input__arrows {
+    display: flex;
+    flex-direction: row;
+    width: 88px;
+  }
+  .encounter-panel-card .starthp-input .num-input__btn {
+    min-width: 44px;
+    min-height: 44px;
+  }
+  .encounter-panel-card .starthp-input .num-input__btn + .num-input__btn {
+    border-top: 0;
+    border-left: 1px solid var(--color-border);
+  }
+  .encounter-panel-card .num-input__field {
+    min-width: 44px;
+    min-height: 44px;
+  }
+  .encounter-panel-card .starthp-field {
+    flex-wrap: wrap;
+  }
+  /* The 44px target stays, but the mark sits at the start of it: centered, the glyph would drift
+     ~20px clear of the label it is a footnote on and read as a loose character. */
+  .encounter-panel-card :is(.info-hint, .wiki-link) {
+    min-width: 44px;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-start;
+  }
+  .encounter-panel-card .info-hint {
+    margin-bottom: 0;
+  }
+  .encounter-panel-card button.info-hint::before {
+    inset: 0;
+  }
+  .encounter-panel-card .mechanics-choice {
+    gap: 0;
+  }
+  .encounter-panel-card .mechanics-group-rule {
+    margin: 0;
+  }
+  .encounter-panel-card
+    :is(.loadout-stats-disclosure, .loadout-unlocks-disclosure, .configurer-contract-terms)
+    > summary {
+    min-height: 44px;
+    box-sizing: border-box;
+    padding-block: 12px;
+  }
+  .encounter-panel-card .modifier-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+  .encounter-panel-card .modifier-slot {
+    display: none;
+  }
+  .encounter-panel-card .modifier-effect {
+    grid-column: 1 / -1;
+  }
+  .encounter-panel-card .loadout-editor-guidance {
+    flex-basis: 100%;
+    grid-column: 1 / -1;
+    grid-row: 2;
+    margin-top: 0;
+  }
+}
+
+/* Compact editing has the same legible hit areas whether it was reached by device mode
+   or by a narrow desktop window. The footer never spends three rows on navigation. */
+@media (max-width: 720px), (max-height: 540px) {
+  .encounter-panel-card .loadout-section {
+    --loadout-slot-size: 44px;
+  }
+  .encounter-panel-card .loadout-bar {
+    min-height: 44px;
+  }
+  .encounter-panel-card .loadout-bar-action,
+  .encounter-panel-card .loadout-draft-name {
+    min-height: 44px;
+  }
+  .encounter-panel-card .loadout-saved-delete {
+    min-width: 44px;
+    min-height: 44px;
+  }
+  .encounter-panel-card .loadout-saved-cell > .loadout-tile {
+    padding-right: 48px;
+  }
+  .configurer-subhead {
+    gap: 8px 12px;
+    padding: 8px 12px;
+  }
+  .configurer-subhead-note {
+    flex-basis: 100%;
+  }
+  .configurer-modifier-editor .modifier-row {
+    grid-column: auto;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: auto auto;
+    gap: 6px 12px;
+  }
+  .configurer-modifier-editor .modifier-name {
+    grid-column: 1;
+  }
+  .configurer-modifier-editor .modifier-tiers {
+    grid-column: 2;
+  }
+  .configurer-modifier-editor .modifier-effect {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+}
+
+/* Landscape is a short workbench, not a long phone form. Each task keeps its own
+   opaque scroller; neither column can push the action row out of reach. */
+@media (min-width: 721px) and (max-height: 540px) {
+  .encounter-panel-body,
+  :root[data-mobile-ui] .encounter-panel-body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    overflow: visible;
+    padding: 0;
+    gap: 0;
+  }
+  .encounter-panel-main,
+  .encounter-panel-rail,
+  :root[data-mobile-ui] .encounter-panel-rail {
+    overflow-y: auto;
+    padding: 12px;
+    scrollbar-gutter: stable;
+  }
+  .encounter-panel-rail,
+  :root[data-mobile-ui] .encounter-panel-rail {
+    border-top: 0;
+    border-left: 1px solid var(--color-border);
+  }
+  @supports selector(::-webkit-scrollbar) {
+    .encounter-panel-rail,
+    :root[data-mobile-ui] .encounter-panel-rail {
+      overflow-y: scroll;
+      scrollbar-gutter: auto;
+    }
+  }
+  .loadout-section:not(.loadout-section--presets-open)
+    > :is(.loadout-editor, .loadout-picker, .loadout-stats-disclosure, .loadout-unlocks-disclosure) {
+    display: block;
+  }
+  .loadout-phone-summary .loadout-summary-edit {
+    display: none;
+  }
+  .loadout-phone-summary > div {
+    flex-direction: column;
+    gap: 0;
+  }
+  .loadout-phone-summary > div > .section-label {
+    display: none;
+  }
+  .encounter-panel-card .rail-section .mechanics-toggles > * {
+    flex-basis: 100%;
+  }
+  .encounter-panel-card .loadout-frame {
+    padding-inline: 8px;
+  }
+  .configurer-subhead-note {
+    flex-basis: auto;
+  }
+  .configurer-modifier-editor .modifier-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 24px;
+  }
+}
+
+/* One column on a narrow screen: two 177px tracks would wrap "Infinite Special Attack" onto a
+   second line for no height saved. Landscape keeps the wrap, which is where it pays. */
+@media (max-width: 720px) {
+  .encounter-panel-card .rail-section .mechanics-toggles > * {
+    flex-basis: 100%;
+  }
+}
+.configurer-setup-footer-action:empty,
+.configurer-setup-footer-action[hidden] {
+  display: none;
+}
+.encounter-panel-footer:has(.configurer-setup-footer-action:not([hidden])) .encounter-back-btn {
+  margin-right: 0;
+}
+.encounter-panel-footer .inferno-copy-link,
+:root[data-mobile-ui] .encounter-panel-footer .inferno-copy .inferno-copy-link {
+  flex: 0 0 auto;
+  width: auto;
+  min-width: 84px;
+}
+
+@media (max-width: 720px) {
+  .encounter-panel-footer:has(.configurer-setup-footer-action:not([hidden])) {
+    flex-wrap: wrap;
+  }
+  .configurer-setup-footer-action {
+    order: -1;
+    width: 100%;
+  }
+  .configurer-setup-footer-action .inferno-copy {
+    justify-content: flex-start;
+  }
+}

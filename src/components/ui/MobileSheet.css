@@ -1,0 +1,153 @@
+/* The mobile modal system (see mobileSheet.ts). Every rule here is scoped to
+   :root[data-mobile-ui], so desktop modals are untouched, and acts on a sheet role a modal opted
+   into with `data-msheet`. The `:root` and attribute selectors also outrank each modal's own
+   single-class rules without !important.
+
+   LCD text: in sheet form the card loses its outer shadow and the body paints its own opaque
+   fill, because it is the one scroller. */
+
+/* ---- Every mobile size: controls a thumb can hit ------------------------------------------
+   Applies inside any opted-in container: a modal card, a drawer or a popover. */
+
+:root[data-mobile-ui] [data-msheet="close"] {
+  min-width: 44px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: manipulation;
+}
+
+:root[data-mobile-ui] [data-msheet="foot"] :is(button, a[href]) {
+  min-height: 44px;
+  touch-action: manipulation;
+}
+
+/* The shared controls. Rows grow to 40px rather than borrowing invisible hit area, which would
+   overlap the next row's and send a tap to the wrong setting. Sliders are sized with their own
+   painting (.slider-input in Controls.css), which has to move onto the track as they grow. */
+:root[data-mobile-ui]
+  :is([data-msheet="card"], [data-msheet="drawer"], [data-msheet="popover"])
+  :is(.osrs-checkbox, .osrs-toggle, .osrs-btn, .control-button, .select-input) {
+  min-height: 40px;
+  touch-action: manipulation;
+}
+
+/* The reset arrow stays a 20px glyph; its button grows to 36px around it. */
+:root[data-mobile-ui] :is([data-msheet="card"], [data-msheet="drawer"], [data-msheet="popover"]) {
+  --setting-reset-size: 36px;
+}
+
+:root[data-mobile-ui] :is([data-msheet="card"], [data-msheet="drawer"], [data-msheet="popover"]) .reset-button {
+  justify-content: center;
+}
+
+/* iOS zooms the page into any field under 16px. 16px is also the bitmap fonts' native size. */
+:root[data-mobile-ui]
+  :is([data-msheet="card"], [data-msheet="drawer"], [data-msheet="popover"])
+  :is(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]), select, textarea) {
+  font-size: 16px;
+}
+
+:root[data-mobile-ui] [data-msheet="body"] {
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ---- Phones: the modal becomes the screen ------------------------------------------------- */
+
+/* A phone held either way: under 540 rows (landscape) or under 600 columns (portrait). Tablets
+   miss both and keep their desktop-sized modals. */
+@media (max-height: 540px), (max-width: 600px) {
+  :root[data-mobile-ui] [data-msheet="overlay"] {
+    padding: var(--safe-top, 0px) var(--safe-right, 0px) var(--safe-bottom, 0px) var(--safe-left, 0px);
+    align-items: stretch;
+    justify-content: stretch;
+  }
+
+  :root[data-mobile-ui] [data-msheet="card"] {
+    left: 0;
+    top: 0;
+    width: 100%;
+    max-width: none;
+    height: 100%;
+    max-height: none;
+    margin: 0;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    /* Display is the card's own (a flex column or the picker's grid); only its box changes. */
+    animation-name: msheet-in;
+  }
+
+  /* The cards that keep their drop shadow on a pseudo-element: there is nothing to cast it on. */
+  :root[data-mobile-ui] [data-msheet="card"]::before {
+    content: none;
+  }
+
+  :root[data-mobile-ui] [data-msheet="head"] {
+    flex: none;
+    min-height: 48px;
+    padding: 2px 4px 2px 14px;
+    gap: 8px;
+    align-items: center;
+  }
+
+  :root[data-mobile-ui] [data-msheet="head"] [data-msheet="close"] {
+    position: static;
+    margin: 0 0 0 auto;
+    flex: none;
+  }
+
+  /* The one scroller. Opaque, so its text keeps subpixel antialiasing. */
+  :root[data-mobile-ui] [data-msheet="body"] {
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: none;
+    overflow-y: auto;
+    background: var(--color-bg-solid);
+    padding-bottom: max(12px, var(--safe-bottom, 0px));
+  }
+
+  /* Actions stay one row, pinned under the body: never a stack of full-width bars eating the
+     few rows a landscape phone has. */
+  :root[data-mobile-ui] [data-msheet="foot"] {
+    flex: none;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 6px 12px;
+  }
+
+  :root[data-mobile-ui] [data-msheet="foot"] :is(button, a[href]) {
+    width: auto;
+    min-width: 0;
+    white-space: nowrap;
+  }
+}
+
+/* Portrait: the footer's actions share the width, wrapping only when they must. */
+@media (max-width: 600px) and (orientation: portrait) {
+  :root[data-mobile-ui] [data-msheet="foot"] {
+    flex-wrap: wrap;
+  }
+
+  :root[data-mobile-ui] [data-msheet="foot"] :is(button, a[href]) {
+    flex: 1 1 auto;
+  }
+}
+
+@keyframes msheet-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root[data-mobile-ui] [data-msheet="card"] {
+    animation: none;
+  }
+}

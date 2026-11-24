@@ -1,0 +1,166 @@
+.modifier-summary {
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 13px;
+  color: var(--color-primary);
+  white-space: nowrap;
+}
+
+/* Sized by the panel, not the window, so the grid picks its column count from the space it has. */
+.modifier-list {
+  container-type: inline-size;
+  /* Equal space inside the open body, above the first row and below the last. */
+  padding: 12px 16px 12px 34px;
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.modifier-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  row-gap: 12px;
+}
+
+/* Two columns once each still fits its name and tier track on one line. The wide gutter and its
+   rule keep a left-hand track from reading as part of the modifier beside it. */
+@container (min-width: 600px) {
+  .modifier-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    /* Fill down the left column first, so the list reads in order top to bottom. */
+    grid-template-rows: repeat(var(--modifier-rows, 1), auto);
+    grid-auto-flow: column;
+    column-gap: 41px;
+    /* The rule is painted in the grid's own background: a positioned divider laid over the rows
+       cost them subpixel text AA. */
+    background: linear-gradient(var(--color-border), var(--color-border)) center / 1px 100% no-repeat;
+  }
+}
+
+/* Slot on the left spanning both lines; name and tier track on top, effect underneath. */
+.modifier-row {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr) auto;
+  grid-template-rows: auto auto;
+  /* Pinned to the top: a taller neighbor in the same grid row leaves its extra space below the
+     text, rather than spreading it between the name and its description. */
+  align-content: start;
+  align-items: center;
+  column-gap: 10px;
+  row-gap: 3px;
+  min-width: 0;
+}
+
+/* 40x40 outer = 1px border around a 38x38 box, so each icon renders 1:1 like the loadout slots. */
+.modifier-slot {
+  grid-row: 1 / span 2;
+  align-self: start;
+  box-sizing: border-box;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  background: var(--color-surface-inset);
+  border: 1px solid var(--color-border);
+  border-radius: 2px;
+  /* Keeps the icon canvas's painting inside its slot. Without it Chrome composited the text laid
+     out after the canvases alongside them and dropped most of it to grayscale AA (7/24 text
+     elements, measured with the two-browser differential). */
+  contain: paint;
+  transition: border-color 0.15s ease;
+}
+
+.modifier-slot canvas {
+  filter: grayscale(1) brightness(0.65);
+  transition: filter 0.15s ease;
+}
+
+.modifier-row--active .modifier-slot {
+  border-color: var(--color-primary-structure);
+}
+
+.modifier-row--active .modifier-slot canvas {
+  filter: none;
+}
+
+.modifier-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 14px;
+  color: var(--color-text-muted);
+  text-shadow: 1px 1px 0 #000;
+}
+
+.modifier-row--active .modifier-name {
+  color: var(--color-secondary);
+}
+
+/* One track, as the panel's other pickers draw their choices. */
+.modifier-tiers {
+  display: grid;
+  grid-template-columns: repeat(4, 28px);
+  gap: 2px;
+  padding: 2px;
+  background: var(--color-surface-inset);
+  border: 1px solid var(--color-border);
+  border-radius: 2px;
+}
+
+.modifier-tier {
+  box-sizing: border-box;
+  height: 18px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  background: transparent;
+  color: var(--color-text-muted);
+  font-family: "RuneScape Bold 12", sans-serif;
+  font-size: 11px;
+  line-height: 16px;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.modifier-tier:hover {
+  background: var(--color-surface-hover);
+  color: var(--color-secondary);
+}
+
+/* Off reads as a resting position, not a choice worth gold: only an active tier is lit. */
+.modifier-tier--selected {
+  background: var(--color-surface-hover);
+  color: var(--color-text-body);
+  cursor: default;
+}
+
+.modifier-row--active .modifier-tier--selected,
+.modifier-row--active .modifier-tier--selected:hover {
+  border-color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 18%, var(--color-surface-inset));
+  color: var(--color-primary);
+}
+
+.modifier-effect {
+  grid-column: 2 / -1;
+  display: grid;
+}
+
+.modifier-effect > p {
+  grid-area: 1 / 1;
+  margin: 0;
+  font-family: "RuneScape Plain 12", sans-serif;
+  font-size: 13px;
+  line-height: 15px;
+  color: var(--color-text-muted);
+}
+
+.modifier-effect > .modifier-effect-spacer {
+  visibility: hidden;
+}
+
+.modifier-row--active .modifier-effect > p {
+  color: var(--color-text-body);
+}

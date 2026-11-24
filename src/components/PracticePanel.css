@@ -1,0 +1,300 @@
+/* Practice's controls, wherever they are drawn: the desktop Practice pane's Setup tab
+   (launcher/PracticePane.tsx) and the Mobile tool window's Practice tab. `.practice-panel` scopes
+   the content, not a surface: each host paints its own background and spacing.
+
+   Text ramp, brightest first: value (cream) > accent (gold, which wins optically via the Bold face)
+   > label > dim separators. All four derive from the semantic color tokens. Every run sits on the pixel fonts' native 16px grid and picks apparent size by
+   FACE, with a hard 1px black drop shadow. */
+.practice-panel {
+  --hud-label: color-mix(in srgb, var(--color-secondary) 85%, var(--color-text-muted));
+  --hud-value: var(--color-text-body);
+  --hud-accent: var(--color-secondary);
+  --hud-dim: color-mix(in srgb, var(--color-text-muted) 70%, var(--color-secondary));
+  box-sizing: border-box;
+  min-width: 0;
+  color: var(--hud-value);
+  font-size: 16px;
+  font-family: "RuneScape Plain 12", sans-serif;
+  text-align: left;
+  /* Rows here are 18px apart and the group headings sit flush against them, so a `?` tap target
+     reaching the default 12px either side of its line would take taps from the row or heading
+     beside it (InfoHint.css). */
+  --info-hint-reach: 9px;
+}
+
+.mechanics-practice-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  min-height: 0;
+  flex: 1 1 auto;
+}
+
+.practice-panel .mechanics-practice-groups[hidden] {
+  display: none;
+}
+
+.mechanics-settings--practice .mechanics-toggle-family {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  break-inside: avoid;
+}
+
+.practice-panel .mechanics-choice {
+  width: 192px;
+  max-width: 100%;
+}
+
+/* ---- Section rhythm ----------------------------------------------------------------------
+   The sections chunk by proximity, nothing else. Without this, a group heading sits 2px
+   below the previous group's last row and 2px above its own first row: identical gaps either
+   side, so Fight Setup / Mechanics / Assists float between the groups instead of owning the
+   rows under them, and the pane reads as one undivided list. Space above the boundary is the
+   whole remedy; no extra rule, no brighter color (DESIGN.md: reduce emphasis before adding
+   color). It costs 8px per section in a pane that already scrolls. */
+.practice-panel .mechanics-settings--practice .mechanics-group + .mechanics-group {
+  margin-top: 8px;
+}
+
+/* The other half of the same rhythm, and it pays for most of it: the heading's own bottom
+   padding is 2px, so its rows sit 4px under it against 12px above it. Three headings give back
+   6px of the 16px the boundaries cost, which keeps a pane that fits without the boundaries from
+   tipping into its scroll nav. */
+.practice-panel .mechanics-settings--practice .mechanics-group-toggle {
+  padding-bottom: 2px;
+}
+
+/* Titles take the heading token, not the value ink. The ramp at the top of this file gives
+   cream to readouts, so on that ink "Fight Setup" measures exactly as bright as "1500/1500". Warmth rather than weight: Bold 12 stays reserved for values. */
+.practice-panel .mechanics-settings--practice .mechanics-group-title {
+  color: var(--color-heading);
+}
+
+/* Hover brightens. The shared rule sends these to `--hud-accent`, which in this panel is the
+   dimmer label ink, so pressing toward a disclosure would fade its own title. */
+.practice-panel .mechanics-settings--practice .mechanics-group-toggle:hover .mechanics-group-title,
+.practice-panel .mechanics-settings--practice .mechanics-group-toggle:hover .mechanics-group-indicator {
+  color: var(--color-accent-text);
+}
+
+.practice-panel .mechanics-settings {
+  gap: 2px;
+}
+
+/* Align picker headings with the toggles without moving their inset option buttons. */
+.practice-panel .setting-row--dependent .mechanics-choice-label {
+  margin-left: -8px;
+}
+
+.practice-panel .mechanics-toggle-family > .setting-row:not(.setting-row--dependent) + .setting-row--dependent {
+  border-top: var(--unscaled-px, 1px) solid var(--hud-border);
+  margin-top: 3px;
+  padding-top: calc(3px + var(--border-give, 0px));
+}
+
+.practice-panel .setting-row--dependent + .setting-row--dependent {
+  margin-top: 3px;
+}
+
+.practice-panel .mechanics-toggle-info {
+  max-width: 100%;
+}
+
+/* One control per line. Packing them by width put a dependent picker's label beside the NEXT
+   mechanic's checkbox ("Practice As" read as Fireballs' sibling, Void Flares as the orientation
+   picker's), so a dependent only reads as its parent's when nothing shares its line. */
+.practice-panel .mechanics-toggles {
+  gap: 2px;
+}
+
+/* The inset reserves room for .setting-row::before, the modified-indicator bar. Nothing in the
+   Practice passes defaultConfig, so that bar has no state to announce and never paints. */
+.practice-panel .setting-row {
+  padding-left: 0;
+  min-height: 16px;
+}
+
+.practice-panel .setting-row--dependent {
+  padding-left: 8px;
+}
+
+/* Actions grow to share a line but never past the panel: a label longer than the panel wraps
+   inside its button instead of leaving it. */
+.practice-panel .mechanics-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 3px;
+}
+
+.practice-panel .mechanics-actions .osrs-btn {
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: 100%;
+  white-space: normal;
+}
+
+/* Tighter than the 8 used on opaque chrome: on a panel this narrow the label is already bound
+   to its box by the wrap gap being wider than this one. */
+.practice-panel .osrs-checkbox {
+  gap: 6px;
+  min-width: 0;
+  flex-shrink: 1;
+  max-width: 100%;
+}
+
+/* The shared checkbox paints 16px, which with its border makes every practice toggle row 18px
+   around a 16px line of text. At 14px the row is exactly the text line. */
+.practice-panel .osrs-checkbox__box {
+  box-sizing: border-box;
+  width: 14px;
+  height: 14px;
+}
+
+/* Same cap-height line box as the toggle labels below it, so the two label rows in this panel
+   stand the same height. */
+.practice-panel .boss-health-name {
+  line-height: 12px;
+}
+
+/* Plain 11, the face this panel gives labels: the boss-health name beside these very toggles all use it, and the ramp at the top of this file
+   reserves Bold 12 for values. Size stays 16 per that same ramp, which is why apparent size is
+   picked by FACE; the line box is leading rather than glyph, so cutting it to the cap is free. */
+.practice-panel .osrs-checkbox__label {
+  font-family: "RuneScape Plain 11", sans-serif;
+  font-size: 16px;
+  line-height: 16px;
+}
+
+/* Same re-facing as the checkbox labels directly above, for the same reason: the Fireball Start
+   label is a peer of those toggles, and left on the global Bold 12 it reads as a section heading
+   dividing the panel instead of one more setting in it. */
+.practice-panel .mechanics-choice-label {
+  font-family: "RuneScape Plain 11", sans-serif;
+  font-size: 16px;
+  line-height: 16px;
+}
+
+.practice-panel .mechanics-actions .osrs-btn--small {
+  font-family: "RuneScape Plain 11", sans-serif;
+  font-size: 16px;
+  line-height: 14px;
+  padding: 3px 4px;
+  letter-spacing: normal;
+}
+
+.practice-panel .mechanics-choice-segment {
+  font-family: "RuneScape Plain 11", sans-serif;
+  /* On the 16px grid like every other run in the panel; 14px scaled the face off it. */
+  font-size: 16px;
+  line-height: 16px;
+  min-height: 28px;
+  --segment-pad-y: 4px;
+}
+
+.practice-panel .boss-health {
+  gap: 4px;
+  padding-bottom: 0;
+}
+
+/* Reserve the thumb's bottom overhang so a fitting Fight Setup does not gain a scrollbar. */
+.practice-panel .boss-health-slider {
+  margin: 0 0 2px;
+}
+
+.practice-panel .boss-health-phases {
+  margin-top: 2px;
+}
+
+/* "Jump to phase": a label of its own, apart from the slider above, so the buttons read as a jump
+   rather than as stops on the slider. */
+.practice-panel .boss-health-phases legend {
+  margin-bottom: 4px;
+  font-family: "RuneScape Plain 11", sans-serif;
+  font-size: 16px;
+  line-height: 16px;
+  color: var(--color-text-muted);
+}
+
+.practice-panel .boss-health-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+/* Restrained outlined buttons: a border and the label, nothing filled until hovered. */
+.practice-panel .boss-health-preset {
+  --preset-pad-y: 2px;
+  --preset-pad-x: 6px;
+  min-width: 36px;
+  min-height: 22px;
+  border-color: var(--color-border);
+}
+
+.practice-panel .boss-health-preset:hover {
+  border-color: var(--color-primary-structure);
+  background: var(--color-surface-hover);
+}
+
+.practice-panel .boss-health-preset-hp {
+  display: none;
+}
+
+.practice-options {
+  border-top: 1px solid var(--color-border);
+  margin-top: 8px;
+}
+.practice-options__toggle {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  width: 100%;
+  min-height: 32px;
+  padding: 6px 0;
+  border: 0;
+  background: none;
+  color: var(--color-secondary);
+  font:
+    16px / 20px "RuneScape Bold 12",
+    sans-serif;
+  cursor: pointer;
+  text-align: left;
+}
+.practice-options__toggle span {
+  font:
+    16px / 18px "RuneScape Plain 11",
+    sans-serif;
+  color: var(--color-text-muted);
+}
+.practice-options__heading {
+  /* A section's shared note ("From wave 69") rides the heading's far end. */
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  margin: 8px 0 6px;
+  color: var(--color-secondary);
+  font:
+    16px / 20px "RuneScape Plain 11",
+    sans-serif;
+}
+.practice-footer {
+  flex-shrink: 0;
+  border-top: 1px solid var(--color-border);
+  padding: 8px;
+  background: var(--color-bg-solid);
+}
+.practice-footer .osrs-btn {
+  padding: 4px 8px;
+}
+.practice-footer__restart {
+  gap: 8px;
+  white-space: nowrap;
+}
+.practice-footer__shortcut {
+  font:
+    16px / 20px "RuneScape Plain 11",
+    sans-serif;
+  color: var(--color-text-muted);
+}
