@@ -1,10 +1,9 @@
 # Zulrah — facts spec
 
-The sourced facts the Zulrah encounter (`src/encounters/zulrah/`, `src/npcs/zulrah/`) is built on.
-There are **no capture fixtures** for Zulrah: every fact here comes from the OSRS Wiki, a Jagex staff
-statement quoted on it, the pinned game cache, or RuneLite's gameval names. What these do not settle
-is in the [open questions](./zulrah-open-questions.md); the decisions taken past them are in the
-[policy](./zulrah-policy.md).
+Sourced facts behind `src/encounters/zulrah/` and `src/npcs/zulrah/`. There are no Zulrah captures;
+the sources are the OSRS Wiki, a Jagex statement quoted on it, the pinned cache and RuneLite's
+gameval names. Unsettled behavior: [open questions](./zulrah-open-questions.md). Decisions past the
+evidence: [policy](./zulrah-policy.md).
 
 ## Sources
 
@@ -26,7 +25,7 @@ is in the [open questions](./zulrah-open-questions.md); the decisions taken past
 | Size | 5 | C NpcType; W |
 | Hitpoints, Defence/Magic/Ranged | 500; 300/300/300 | W infobox; WS |
 | Attack speed, max hit | 3 ticks; 41 | W infobox |
-| Defensive bonuses | Green: magic −45, ranged +50; red: magic 0, ranged +300; blue: magic +300, ranged 0; melee 0 in every form | WS (per-form figures; W's infobox row disagrees) |
+| Defensive bonuses | Green: magic −45, ranged +50; red: magic 0, ranged +300; blue: magic +300, ranged 0; melee 0 in every form | WS per-form figures (W's infobox row differs) |
 | Damage cap | "capped at 50, with hits dealing more than that randomly hitting it for 45-50" | WS; W |
 | Melee | "no melee defence in any form … can only be reached with a halberd-type weapon" | WS |
 | Snakelings | 2045 SNAKEBOSS_MINION_MELEE, 2046 SNAKEBOSS_MINION_MAGIC (2047 SNAKEBOSS_MINION_DYING); 1 HP, size 1, combat 90, attack speed 3, max hit 15 (stab) / 13 (magic) | G NpcID; WSn infobox |
