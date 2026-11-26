@@ -1282,11 +1282,16 @@ export class CombatSystem {
       target.equipment.shield === ELYSIAN_SPIRIT_SHIELD_ID
         ? applyElysianDamageMitigation(cappedDamage, this.random())
         : cappedDamage;
+    const hitCap = this.isNpcActor(target) ? target.incomingHitCap : undefined;
+    const capReplacedDamage =
+      hitCap !== undefined && mitigatedDamage > hitCap.above
+        ? hitCap.min + Math.floor(this.random() * (hitCap.max - hitCap.min + 1))
+        : mitigatedDamage;
     // A hit on an NPC deals and shows at most its remaining HP: Colosseum captures, every player
     // hit on a 1-HP Bee swarm splats 1 (17/17), and no Fremennik warbander's splats exceed its HP (30/30).
     const effectiveDamage = this.isNpcActor(target)
-      ? Math.min(mitigatedDamage, Math.max(0, hpBefore))
-      : mitigatedDamage;
+      ? Math.min(capReplacedDamage, Math.max(0, hpBefore))
+      : capReplacedDamage;
 
     const isProtected = bridge.infiniteHealth && target.kind === 'player';
     if (!isProtected && this.isPlayerActor(target)) {
