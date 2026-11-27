@@ -503,11 +503,11 @@ describe('Zulrah magma tail', () => {
   });
 
   it('only treats the pillar tiles as safe while Zulrah is at the middle spot', () => {
-    expect(isTailSafeTile([26, 65], [24, 62])).toBe(true);
-    expect(isTailSafeTile([26, 65], [32, 62])).toBe(true);
-    expect(isTailSafeTile([26, 65], [25, 62])).toBe(true);
-    expect(isTailSafeTile([26, 65], [26, 62])).toBe(false);
-    expect(isTailSafeTile([26, 65], [24, 61])).toBe(false);
+    expect(isTailSafeTile(ZULRAH_SPOTS.middle, [24, 62])).toBe(true);
+    expect(isTailSafeTile(ZULRAH_SPOTS.middle, [32, 62])).toBe(true);
+    expect(isTailSafeTile(ZULRAH_SPOTS.middle, [25, 62])).toBe(true);
+    expect(isTailSafeTile(ZULRAH_SPOTS.middle, [26, 62])).toBe(false);
+    expect(isTailSafeTile(ZULRAH_SPOTS.middle, [24, 61])).toBe(false);
     expect(isTailSafeTile([16, 65], [24, 62])).toBe(false);
   });
 
@@ -681,6 +681,24 @@ describe('Zulrah island across two map squares', () => {
     expect(isInTileSpace(23, 71)).toBe(false);
   });
 
+  it('lets a halberd hit the middle form from the front of the base, without walking', () => {
+    const run = startRun(6, { zulrahAttacks: false, zulrahClouds: false });
+    installIsland(run);
+    const front: Coordinate = [28, 62];
+    run.engine.setEquipment({ weapon: 3204 }); // Dragon halberd
+    // Weapon reach comes from the cache's item params, which unit tests do not load: set the halberd's 2.
+    const player = run.world.getPlayer();
+    if (player) player.equipmentStats = { ...player.equipmentStats, attackRange: 2 };
+    for (let i = 0; i < 20; i++) run.engine.advanceTick(front);
+    expect(run.world.getPlayer()?.position).toEqual(front);
+    run.engine.setAttackTarget(ZULRAH_ACTOR_ID);
+    for (let i = 0; i < 4; i++) {
+      run.engine.advanceTick(front);
+      expect(run.world.getPlayer()?.position).toEqual(front);
+    }
+    expect(run.world.getPlayer()?.attackTarget).toBe(ZULRAH_ACTOR_ID);
+  });
+
   it('lets the player walk up an arm to its tip', () => {
     const run = startRun(6, { zulrahAttacks: false, zulrahClouds: false });
     installIsland(run);
@@ -748,6 +766,24 @@ describe('Zulrah surfacing bob', () => {
     // The melee form surfaces without one (rotation 1: phases 2 and 5).
     expect(meleeSurfaces.length).toBeGreaterThan(0);
     for (const tick of meleeSurfaces) expect(bobs).not.toContain(tick);
+  });
+
+  it('waits 3 quiet ticks after the bob, attacking on the 4th', () => {
+    const run = startRun(1, { zulrahClouds: false });
+    let bob: number | null = null;
+    const gaps: number[] = [];
+    for (let i = 0; i < 400 && gaps.length < 3; i++) {
+      run.tick();
+      const zulrah = run.zulrah();
+      if (!zulrah || !attackCued(run)) continue;
+      const attacked = zulrah.combat.lastAttackTick === run.world.tick;
+      if (!attacked) bob = run.world.tick;
+      else if (bob !== null) {
+        gaps.push(run.world.tick - bob);
+        bob = null;
+      }
+    }
+    expect(gaps).toEqual([4, 4, 4]);
   });
 });
 

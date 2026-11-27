@@ -10,10 +10,12 @@ export type ZulrahSpot = 'middle' | 'south' | 'west' | 'east';
  *
  * Simulator policy, read off the cache geometry rather than any capture: the island is a U whose base
  * spans local y 60-63 and whose arms are x 22-24 and 32-34 up to y 70. `middle` sits between the arms
- * north of the base, `south` below the base, `west` and `east` just outside each arm.
+ * north of the base, `south` below the base, `west` and `east` just outside each arm. `middle`'s south
+ * edge (y 64) is two tiles from the base's front row (y 62), so a halberd (reach 2) hits it from the
+ * middle, as reported from play; one tile further north, only the arms were in reach.
  */
 export const ZULRAH_SPOTS: Readonly<Record<ZulrahSpot, Coordinate>> = {
-  middle: [26, 65],
+  middle: [26, 64],
   south: [26, 55],
   west: [16, 65],
   east: [36, 64],
@@ -156,7 +158,7 @@ export function nextZulrahPosition(
  * - dive: SINKFAST runs 60 cycles, 2 ticks;
  * - underwater: 2 ticks hidden;
  * - emerge: EMERGEFAST runs 60 cycles, 2 ticks untargetable after the new form appears;
- * - surface pause: `ZULRAH_SURFACE_PAUSE_TICKS` before its first turn.
+ * - surface pause: the bob, then 3 quiet ticks; first turn at `ZULRAH_SURFACE_PAUSE_TICKS` after the emerge.
  * The fight's opening rise (SNAKEBOSS_SPAWN, 105 cycles) keeps 4 ticks, then its own pause.
  */
 export const ZULRAH_DIVE_TICKS = 2;
@@ -165,11 +167,12 @@ export const ZULRAH_EMERGE_TICKS = 2;
 export const ZULRAH_OPENING_RISE_TICKS = 4;
 
 /**
- * Ticks a resurfaced form waits after its emerge before its first turn. No source gives it; 3 is
- * reported from play (surfacing straight into an attack looks wrong), a POLICY value until measured
- * on video. Not applied to the opening, which has its own pause.
+ * Ticks from a resurfaced form's emerge ending (its bob) to its first turn. No source gives it; from
+ * play she waits 3 full ticks after the bob before attacking, so the first turn lands on bob + 4 (at
+ * bob + 3 it reads as one more attack at her normal speed). A POLICY value until measured on video.
+ * Not applied to the opening, which has its own pause.
  */
-export const ZULRAH_SURFACE_PAUSE_TICKS = 3;
+export const ZULRAH_SURFACE_PAUSE_TICKS = 4;
 
 /**
  * Ticks Zulrah waits after its opening rise before its first turn (the fill's first barrage). No

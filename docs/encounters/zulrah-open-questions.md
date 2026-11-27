@@ -13,7 +13,7 @@ Paths: **N/** = `src/npcs/zulrah/`, **E/** = `src/encounters/zulrah/`.
 
 | Question | Simulator | Label | Settled by |
 |---|---|---|---|
-| Form change | Dive 2, underwater 2, emerge 2, then 3 ticks before the first turn; `E/rotation.ts` | POLICY | Ticks from dive start to resurface, and to the first attack |
+| Form change | Dive 2, underwater 2, emerge 2, the bob, then 3 quiet ticks; first turn 4 ticks after the bob; `E/rotation.ts` | POLICY | Ticks from dive start to resurface, and to the first attack |
 | Opening | Rise 4 ticks from the fight's first tick, then 12 ticks before the first barrage; `E/rotation.ts` | POLICY | Ticks from arriving to Zulrah appearing, and to its first spit |
 | Cloud barrage and snakeling turn length | 3 ticks, as attacks | POLICY | A cloud-only phase (rotation 1, phase 1) |
 | Tail stare | Slam 6 ticks after the stare starts; next stare 3 ticks after the slam; `N/constants.ts` `ZULRAH_TAIL` | UNVERIFIED | Tail animation start to hitsplat, and slam to next stare |
@@ -72,7 +72,7 @@ Paths: **N/** = `src/npcs/zulrah/`, **E/** = `src/encounters/zulrah/`.
 | Out-of-pattern phases after the first rotation | Not modelled | Gap | — |
 | Projectile graphics | 1045 ranged, 1044 cloud orb, 1046 magic | POLICY | The projectile each attack shows |
 | Projectile flight | Generic magic-spell timing | UNVERIFIED | Launch to hitsplat at several distances |
-| Spot tiles | Middle (26,65), south (26,55), west (16,65), east (36,64), south-west tile in 35_47's frame | INFERENCE (island geometry) | Tile markers of Zulrah's footprint at each spot |
+| Spot tiles | Middle (26,64), south (26,55), west (16,65), east (36,64), south-west tile in 35_47's frame; middle sits one tile off the base so a halberd reaches it from the middle tiles (y 62), reported from play | INFERENCE (island geometry) | Tile markers of Zulrah's footprint at each spot |
 | Player start | (28,61) | INFERENCE (wiki tile marker) | The boat arrival |
 
 ## Loadouts

@@ -53,13 +53,13 @@ export const ZULRAH_TAIL = {
 } as const;
 
 /**
- * Tiles the tail cannot reach while Zulrah is at its middle spot (SW corner 26,65): the three walkable
+ * Tiles the tail cannot reach while Zulrah is at its middle spot (SW corner 26,64): the three walkable
  * tiles tucked behind each pillar (pillars at 25,63 and 31,63), reported from play. West pillar: its
  * west 24,63, south-west 24,62 and south 25,62; the east pillar mirrors them. The slam still lands; a
  * player standing here takes no damage and no stun.
  */
 export const ZULRAH_TAIL_SAFE_TILES: Readonly<{ zulrah: Coordinate; tiles: readonly Coordinate[] }> = {
-  zulrah: [26, 65],
+  zulrah: [26, 64],
   tiles: [
     [24, 63],
     [24, 62],
