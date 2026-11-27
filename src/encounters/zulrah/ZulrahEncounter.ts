@@ -117,7 +117,6 @@ export class ZulrahEncounter implements Encounter {
   /** Whether the opening form's rise (SNAKEBOSS_SPAWN) has been cued. */
   private openingRiseCued = false;
   /** Where the player stood when the fight was built: moving off it counts as acting. */
-  private playerStart: Coordinate = [...ZULRAH_PLAYER_START];
   private snakelingCounter = 0;
   /** The setup's rotation pin; null picks each rotation at random. */
   private rotationPin: ZulrahRotationNumber | null = null;
@@ -160,32 +159,19 @@ export class ZulrahEncounter implements Encounter {
   }
 
   /**
-   * Zulrah starts underwater, hidden and untargetable: it "will appear as soon as the player continues
-   * the dialogue or performs an action" (https://oldschool.runescape.wiki/w/Zulrah, Transportation).
-   * `processPostTick` raises it on the player's first action.
+   * Zulrah starts underwater, hidden and untargetable, and `processPostTick` raises it on the fight's
+   * first tick. Reported from play: it rises without waiting for the player to act (the wiki's "as soon
+   * as the player continues the dialogue or performs an action" is the boat dialogue, which the
+   * simulator skips).
    */
-  createNpcs(playerStart: Coordinate): NpcActor[] {
+  createNpcs(_playerStart: Coordinate): NpcActor[] {
     this.openingRiseCued = false;
-    this.playerStart = [playerStart[0], playerStart[1]];
     this.phase = { ...this.initialPhase(), stage: 'submerged', stageEndTick: null };
     const zulrah = this.createPhaseActor(ZULRAH_OPENING_POSITION, 0, this.maxHp);
     zulrah.hidden = true;
     submergeNpc(zulrah, Number.MAX_SAFE_INTEGER);
     zulrah.combat.nextActionTick = Number.MAX_SAFE_INTEGER;
     return [zulrah];
-  }
-
-  /** The player has acted: moved off its start tile, picked a target, or lit a prayer. */
-  private playerHasActed(ctx: EncounterContext): boolean {
-    const player = ctx.world.getPlayer();
-    if (!player) return false;
-    return (
-      player.position[0] !== this.playerStart[0] ||
-      player.position[1] !== this.playerStart[1] ||
-      player.attackTarget !== null ||
-      player.activePrayer !== null ||
-      player.offensivePrayer !== null
-    );
   }
 
   /** Raises the opening form on SNAKEBOSS_SPAWN, as if it had surfaced this tick. */
@@ -280,8 +266,8 @@ export class ZulrahEncounter implements Encounter {
     this.landSnakelings(ctx);
     const actor = ctx.world.getNpc(phase.actorId);
     if (actor && !this.openingRiseCued) {
-      // Still waiting for the player; later forms surface on EMERGEFAST instead.
-      if (this.playerHasActed(ctx)) this.riseForOpening(actor, ctx);
+      // The fight's first tick; later forms surface on EMERGEFAST instead.
+      this.riseForOpening(actor, ctx);
       return [];
     }
     if (actor) phase.hp = actor.vitals.hp;
@@ -291,6 +277,16 @@ export class ZulrahEncounter implements Encounter {
         if (phase.stageEndTick !== null && ctx.tick >= phase.stageEndTick) {
           phase.stage = 'active';
           phase.stageEndTick = null;
+          // Reported from play: after a form change she plays her attack animation with no attack
+          // (the "bob"), the visual cue that she can be clicked again. Not on the opening rise, and
+          // not as the melee (magma) form, which only plays it for a cloud or snakeling spit.
+          if (actor && phase.index > 0 && getZulrahState(actor)?.form !== 'magma') {
+            emitInfernoVisual(ctx.tickEvents, {
+              animations: [{ actorId: actor.id, clipId: 'attack', delayCycles: 0 }],
+              projectiles: [],
+              graphics: [],
+            });
+          }
         }
         break;
       case 'active':

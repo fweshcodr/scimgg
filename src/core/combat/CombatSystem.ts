@@ -33,6 +33,7 @@ import { type EquipmentHitEffectsSnapshot, resolveEquipmentHitEffects } from './
 import { endPowerOfDeathOnDamage, powerOfDeathMeleeMultiplier } from './player/specialAttacks/instantSpecial';
 import { appliesOnAccurateHit, applySpecialAttackEffects } from './player/specialAttacks/postHitEffects';
 import type { OnKillEffect, SpecialAttackEffect } from './player/specialAttacks/types';
+import { recoilDamage, wearsRecoilRing } from './recoil';
 import { notifyNpcOfPlayerAttack } from './retaliation';
 
 /** No encounter multipliers in force. See {@link PendingHitDamageMultipliers}. */
@@ -849,6 +850,40 @@ export class CombatSystem {
   }
 
   /**
+   * A recoil ring on the player reflects part of a damaging NPC hit back at its attacker, as its own
+   * typeless player hit (/w/Ring_of_recoil). It cannot exceed the attacker's remaining HP, so a
+   * 1-HP snakeling dies to any hit that lands.
+   */
+  private applyRecoil(
+    world: WorldState,
+    source: ActorBase,
+    target: ActorBase,
+    damage: number,
+    bridge: CombatBridge,
+  ): void {
+    if (!this.isNpcActor(source) || !this.isPlayerActor(target) || !source.alive) return;
+    if (!wearsRecoilRing(target)) return;
+    const reflected = Math.min(recoilDamage(damage), source.vitals.hp);
+    if (reflected <= 0) return;
+    this.applyResolvedHit(
+      world,
+      target,
+      source,
+      {
+        style: 'typeless',
+        attackKind: 'typeless',
+        rolledDamage: reflected,
+        accuracySucceeded: true,
+        impactDelayTicks: 0,
+      },
+      bridge,
+      undefined,
+      undefined,
+      'fixed',
+    );
+  }
+
+  /**
    * Tick this NPC's burn clock, in its turn. One splat per pulse, valued at the number of stacks
    * burning — "each time the entity will take damage equal to the number of burn stacks they
    * currently have" (/w/Burn). The captures agree: `hit id=74` carries values 1 to 5, never a
@@ -1076,6 +1111,8 @@ export class CombatSystem {
     bridge.events.emit(hitsplatEvent);
 
     bridge.onDamageApplied?.(damageApplied);
+
+    this.applyRecoil(world, source, target, damageApplied.effectiveDamage, bridge);
 
     if (attack.postHitEffects && this.isPlayerActor(source) && this.isNpcActor(target)) {
       // A hit that CONNECTED is not the same as one that dealt damage: the player's minimum-1 rule

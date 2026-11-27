@@ -1,4 +1,5 @@
 import type { ProjAnimTiming } from '../../core/combat/hitDelay';
+import type { Coordinate } from '../../types/simulation';
 
 /**
  * Zulrah's three forms. RuneLite gameval (NpcID.java, same commit): SNAKEBOSS_BOSS_RANGED 2042,
@@ -50,6 +51,24 @@ export const ZULRAH_TAIL = {
   /** Ticks after a slam lands before the next stare begins. */
   recoveryTicks: 3,
 } as const;
+
+/**
+ * Tiles the tail cannot reach while Zulrah is at its middle spot (SW corner 26,65): the three walkable
+ * tiles tucked behind each pillar (pillars at 25,63 and 31,63), reported from play. West pillar: its
+ * west 24,63, south-west 24,62 and south 25,62; the east pillar mirrors them. The slam still lands; a
+ * player standing here takes no damage and no stun.
+ */
+export const ZULRAH_TAIL_SAFE_TILES: Readonly<{ zulrah: Coordinate; tiles: readonly Coordinate[] }> = {
+  zulrah: [26, 65],
+  tiles: [
+    [24, 63],
+    [24, 62],
+    [25, 62],
+    [32, 63],
+    [32, 62],
+    [31, 62],
+  ],
+};
 
 /**
  * Venom from attacks.

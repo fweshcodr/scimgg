@@ -27,6 +27,7 @@ import {
   ZULRAH_SIZE,
   ZULRAH_SNAKELING_ORB_SPOTANIM_ID,
   ZULRAH_TAIL,
+  ZULRAH_TAIL_SAFE_TILES,
   type ZulrahForm,
 } from './constants';
 
@@ -186,6 +187,8 @@ function takeAttack(
     state.lastImpactTick = context.tick;
     return EMPTY;
   }
+  // Reported from play: it faces south until the player hits it or it first attacks, then tracks the player.
+  actor.combat.targetId = 'player';
   const style = selectStyle(actor, state, config, context);
   const attack = resolveAttackRequest({
     attacker: actor,
@@ -258,7 +261,8 @@ function landTail(
     !player ||
     !canReceiveNewAttack(player) ||
     !config.attacksEnabled() ||
-    !isInTailArea(player.position, pending.target)
+    !isInTailArea(player.position, pending.target) ||
+    isTailSafeTile(actor.position, player.position)
   )
     return [];
   config.stunPlayer(context.tick + ZULRAH_TAIL.stunTicks);
@@ -291,6 +295,9 @@ function startTail(
   // Holds the clock until the tail lands; the landing reschedules the next stare.
   scheduleNpcAction(actor.combat, context.tick, ZULRAH_TAIL.stareTicks);
   if (config.attacksEnabled()) {
+    // Its first attack turns it from south to the player (see `takeAttack`); the stare bearing above
+    // still wins until the slam lands.
+    actor.combat.targetId = 'player';
     emitInfernoVisual(context.tickEvents, {
       // Which side the game whips from is not sourced: simulator policy alternates, left first
       // (docs/encounters/zulrah-open-questions.md).
@@ -350,6 +357,9 @@ function spitSnakelingOrb(
   state.lastImpactTick = context.tick + SNAKELING.orbFlightTicks;
   const tile = config.launchSnakelingOrb(actor, context);
   if (!tile) return;
+  // Reported from play: like a cloud barrage, it turns to where the orb lands rather than watching the
+  // player, and holds that bearing until its next attack or form change.
+  actor.actionFacing = facingToward(actor, tile);
   emitInfernoVisual(context.tickEvents, {
     animations: [{ actorId: actor.id, clipId: 'attack', delayCycles: 0 }],
     projectiles: [
@@ -379,6 +389,13 @@ function facingToward(actor: Pick<NpcActor, 'position' | 'size'>, tile: Coordina
 /** The tail hits the locked tile and every tile within `ZULRAH_TAIL.radius` of it. */
 export function isInTailArea(position: Coordinate, target: Coordinate): boolean {
   return Math.max(Math.abs(position[0] - target[0]), Math.abs(position[1] - target[1])) <= ZULRAH_TAIL.radius;
+}
+
+/** Whether the player stands on a pillar tile the tail cannot reach from where Zulrah is. */
+export function isTailSafeTile(zulrah: Coordinate, position: Coordinate): boolean {
+  const { zulrah: spot, tiles } = ZULRAH_TAIL_SAFE_TILES;
+  if (zulrah[0] !== spot[0] || zulrah[1] !== spot[1]) return false;
+  return tiles.some((tile) => tile[0] === position[0] && tile[1] === position[1]);
 }
 
 function projectileCue(actor: NpcActor, target: PlayerActor, style: ZulrahStyle): NpcProjectileCue {
@@ -422,8 +439,8 @@ export function createZulrahActor(input: CreateZulrahActorInput) {
       attackRange: 20,
       attackStyle: input.form === 'tanzanite' ? 'magic' : 'range',
       nextActionTick: targetableFromTick,
-      // No target until the player first hits it, so it faces south (`facing: 0`) rather than tracking
-      // the player; see `onDamageResolved`.
+      // No target until the player first hits it or it first attacks, so it faces south (`facing: 0`)
+      // rather than tracking the player; see `onDamageResolved` and `takeAttack`.
       targetId: null,
       lastAttackTick: null,
       animations: { idle: null, walk: null, run: null, attack: null, death: null },

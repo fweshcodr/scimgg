@@ -19,10 +19,11 @@ import {
   ZULRAH_CLOUD,
   ZULRAH_CLOUD_LOC_ID,
   ZULRAH_NPC_ID_BY_FORM,
+  ZULRAH_SNAKELING_ORB_SPOTANIM_ID,
   ZULRAH_TAIL,
 } from '../../../npcs/zulrah/constants';
 import { snakelingDefinition } from '../../../npcs/zulrah/snakeling';
-import { getZulrahState, isInTailArea, zulrahDefinition } from '../../../npcs/zulrah/zulrah';
+import { getZulrahState, isInTailArea, isTailSafeTile, zulrahDefinition } from '../../../npcs/zulrah/zulrah';
 import { getBoundsFromRegion } from '../../../rs/collision/WalkabilityAnalyzer';
 import { enqueueEnginePendingHit } from '../../../test/helpers/pendingHits';
 import { parseInventoryFromSetup } from '../../../types/inventory';
@@ -54,8 +55,6 @@ function startRun(seed = 1, mechanics: Partial<MechanicsConfig> = {}): Run {
   const encounter = new ZulrahEncounter(seed);
   const engine = new SimulationEngine({ encounter, startPos: [...ZULRAH_PLAYER_START] as Coordinate });
   engine.setMechanicsConfig({ infiniteHealth: true, zulrahAttacks: true, zulrahRotation: '1', ...mechanics });
-  // Zulrah rises on the player's first action; an offensive prayer is one that changes nothing else.
-  engine.queueOffensivePrayer(PrayerType.Piety);
   const world = engine['worldState'] as WorldState;
   return {
     engine,
@@ -186,8 +185,28 @@ describe('ZulrahEncounter', () => {
     expect(second?.vitals.hp).toBe(321);
   });
 
-  it('faces south until the player first hits it, then tracks the player through form changes', () => {
+  it('faces south through the opening pause, then tracks the player from its first attack', () => {
     const run = startRun();
+    const npcSnapshot = () => run.engine.getState().npcs.find((npc) => npc.id === ZULRAH_ACTOR_ID);
+    const attacksMade = () => {
+      const zulrah = run.zulrah();
+      return zulrah ? (getZulrahState(zulrah)?.attacksMade ?? 0) : 0;
+    };
+    let zulrah = run.zulrah();
+    for (let i = 0; i < 300 && attacksMade() === 0; i++) {
+      if (zulrah && zulrah.actionFacing === undefined) {
+        expect(zulrah.combat.targetId).toBeNull();
+        expect(npcSnapshot()?.facingAngle).toBe(0);
+      }
+      run.tick();
+      zulrah = run.zulrah();
+    }
+    expect(attacksMade()).toBeGreaterThan(0);
+    expect(zulrah?.combat.targetId).toBe('player');
+  });
+
+  it('faces south until the player first hits it, then tracks the player through form changes', () => {
+    const run = startRun(1, { zulrahAttacks: false });
     runToPhase(run, 1);
     const zulrah = run.zulrah();
     if (!zulrah) throw new Error('No Zulrah');
@@ -233,18 +252,16 @@ describe('ZulrahEncounter', () => {
     expect(run.zulrah()?.vitals.hp).toBe(hp - 30);
   });
 
-  it('stays underwater until the player acts, then rises', () => {
+  it('rises on the first tick without waiting for the player to act', () => {
     const encounter = new ZulrahEncounter(1);
     const engine = new SimulationEngine({ encounter, startPos: [...ZULRAH_PLAYER_START] as Coordinate });
     engine.setMechanicsConfig({ infiniteHealth: true, zulrahRotation: '1' });
     const world = engine['worldState'] as WorldState;
     const zulrah = () => world.getNpcs().find((npc) => zulrahDefinition.isActor(npc));
-    for (let i = 0; i < 20; i++) engine.advanceTick([...ZULRAH_PLAYER_START] as Coordinate);
-    expect(zulrah()?.hidden).toBe(true);
-    expect(world.pendingHits).toHaveLength(0);
-    engine.advanceTick([ZULRAH_PLAYER_START[0] + 1, ZULRAH_PLAYER_START[1]] as Coordinate);
+    engine.advanceTick([...ZULRAH_PLAYER_START] as Coordinate);
     expect(zulrah()?.hidden).toBe(false);
     expect(zulrah()?.spawnTick).toBe(world.tick);
+    expect(zulrah()?.combat.targetId).toBeNull();
   });
 
   it('waits ZULRAH_OPENING_PAUSE_TICKS after its rise before the first barrage', () => {
@@ -458,6 +475,42 @@ describe('Zulrah magma tail', () => {
     expect(run.engine.wasLastTickStunned()).toBe(false);
   });
 
+  it.each([
+    ['west of the west', [24, 63]],
+    ['south-west of the west', [24, 62]],
+    ['south of the west', [25, 62]],
+    ['east of the east', [32, 63]],
+    ['south-east of the east', [32, 62]],
+    ['south of the east', [31, 62]],
+  ] as const)('neither damages nor stuns a player %s pillar', (_side, tile) => {
+    const safe: Coordinate = [tile[0], tile[1]];
+    const run = startRun(5, { infiniteHealth: false, zulrahClouds: false });
+    runToPhase(run, MAGMA_PHASE);
+    for (let i = 0; i < 10; i++) run.engine.advanceTick(safe);
+    expect(run.world.getPlayer()?.position).toEqual(safe);
+    let pending = run.zulrah() ? getZulrahState(run.zulrah()!)?.pendingTail : null;
+    for (let i = 0; i < 100 && !pending; i++) {
+      run.engine.advanceTick(safe);
+      pending = getZulrahState(run.zulrah()!)?.pendingTail;
+    }
+    if (!pending) throw new Error('Magma never stared');
+    // It still stares at the player's tile and slams; the pillar takes it.
+    expect(pending.target).toEqual(safe);
+    const before = playerHp(run);
+    while (run.world.tick <= pending.landTick + 1) run.engine.advanceTick(safe);
+    expect(playerHp(run)).toBe(before);
+    expect(run.engine.wasLastTickStunned()).toBe(false);
+  });
+
+  it('only treats the pillar tiles as safe while Zulrah is at the middle spot', () => {
+    expect(isTailSafeTile([26, 65], [24, 62])).toBe(true);
+    expect(isTailSafeTile([26, 65], [32, 62])).toBe(true);
+    expect(isTailSafeTile([26, 65], [25, 62])).toBe(true);
+    expect(isTailSafeTile([26, 65], [26, 62])).toBe(false);
+    expect(isTailSafeTile([26, 65], [24, 61])).toBe(false);
+    expect(isTailSafeTile([16, 65], [24, 62])).toBe(false);
+  });
+
   it('slams twice, then dives to the next phase', () => {
     const run = startRun(5);
     runToPhase(run, MAGMA_PHASE);
@@ -658,6 +711,46 @@ describe('Zulrah island across two map squares', () => {
   });
 });
 
+describe('Zulrah surfacing bob', () => {
+  const attackCued = (run: Run) =>
+    run.engine
+      .getLastTickEvents()
+      .some(
+        (event) =>
+          event.type === 'inferno_visual' &&
+          (event as { animations?: { actorId: string; clipId: string }[] }).animations?.some(
+            (a) => a.actorId === ZULRAH_ACTOR_ID && a.clipId === 'attack',
+          ),
+      );
+
+  it('plays the attack animation, with no attack, when each later non-melee form becomes targetable', () => {
+    const run = startRun(1);
+    const bobs: number[] = [];
+    const targetable: number[] = [];
+    const meleeSurfaces: number[] = [];
+    let wasTargetable = false;
+    for (let i = 0; i < 400; i++) {
+      run.tick();
+      const zulrah = run.zulrah();
+      const isTargetable =
+        !!zulrah && !zulrah.hidden && run.world.tick >= (zulrah.targetableFromTick ?? Number.POSITIVE_INFINITY);
+      if (isTargetable && !wasTargetable && zulrah) {
+        (getZulrahState(zulrah)?.form === 'magma' ? meleeSurfaces : targetable).push(run.world.tick);
+      }
+      wasTargetable = isTargetable;
+      if (attackCued(run) && zulrah && zulrah.combat.lastAttackTick !== run.world.tick) bobs.push(run.world.tick);
+    }
+    expect(targetable.length).toBeGreaterThanOrEqual(3);
+    // Every form change bobs; the opening rise does not.
+    const [opening, ...surfaces] = targetable;
+    expect(bobs).toEqual(expect.arrayContaining(surfaces));
+    expect(bobs).not.toContain(opening);
+    // The melee form surfaces without one (rotation 1: phases 2 and 5).
+    expect(meleeSurfaces.length).toBeGreaterThan(0);
+    for (const tick of meleeSurfaces) expect(bobs).not.toContain(tick);
+  });
+});
+
 describe('Zulrah snakelings', () => {
   const snakelings = (run: Run) => run.world.getNpcs().filter((npc) => snakelingDefinition.isActor(npc) && npc.alive);
 
@@ -703,6 +796,59 @@ describe('Zulrah snakelings', () => {
     if (!first?.spawnTick) throw new Error('No snakeling');
     while (run.world.tick < first.spawnTick + SNAKELING.lifetimeTicks + 1) run.tick();
     expect(run.world.getNpc(first.id)).toBeNull();
+  });
+
+  describe('recoil', () => {
+    const recoils = (run: Run) =>
+      (run.engine['damageHistory'] as { source: string; targetId: string; effectiveDamage: number }[]).filter(
+        (entry) => entry.source === 'PlayerAttack' && entry.targetId.startsWith('zulrah-snakeling-'),
+      );
+
+    it.each([
+      ['Ring of recoil', 2550],
+      ['Ring of suffering (ri)', 20657],
+    ])('kills a snakeling that hits a player wearing a %s', (_name, ring) => {
+      const run = runToFirstSnakelings(8);
+      run.world.getPlayer()!.equipment.ring = ring;
+      for (let i = 0; i < 20 && recoils(run).length === 0; i++) run.tick();
+      const [recoil] = recoils(run);
+      expect(recoil).toMatchObject({ effectiveDamage: 1 });
+      expect(run.world.getNpc(recoil!.targetId)?.alive ?? false).toBe(false);
+    });
+
+    it('reflects nothing off an uncharged ring of suffering', () => {
+      const run = runToFirstSnakelings(8);
+      run.world.getPlayer()!.equipment.ring = 19710; // Ring of suffering (i)
+      for (let i = 0; i < 20; i++) run.tick();
+      expect(recoils(run)).toHaveLength(0);
+    });
+  });
+
+  it('faces each orb as it spits it, not the player', () => {
+    const run = startRun(8, { zulrahRotation: '4', zulrahClouds: false });
+    runToPhase(run, 1);
+    const zulrah = run.zulrah();
+    if (!zulrah) throw new Error('No Zulrah');
+    const center = (tile: readonly number[]) => [tile[0] + 0.5, tile[1] + 0.5];
+    let checked = 0;
+    for (let i = 0; i < 40 && checked < 4; i++) {
+      run.tick();
+      for (const event of run.engine.getLastTickEvents()) {
+        if (event.type !== 'inferno_visual') continue;
+        const orb = (
+          event as { projectiles?: { spotAnimId: number; target: { position: number[] } }[] }
+        ).projectiles?.find((p) => p.spotAnimId === ZULRAH_SNAKELING_ORB_SPOTANIM_ID);
+        if (!orb) continue;
+        const [tx, ty] = center(orb.target.position);
+        const dx = tx - (zulrah.position[0] + zulrah.size / 2);
+        const dy = ty - (zulrah.position[1] + zulrah.size / 2);
+        const expected = (Math.round((Math.atan2(-dx, -dy) * 1024) / Math.PI) + 2048) % 2048;
+        const diff = Math.abs((zulrah.actionFacing ?? -9999) - expected) % 2048;
+        expect(Math.min(diff, 2048 - diff)).toBeLessThanOrEqual(2);
+        checked += 1;
+      }
+    }
+    expect(checked).toBe(4);
   });
 
   it('spawns none with snakelings off', () => {

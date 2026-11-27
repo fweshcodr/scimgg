@@ -14,7 +14,7 @@ Paths: **N/** = `src/npcs/zulrah/`, **E/** = `src/encounters/zulrah/`.
 | Question | Simulator | Label | Settled by |
 |---|---|---|---|
 | Form change | Dive 2, underwater 2, emerge 2, then 3 ticks before the first turn; `E/rotation.ts` | POLICY | Ticks from dive start to resurface, and to the first attack |
-| Opening | Rise 4 ticks on the player's first action, then 12 ticks before the first barrage; `E/rotation.ts` | POLICY | Ticks from the first action to Zulrah appearing, and to its first spit |
+| Opening | Rise 4 ticks from the fight's first tick, then 12 ticks before the first barrage; `E/rotation.ts` | POLICY | Ticks from arriving to Zulrah appearing, and to its first spit |
 | Cloud barrage and snakeling turn length | 3 ticks, as attacks | POLICY | A cloud-only phase (rotation 1, phase 1) |
 | Tail stare | Slam 6 ticks after the stare starts; next stare 3 ticks after the slam; `N/constants.ts` `ZULRAH_TAIL` | UNVERIFIED | Tail animation start to hitsplat, and slam to next stare |
 | Stun length | 5 ticks; `ZULRAH_TAIL.stunTicks` | UNVERIFIED | Hitsplat to the player's first move |
@@ -26,6 +26,7 @@ Paths: **N/** = `src/npcs/zulrah/`, **E/** = `src/encounters/zulrah/`.
 | Area hit | 3x3 around the locked tile | INFERENCE ("moving two tiles away") | A player one tile off the target, on each side |
 | Locked tile | The player's tile when the stare starts | INFERENCE ("stare at the player's position") | Moving during the stare |
 | TAIL_LEFT vs TAIL_RIGHT | Alternates, left first | POLICY | Which animation plays for targets on each side |
+| Pillar safe tiles | 24,63 24,62 25,62 (west pillar) and 32,63 32,62 31,62 (east) take no slam while Zulrah is at the middle spot; `N/constants.ts` `ZULRAH_TAIL_SAFE_TILES` | REPORTED (from play) | — |
 | What the stun blocks | Moving and attacking; prayer, food, potions and gear still work | INFERENCE (Stun status page) | Praying, eating and switching while stunned |
 | Stun graphic | Spotanim 80 STUNNED on the player; no player animation | UNVERIFIED | A tail hit |
 | Envenoms | No | INFERENCE (venom is stated for ranged and magic only) | A tail hit on an un-envenomed player |
